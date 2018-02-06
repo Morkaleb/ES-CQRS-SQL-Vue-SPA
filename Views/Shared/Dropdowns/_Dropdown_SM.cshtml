@@ -1,0 +1,22 @@
+@*@{
+    var products =  User.IsInRole("SM_View_Products") || User.IsInRole("SM_Edit_Products");
+    var sku = User.IsInRole("SM_View_SKU") || User.IsInRole("SM_Edit_SKU ");
+    var admin = User.IsInRole("SM_Admin");
+    var visible = products || sku || admin;
+}*@
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Supply Hub<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+                <li>@Html.ActionLink("Home (NEW)", "Home", "SupplyHub")</li>
+                <li>@Html.ActionLink("Products", "ProductsGrid", "SupplyManagement")</li>
+                <li>@Html.ActionLink("SKUs", "SKUGrid", "SupplyManagement")</li>
+                <li>@Html.ActionLink("Contracts", "ContractGrid", "SupplyManagement")</li>
+                <li>@Html.ActionLink("Bids", "BidGrid", "SupplyManagement")</li>
+                <li class="divider"></li>
+                <li>@Html.ActionLink("Mapper", "SyscoInvoiceMapper", "SupplyManagement")</li>
+                <li>@Html.ActionLink("Admin", "Admin", "SupplyManagement")</li>
+
+        </ul>
+
+    </li>
+}

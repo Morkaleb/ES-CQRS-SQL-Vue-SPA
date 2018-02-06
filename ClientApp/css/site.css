@@ -13,6 +13,8 @@
 /* Keep the nav menu independent of scrolling and on top of other items */
 .main-nav {
     position: fixed;
+    width: 100%;
+    height: 8%;
     top: 0;
     left: 0;
     right: 0;
@@ -29,8 +31,8 @@
 @media (min-width: 768px) {
     /* On small screens, convert the nav menu to a vertical sidebar */
     .main-nav {
-        height: 100%;
-        width: calc(25% - 20px);
+        height: calc(8%);
+        width: 100%;
     }
     .main-nav .navbar {
         border-radius: 0px;

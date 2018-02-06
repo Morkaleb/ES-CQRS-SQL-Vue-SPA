@@ -1,0 +1,46 @@
+<div class="navbar navbar-inverse navbar-fixed-top gi-sm">
+    <div class="container">
+        <div class="navbar-header ">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/wsbis" class="pull-left">
+                <img src="~/Images/Logo_Green_lq.jpg" style="width: 100px; height: 60px; padding: .3em .5em .3em .5em" alt="logo" />
+            </a>
+            <a href="/wsbis" class="pull-left">
+                <img src="~/Images/logo2_lq.png" style="width: 100px; height: 60px;  padding: 1em .5em 1em .5em" alt="logo" />
+
+            </a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                @Html.Partial("Dropdowns/_Dropdown_SM")
+                @Html.Partial("Dropdowns/_Dropdown_MenuDev")
+                @Html.Partial("Dropdowns/_Dropdown_OPS")
+                @Html.Partial("Dropdowns/_Dropdown_Finance")
+                @Html.Partial("Dropdowns/_Dropdown_Manage")
+                @Html.Partial("Dropdowns/_Dropdown_INV")
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li>@Html.ActionLink("Logout", "Logout", "Account", null, new { @class = "dropdown-toggle" })</li>
+                    <li><a class="dropdown-toggle"> Hello, @User.Identity.Name ! </a></li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("Login", "Login", "Account")</li>
+                }
+                <li style="width: 100px; height: 60px">
+                    <a href="/wsbis" class="pull-right" style="padding:0; ">
+                        <img src="~/Images/SmallLogo.png" style="width: 100px; height: 60px; padding: .6em 1em .6em 1em" alt="hub_logo" />
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>

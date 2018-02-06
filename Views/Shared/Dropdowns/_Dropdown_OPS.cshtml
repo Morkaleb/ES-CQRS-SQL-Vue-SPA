@@ -1,0 +1,22 @@
+@*@using WSBIS_SimpleMembership.Helpers
+@{
+    bool pillarsBC = User.IsInRole(Roles_.Pillars_BC);
+    bool pillarsAdmin = User.IsInRole(Roles_.Pillars_Admin);
+    bool trackingBC = User.IsInRole(Roles_.Tracking_BC);
+    bool trackingAdmin = User.IsInRole(Roles_.Tracking_Admin);
+    bool pivotGrid = User.IsInRole(Roles_.OOO_PivotGrid);
+    bool opsEnabled = pillarsBC || pillarsAdmin || trackingBC || trackingAdmin || pivotGrid;
+}*@
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ops Hub<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+                <li>@Html.ActionLink("My Pillars", "Index", "Pillars")</li>
+                <li>@Html.ActionLink("Pillars Admin", "Index", "Pillars", new { admin = "true" }, null)</li>
+            <li class="divider"></li>
+                <li>@Html.ActionLink("OOO Grid", "ReviewTrackingGrid", "Operations")</li>
+                <li>@Html.ActionLink("OOO Pivot Data", "OOO_PivotGrid", "Operations")</li>
+                <li>@Html.ActionLink("Mgmt Change", "ManagementChangeForm", "Manage")</li>
+        </ul>
+
+    </li>
+}   
