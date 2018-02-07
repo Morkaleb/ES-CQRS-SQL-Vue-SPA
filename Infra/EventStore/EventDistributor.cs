@@ -13,7 +13,7 @@ namespace Ops.Infra.EventStore
         public static void Publish(EventFromES anEvent)
         {
             dynamic readmodelData;
-            string nspace = "Manager.src.ReadModels";
+            string nspace = "Ops.ReadModels";
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
                     where t.IsClass && t.Namespace == nspace
                     select t;

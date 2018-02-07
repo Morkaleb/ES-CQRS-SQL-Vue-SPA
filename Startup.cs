@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Ops.Infra;
 
 namespace Ops
 {
@@ -20,6 +21,7 @@ namespace Ops
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+            OnStart.Start();
             Configuration = builder.Build();
         }
 
@@ -30,6 +32,11 @@ namespace Ops
         {
             // Add framework services.
             services.AddMvc();
+
+            //services.AddDbContext<ManagerContext>(options =>
+            //{
+
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

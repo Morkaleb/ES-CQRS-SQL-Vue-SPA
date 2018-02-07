@@ -14,7 +14,6 @@ namespace Ops
         public static void Main(string[] args)
         {
             BuildWebHost(args).Run();
-            OnStart.Start();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
