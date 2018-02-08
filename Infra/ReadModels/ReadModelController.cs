@@ -71,13 +71,7 @@ namespace Ops.Infra.ReadModels
             else { return Json(Book.book); }
         }
 
-        private JsonResult Json(List<ReadModelData> filtered)
-        {
-            throw new NotImplementedException();
-        }
-
-        // POST api/values
-
+       
         private static string getValues(object anEvent, string name)
         {
             var value = anEvent.GetType().GetProperties()

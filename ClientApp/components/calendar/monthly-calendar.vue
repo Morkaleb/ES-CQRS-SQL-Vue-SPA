@@ -176,7 +176,6 @@
     },
     created () {
       this.params = this.$route.query.locationId
-      console.log(this.params)
       this.fetchSchedule(this.params)
       this.fetchManagers(this.state, this.params)
       this.fetchShiftCodes(this.state)
