@@ -27,7 +27,6 @@ Vue.component('fetch-data', FetchData);
 Vue.component('home-page', HomePage);
 Vue.component('nav-menu', NavMenu);
 Vue.component('monthly-calendar', MonthlyCalendar);
-Vue.component('calendar', calendar);
 
 export default {
     data() {

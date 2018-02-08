@@ -262,7 +262,7 @@ namespace Ops.Domain
             string body = managerToName + " from location " +
                 locationId + " has requested that their shift on " + date + "  "
                 + "Be changed with " + managerFromName + "<br/> The reason that they gave was: '" +
-                reason + ".'<br/> " + "Please click  <a href='http://localhost:8080/#/" + page + "/?Id=" + requestId + "'>here</a> to check.";
+                reason + ".'<br/> " + "Please click  <a href='http://localhost:8080/" + page + "/?Id=" + requestId + "'>here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
 

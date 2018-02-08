@@ -1,5 +1,5 @@
 <template>
-  <div id="wrapper" class="container">
+  <div id="wrapper" class="flex-container">
     <shift-modal v-if="showModal">
       <h3 slot="header" class="modal-card-title">Set The Shift</h3>
       <div slot="body">
@@ -53,16 +53,17 @@
       <h1>Schedule for Store 104 Manager shifts</h1>
     </div>
     <calendar
-      :events="getSchedule"
-      :ShowLimit="4"
-      @dayClicked="addShift($event)"
-      @eventClicked="changeShift($event)"
+        :events='getSchedule'
+        local="en"
+        @dayClick="addShift($event)"
+        @eventClick="changeShift($event)"
+        >
     ></calendar>
   </div>
 </template>
 
 <script>
-  import calendar from 'vue2-simple-calendar'
+  import fullCalendar from 'vue-fullcalendar'
   import ShiftModel from './ShiftModal.vue'
   import moment from 'moment'
   //import calendar from 'ccalendar'
@@ -87,11 +88,13 @@
         showChangeModal: false,
         managerChangeFrom: '',
         concerns: [{}],
-        params: ''
+        params: '',
+        events: [{}]       
       }
     },
     components: {
-      shiftModal: ShiftModel
+        shiftModal: ShiftModel,
+        calendar: fullCalendar
     },
     methods: {
       ...mapActions([
@@ -100,10 +103,13 @@
         'fetchShiftCodes',
         'submitNewShift',
         'submitShiftChange'
-      ]),
-      addShift (event) {
-        let dateArray = event.date.toString().split(' ')
-        this.shiftDate = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
+        ]),
+      addShift(event) {          
+        let dateArray = event.toString().split(' ')
+        let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
+         console.log(date)
+        this.shiftDate = moment(date).format("MM-DDYYYY")
+        console.log(this.shiftDate)
         this.showModal = true
       },
       changeShift (event) {
@@ -124,12 +130,12 @@
           LocationId: this.params,
           ShiftCode: this.getShiftCodes[shiftCodeIndex].code,
           ManagerId: this.getManagers[managerIndex].Id,
-          Day: shiftDay
+          Day: this.shiftDate
         }
         this.submitNewShift(aNewShift)
         this.emptyFields()
         this.closeModal()
-        setTimeout(() => { this.submissionCompletion() }, 300)
+        setTimeout(() => { this.submissionCompletion() }, 3400)
       },
       submitChange () {
         let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
