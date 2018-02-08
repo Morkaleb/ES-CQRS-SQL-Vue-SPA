@@ -20,12 +20,14 @@ import FetchData from './fetch-data'
 import HomePage from './home-page'
 import NavMenu from './nav-menu'
 import MonthlyCalendar from './calendar/monthly-calendar'
+import calendar from 'vue2-simple-calendar'
 
 Vue.component('counter-example', CounterExample);
 Vue.component('fetch-data', FetchData);
 Vue.component('home-page', HomePage);
 Vue.component('nav-menu', NavMenu);
 Vue.component('monthly-calendar', MonthlyCalendar);
+Vue.component('calendar', calendar);
 
 export default {
     data() {

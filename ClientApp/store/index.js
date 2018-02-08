@@ -61,8 +61,6 @@ const actions = ({
         let storeNumber = payload
         axios.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
-                console.log('hit')
-                console.log(response)
                 let data = response.data
                 for (var day in data) {
                     var schedule = data[day].schedule
@@ -84,8 +82,6 @@ const actions = ({
         let shiftCodes = []
         axios.get('http://localhost:8000/api/r/ShiftStatusTable')
             .then((response) => {
-                console.log('hit2')
-                console.log()
                 let data = response.data
                 for (var shift in data) {
                     var code = data[shift]
@@ -102,8 +98,6 @@ const actions = ({
         var managerList = []
         axios.get('http://localhost:8000/api/r/ManagerTable')
             .then((response) => {
-                console.log('hit3')
-                console.log(response)
                 let data = response.data
                 for (let person in data) {
                     let human = data[person]

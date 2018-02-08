@@ -65,6 +65,7 @@
   import calendar from 'vue2-simple-calendar'
   import ShiftModel from './ShiftModal.vue'
   import moment from 'moment'
+  //import calendar from 'ccalendar'
   import { mapActions, mapGetters } from 'vuex'
 
   export default {
@@ -90,7 +91,6 @@
       }
     },
     components: {
-      calendar: calendar,
       shiftModal: ShiftModel
     },
     methods: {
