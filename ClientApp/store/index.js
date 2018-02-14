@@ -6,8 +6,10 @@ import moment from 'moment'
 
 Vue.use(Vuex)
 
-// TYPES
-const MAIN_SET_COUNTER = 'MAIN_SET_COUNTER'
+var instance = axios.create({
+    baseURL: 'http://localhost:8000/api/',
+    headers: { 'Access-Control-Allow-Origin': 'http://localhost:8001' }
+})
 
 // STATE
 const state = {
@@ -15,7 +17,8 @@ const state = {
     managers: [],
     shiftCodes: [],
     changeRequest: {},
-    week: []
+    week: [],
+    loggedInUser: {}
 }
 //GETTERS
 
@@ -34,6 +37,9 @@ const getters = {
     },
     getWeek: state => {
         return state.week
+    },
+    getUser: state => {
+        return state.loggedInUser
     }
 }
 // MUTATIONS
@@ -52,15 +58,26 @@ const mutations = {
     },
     setWeek: (state, payload) => {
         state.week = payload
+    },
+    setLoggedInUser: (state, payload) => {
+        state.loggedInUser = payload
     }
 }
 
 // ACTIONS
 const actions = ({
+    checkAuth: () => {
+        let token = window.localStorage.getItem('Auth-Token')
+        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token)
+            .then((res) =>{
+                console.log(res)
+            })
+    },
     fetchSchedule: ({ commit }, payload) => {
+        actions.checkAuth()
         let managerSchedule = []
         let storeNumber = payload
-        axios.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
+        instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data
                 for (var day in data) {
@@ -83,7 +100,7 @@ const actions = ({
     },
     fetchShiftCodes: ({ commit }) => {
         let shiftCodes = []
-        axios.get('http://localhost:8000/api/r/ShiftStatusTable')
+       instance.get('http://localhost:8000/api/r/ShiftStatusTable')
             .then((response) => {
                 let data = response.data
                 for (var shift in data) {
@@ -99,7 +116,7 @@ const actions = ({
     },
     fetchManagers: ({ commit }) => {
         var managerList = []
-        axios.get('http://localhost:8000/api/r/ManagerTable')
+        instance.get('http://localhost:8000/api/r/ManagerTable')
             .then((response) => {
                 let data = response.data
                 for (let person in data) {
@@ -121,49 +138,42 @@ const actions = ({
             })
     },
     submitNewShift: ({ commit }, payload) => {
-        axios.post('http://localhost:8000/api/Schedule/set', payload)
+       instance.post('http://localhost:8000/api/Schedule/set', payload)
             .then((res) => {
-                console.log(res)
             })
     },
     submitShiftChange: ({ commit }, newshift) => {
-        Vue.http.post('http://localhost:8000/api/Schedule/changeDay', newshift)
+       instance.post('http://localhost:8000/api/Schedule/changeDay', newshift)
             .then((res) => {
-                console.log(res)
             })
     },
     fetchChangeRequest: ({ commit }, payload) => {
-        console.log(payload)
         let changeRequest = {}
         let requestString = stringifyRequest(payload)
-        return axios.get('http://localhost:8000/api/r/ChangeRequestsTable' + requestString)
+        return instance.get('http://localhost:8000/api/r/ChangeRequestsTable' + requestString)
             .then((response) => {
-                console.log(response)
                 changeRequest = response.data
                 commit('setChangeRequest', changeRequest)
             })
     },
     gmAcceptShiftChange: ({ commit }, payload) => {
-        axios.post('http://localhost:8000/api/Schedule/GMApproveChange', payload)
+        instance.post('http://localhost:8000/api/Schedule/GMApproveChange', payload)
             .then((res) => {
-                console.log(res)
             })
     },
     payrollAcceptShiftChange: ({ commit }, payload) => {
-        axios.post('http://localhost:8000/api/Schedule/PayrollApproveChange', payload)
+        instance.post('http://localhost:8000/api/Schedule/PayrollApproveChange', payload)
             .then((res) => {
-                console.log(res)
             })
     },
     gmRejectShiftChange: ({ commit }, payload) => {
-        axios.post('http://localhost:8000/api/Schedule/GMRejectChange', payload)
+        instance.post('http://localhost:8000/api/Schedule/GMRejectChange', payload)
             .then((res) => {
-                console.log(res)
             })
     },
     fetchWeek: ({ commit }, payload) => {
         let requestString = stringifyRequest(payload)
-        return axios.get('http://localhost:8000/api/r/WeeklyCalendarPage' + requestString)
+        return instance.get('http://localhost:8000/api/r/WeeklyCalendarPage' + requestString)
             .then((response) => {
                 let data = response.data[0]
                 let weeklist = []
@@ -174,28 +184,39 @@ const actions = ({
             })
     },
     approveSchedule: ({ commit }, payload) => {
-        axios.post('http://localhost:8000/api/Schedule/approveSchedule', payload)
+        instance.post('http://localhost:8000/api/Schedule/approveSchedule', payload)
             .then((res) => {
-                console.log(res)
             })
     },
     submitDailyShiftRequirements: ({ commit }, payload) => {
         for (var i = 0; i < 7; i++) {
-            console.log(i)
             var shifts = {
                 Id: 104,
                 GmId: 1,
                 ShiftTypes: payload,
                 DayOfTheWeek: i
             }
-            console.log(shifts)
-            axios.post('http://localhost:8000/api/Restaurant/shiftrequirements', shifts)
+            instance.post('http://localhost:8000/api/Restaurant/shiftrequirements', shifts)
                 .then((res) => {
-                    console.log(res)
                 })
         }
     },
-    gmRejectSchedule: ({ commit }, payload) => { }
+    gmRejectSchedule: ({ commit }, payload) => { },
+    fetchLoggedInUser: ({ commit }, payload) => {
+        var user = {}
+        let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
+        instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
+            .then( (index) => {
+                if (index.data != -1) {
+                    user = instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
+                        .then((user) => {
+                            console.log(user.data[0])
+                            commit('setLoggedInUser', user.data[0])
+                        })
+                }
+            })
+    }
+   
 })
 
 export default new Vuex.Store({

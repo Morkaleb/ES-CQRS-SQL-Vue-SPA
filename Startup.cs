@@ -32,6 +32,12 @@ namespace Ops
         {
             // Add framework services.
             services.AddMvc();
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyMethod();
+            }));
 
             //services.AddDbContext<ManagerContext>(options =>
             //{
@@ -60,6 +66,7 @@ namespace Ops
 
             app.UseStaticFiles();
 
+            app.UseCors("MyPolicy");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

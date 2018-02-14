@@ -68,8 +68,9 @@
   import moment from 'moment'
   //import calendar from 'ccalendar'
   import { mapActions, mapGetters } from 'vuex'
-
-  export default {
+  import Toasted from 'vue-toasted';
+    
+    export default {
     name: 'monthly-calendar',
     data () {
       return {
@@ -107,9 +108,7 @@
       addShift(event) {          
         let dateArray = event.toString().split(' ')
         let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
-         console.log(date)
         this.shiftDate = moment(date).format("MM-DDYYYY")
-        console.log(this.shiftDate)
         this.showModal = true
       },
       changeShift (event) {
@@ -135,7 +134,7 @@
         this.submitNewShift(aNewShift)
         this.emptyFields()
         this.closeModal()
-        setTimeout(() => { this.submissionCompletion() }, 3400)
+        this.submissionCompletion()
       },
       submitChange () {
         let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
@@ -158,16 +157,18 @@
         this.submitShiftChange(shiftChange)
         this.closeModal()
         this.emptyFields()
-        setTimeout(() => { this.submissionCompletion() }, 300)
+        this.submissionCompletion()
       },
       emptyFields () {
         this.selectedManager = ''
         this.newShiftCode = ''
         this.reasonForChange = ''
       },
-      submissionCompletion () {
-        this.$toast.open('Shift change saved')
-        this.fetchSchedule(this.state)
+      submissionCompletion() {
+          setTimeout(() => {this.fetchSchedule(this.params)}, 200)
+          Toasted.show('Shift change saved')
+          console.log('hit')
+          console.log('hit1')
       }
     },
     computed: {
