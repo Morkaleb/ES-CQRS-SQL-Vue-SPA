@@ -24,8 +24,7 @@ export default {
             ])
         },
         created(){
-            this.fetchLoggedInUser(window.localStorage["Auth-Token"])
-            this.user = this.getUser()
+            this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
         }    
 }
 </script>

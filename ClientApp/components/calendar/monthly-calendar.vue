@@ -1,65 +1,67 @@
 <template>
-  <div id="wrapper" class="flex-container">
-    <shift-modal v-if="showModal">
-      <h3 slot="header" class="modal-card-title">Set The Shift</h3>
-      <div slot="body">
-        <div>Shift Date {{ this.shiftDate }}</div>
-        <div><span>Manager Name</span>
-          <select id = 'managerName'
-                  class="form-control"
-                  v-model="selectedManager">
-            <option v-for="manager in getManagers">{{ manager.Name }}</option>
-          </select>
+    <div id="wrapper" class="flex-container">
+        <shift-modal v-if="showModal">
+            <h3 slot="header" class="modal-card-title">Set The Shift</h3>
+            <div slot="body">
+                <div>Shift Date {{ this.shiftDate }}</div>
+                <div>
+                    <span>Manager Name</span>
+                    <select id='managerName'
+                            class="form-control"
+                            v-model="selectedManager">
+                        <option v-for="manager in getManagers">{{ manager.Name }}</option>
+                    </select>
+                </div>
+                <div>
+                    <span>Shift</span>
+                    <select id='ShiftCode'
+                            class="form-control"
+                            v-model="newShiftCode">
+                        <option v-for="code in getShiftCodes"> {{ code.description }} </option>
+                    </select>
+                </div>
+            </div>
+            <div slot="footer">
+                <button @click="submit()"> Submit </button>
+                <button @click="closeModal()">Close</button>
+            </div>
+        </shift-modal>
+        <shift-modal v-if="showChangeModal">
+            <h3 slot="header" class="modal-card-title">Change The Shift</h3>
+            <div slot="body">
+                <div>Shift Date {{ this.dayToChange }}</div>
+                <div>
+                    <span>Manager Name</span>
+                    <select id='managerName1'
+                            class="form-control"
+                            v-model="selectedManager">
+                        <option v-for="manager in getManagers">{{ manager.Name }}</option>
+                    </select>
+                </div>
+                <div>
+                    <div>
+                        Reason For Change
+                    </div>
+                    <div>
+                        <input type="text" v-model="reasonForChange">
+                    </div>
+                </div>
+            </div>
+            <div slot="footer">
+                <button @click="submitChange()"> Submit </button>
+                <button @click="closeModal()">Close</button>
+            </div>
+        </shift-modal>
+        <div class="title">
+            <h1>Schedule for Store {{getUser.locationId}} Manager shifts</h1>
         </div>
-        <div><span>Shift</span>
-          <select id = 'ShiftCode'
-                  class="form-control"
-                  v-model="newShiftCode">
-            <option v-for="code in getShiftCodes"> {{ code.description }} </option>
-          </select>
-        </div>
-      </div>
-      <div slot="footer">
-        <button @click="submit()"> Submit </button>
-      <button @click="closeModal()">Close</button>
-      </div>
-    </shift-modal>
-    <shift-modal v-if="showChangeModal">
-      <h3 slot="header" class="modal-card-title">Change The Shift</h3>
-      <div slot="body">
-        <div>Shift Date {{ this.dayToChange }}</div>
-        <div><span>Manager Name</span>
-          <select id = 'managerName1'
-                  class="form-control"
-                  v-model="selectedManager">
-            <option v-for="manager in getManagers">{{ manager.Name }}</option>
-          </select>
-        </div>
-        <div>
-          <div>
-            Reason For Change
-          </div>
-          <div>
-            <input type="text" v-model="reasonForChange">
-          </div>
-        </div>
-      </div>
-      <div slot="footer">
-        <button @click="submitChange()"> Submit </button>
-        <button @click="closeModal()">Close</button>
-      </div>
-    </shift-modal>
-    <div class="title">
-      <h1>Schedule for Store 104 Manager shifts</h1>
+        <calendar :events='getSchedule'
+                  local="en"
+                  @dayClick="addShift($event)"
+                  @eventClick="changeShift($event)">
+            >
+        </calendar>
     </div>
-    <calendar
-        :events='getSchedule'
-        local="en"
-        @dayClick="addShift($event)"
-        @eventClick="changeShift($event)"
-        >
-    ></calendar>
-  </div>
 </template>
 
 <script>
@@ -175,16 +177,17 @@
       ...mapGetters([
         'getSchedule',
         'getManagers',
-        'getShiftCodes'
+        'getShiftCodes',
+        'getUser'
       ]),
       regetSchedule () {
         return this.fetchSchedule(this.state)
       }
     },
-    created () {
+    created() {
       this.params = this.$route.query.locationId
       this.fetchSchedule(this.params)
-      this.fetchManagers(this.state, this.params)
+      this.fetchManagers(this.params)
       this.fetchShiftCodes(this.state)
     }
 
@@ -192,5 +195,7 @@
 </script>
 
 <style>
-
+    .full-calendar-body .dates .dates-events .events-week .events-day{
+        min-height:100%;
+    }
 </style>

@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 var instance = axios.create({
     baseURL: 'http://localhost:8000/api/',
-    headers: { 'Access-Control-Allow-Origin': 'http://localhost:8001' }
+    headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
 })
 
 // STATE
@@ -67,16 +67,16 @@ const mutations = {
 // ACTIONS
 const actions = ({
     checkAuth: () => {
-        let token = window.localStorage.getItem('Auth-Token')
-        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token)
+        let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
+        instance.get('http://192.168.0.37:8001/api/Auth/checkToken/?token=' + token)
             .then((res) =>{
                 console.log(res)
             })
     },
     fetchSchedule: ({ commit }, payload) => {
-        actions.checkAuth()
         let managerSchedule = []
         let storeNumber = payload
+        console.log('Schedule: ' + payload)
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data
@@ -114,9 +114,11 @@ const actions = ({
                 commit('setShiftCodes', shiftCodes)
             })
     },
-    fetchManagers: ({ commit }) => {
+    fetchManagers: ({ commit }, payload) => {
         var managerList = []
-        instance.get('http://localhost:8000/api/r/ManagerTable')
+        let storeNumber = payload
+        console.log('manager: ' + payload)
+        instance.get('http://localhost:8000/api/r/ManagerTable/?locationId='+ storeNumber)
             .then((response) => {
                 let data = response.data
                 for (let person in data) {
@@ -205,7 +207,7 @@ const actions = ({
     fetchLoggedInUser: ({ commit }, payload) => {
         var user = {}
         let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-        instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
+        instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token)
             .then( (index) => {
                 if (index.data != -1) {
                     user = instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
