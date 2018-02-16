@@ -169,8 +169,6 @@
       submissionCompletion() {
           setTimeout(() => {this.fetchSchedule(this.params)}, 200)
           Toasted.show('Shift change saved')
-          console.log('hit')
-          console.log('hit1')
       }
     },
     computed: {
@@ -196,6 +194,6 @@
 
 <style>
     .full-calendar-body .dates .dates-events .events-week .events-day{
-        min-height:100%;
+        min-height:100px !important;
     }
 </style>

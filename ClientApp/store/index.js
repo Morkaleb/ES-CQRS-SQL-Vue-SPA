@@ -68,15 +68,13 @@ const mutations = {
 const actions = ({
     checkAuth: () => {
         let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-        instance.get('http://192.168.0.37:8001/api/Auth/checkToken/?token=' + token)
+        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token)
             .then((res) =>{
-                console.log(res)
             })
     },
     fetchSchedule: ({ commit }, payload) => {
         let managerSchedule = []
         let storeNumber = payload
-        console.log('Schedule: ' + payload)
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data
@@ -117,7 +115,6 @@ const actions = ({
     fetchManagers: ({ commit }, payload) => {
         var managerList = []
         let storeNumber = payload
-        console.log('manager: ' + payload)
         instance.get('http://localhost:8000/api/r/ManagerTable/?locationId='+ storeNumber)
             .then((response) => {
                 let data = response.data
@@ -212,7 +209,6 @@ const actions = ({
                 if (index.data != -1) {
                     user = instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
                         .then((user) => {
-                            console.log(user.data[0])
                             commit('setLoggedInUser', user.data[0])
                         })
                 }
@@ -221,13 +217,14 @@ const actions = ({
    
 })
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
     state,
     mutations,
     actions,
     getters
 });
 
+export default store;
 
 const stringifyRequest = (request) => {
     let requestArray = Object.keys(request)
