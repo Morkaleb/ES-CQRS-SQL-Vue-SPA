@@ -193,7 +193,7 @@
 </script>
 
 <style>
-    .full-calendar-body .dates .dates-events .events-week .events-day{
+    .full-calendar-body .dates .dates-events .events-week .events-day {
         min-height:100px !important;
     }
 </style>

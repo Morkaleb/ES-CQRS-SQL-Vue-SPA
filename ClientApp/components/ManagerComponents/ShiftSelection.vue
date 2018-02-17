@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="type">
     <input type="checkbox" @click="clicked()"> {{this.shiftDescription}}
   </div>
 </template>
@@ -27,5 +27,7 @@
 </script>
 
 <style scoped>
-
+    .type{
+        font-size:xx-small !important;
+    }
 </style>

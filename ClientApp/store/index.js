@@ -18,7 +18,8 @@ const state = {
     shiftCodes: [],
     changeRequest: {},
     week: [],
-    loggedInUser: {}
+    loggedInUser: {},
+    shiftRequirements: {}
 }
 //GETTERS
 
@@ -40,6 +41,9 @@ const getters = {
     },
     getUser: state => {
         return state.loggedInUser
+    },
+    getShiftRequirements: state => {
+        return state.shiftRequirements
     }
 }
 // MUTATIONS
@@ -61,6 +65,9 @@ const mutations = {
     },
     setLoggedInUser: (state, payload) => {
         state.loggedInUser = payload
+    },
+    setShiftRequirements: (state, payload) => {
+        state.shiftRequirements = payload
     }
 }
 
@@ -213,8 +220,13 @@ const actions = ({
                         })
                 }
             })
-    }
-   
+    },
+    fetchDailyShiftRequirements: ({ commit }, payload) => {
+        instance.get('https://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
+            .then((res) => {
+                commit('setShiftRequirements', res.data[0])
+            })
+    }   
 })
 
 const store = new Vuex.Store({
