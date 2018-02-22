@@ -1,18 +1,18 @@
 <template>
   <div class="container">
       <div class="Daily">
-          <span class="header">{{day}}</span>
-          <ul>
-              <li v-for="shiftCode in getShiftCodes">
+          <span class="header"><h4>{{day}}</h4></span>
+          <hr />
+          <ul class="shiftList">
+              <li v-for="shiftCode in getShiftCodes" style="text-align:left">
                   <label>
                       <shift :ShiftCode="shiftCode.code"
                              :shiftDescription="shiftCode.description"
-                             @AddShiftCode="addShift($event)"
+                             v-on:AddShiftCode="addShift($event)"
                              @RemoveShiftCode="removeShift($event)"></shift>
                   </label>
               </li>
           </ul>
-          <button @click="clicked()">submit</button>
       </div>
   </div>
 </template>
@@ -22,21 +22,23 @@
   import shift from './ShiftSelection'
 
   export default {
-    name: 'daily-shift-requirements',
+        name: 'daily-shift-requirements',
     components: {
       shift
     },
     methods: {
       ...mapActions([
-        'fetchShiftCodes',
-        'submitDailyShiftRequirements'
+            'fetchShiftCodes',
+            'addShiftToDay',
+            'removeShiftFromDay'
       ]),
-      addShift (event) {
-        this.shiftCodes.push(event)
+      addShift(event) {
+          let shifttoAdd = { day: this.day, shift: event }
+          this.addShiftToDay(shifttoAdd)
       },
       removeShift (event) {
-        var index = this.shiftCodes.findIndex(c => c === event)
-        this.shiftCodes.splice(index, 1)
+          let shiftToRemove = { day: this.day, shiftCode: event }
+          this.removeShiftFromDay(shiftToRemove)
       },
       clicked () {
         this.submitDailyShiftRequirements(this.shiftCodes)
@@ -44,7 +46,8 @@
     },
     computed: {
       ...mapGetters([
-        'getShiftCodes'
+            'getShiftCodes',
+            //'getUnSubShiftReq'
       ])
     },
     data () {
@@ -65,11 +68,21 @@
     .Daily {
         border: 1px solid black;
         border-radius: 5px;
-        padding: 5px;
+        padding: 5px 0px;
         width: 100%;
         box-shadow: 10px 10px 5px #999999;
     }
     .header{
+        margin-left:30%;
         width:0 auto;
+    }
+    #sumbit{
+        margin-left:30%;
+        width: 0px auto;
+    }
+    .shiftList{
+        list-style:none;
+        text-align:left;
+        padding-left:2px;
     }
 </style>

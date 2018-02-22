@@ -15,7 +15,7 @@ namespace Ops.ReadModels
             switch (anEvent.EventType)
             {
                 case "ManagerDayScheduleSet":
-                    int locationId = data["LocationId"];
+                    int locationId = (int)data["LocationId"];
                     string day = data["Day"];
                     string EOW = data["EOW"].ToString().Split(" ")[0];
                     string shiftcode = data["ShiftCode"];

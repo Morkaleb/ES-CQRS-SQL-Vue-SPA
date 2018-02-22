@@ -24,8 +24,13 @@ namespace Ops.Domain
             DailyShiftTypeRequirementsSet shiftRequirements = new DailyShiftTypeRequirementsSet
             {
                 Id = cmd.Id,
-                DayOfTheWeek = cmd.DayOfTheWeek,
-                ShiftTypes = cmd.ShiftTypes,
+                Monday = cmd.Monday,
+                Tuesday = cmd.Tuesday,
+                Wednesday = cmd.Wednesday,
+                Thursday = cmd.Thursday,
+                Friday = cmd.Friday,
+                Saturday = cmd.Saturday,
+                Sunday = cmd.Sunday,
                 GmId = cmd.GmId
             };
             return new Events[] { shiftRequirements };

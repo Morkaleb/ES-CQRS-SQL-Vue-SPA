@@ -36,7 +36,7 @@ namespace Ops
             {
                 builder.AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowAnyMethod();
+                .AllowAnyOrigin();
             }));
 
             //services.AddDbContext<ManagerContext>(options =>

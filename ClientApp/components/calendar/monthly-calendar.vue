@@ -53,8 +53,16 @@
             </div>
         </shift-modal>
         <div class="title">
-            <h1>Schedule for Store {{getUser.locationId}} Manager shifts</h1>
-        </div>
+            <h1 style="text-align:center">Schedule for Store {{getUser.locationId}} Manager shifts</h1>
+            <button v-if="this.getUser.role === 3"
+                    style="margin-left:80%;
+                    font-size:x-small;
+                    border-radius:5px;
+                    border:1px solid black;"
+                    :onclick="gotoShift"
+                   >Change Daily Shift Requirements
+            </button>
+        </div>    
         <calendar :events='getSchedule'
                   local="en"
                   @dayClick="addShift($event)"
@@ -105,7 +113,8 @@
         'fetchManagers',
         'fetchShiftCodes',
         'submitNewShift',
-        'submitShiftChange'
+        'submitShiftChange',
+        'fetchLoggedInUser'
         ]),
       addShift(event) {          
         let dateArray = event.toString().split(' ')
@@ -128,7 +137,7 @@
         let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
         let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)
         let aNewShift = {
-          LocationId: this.params,
+          LocationId: this.$store.state.loggedInUser.locationId,
           ShiftCode: this.getShiftCodes[shiftCodeIndex].code,
           ManagerId: this.getManagers[managerIndex].Id,
           Day: this.shiftDate
@@ -153,8 +162,7 @@
           Reason: this.reasonForChange,
           shiftDate: this.dayToChange,
           ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,
-          GMEmailAddress: this.getManagers[GMIndex].EmailAddress,
-          LocationId: 104
+          GMEmailAddress: this.getManagers[GMIndex].EmailAddress
         }
         this.submitShiftChange(shiftChange)
         this.closeModal()
@@ -167,8 +175,11 @@
         this.reasonForChange = ''
       },
       submissionCompletion() {
-          setTimeout(() => {this.fetchSchedule(this.params)}, 200)
+          setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)
           Toasted.show('Shift change saved')
+      },
+      gotoShift() {
+          
       }
     },
     computed: {
@@ -182,13 +193,15 @@
         return this.fetchSchedule(this.state)
       }
     },
-    created() {
-      this.params = this.$route.query.locationId
-      this.fetchSchedule(this.params)
-      this.fetchManagers(this.params)
-      this.fetchShiftCodes(this.state)
+    async created() {
+        this.fetchLoggedInUser()
+            .then(() => {
+                this.fetchSchedule(this.$store.state.loggedInUser.locationId)
+                this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                this.fetchShiftCodes(this.state)
+            })
+      
     }
-
   }
 </script>
 

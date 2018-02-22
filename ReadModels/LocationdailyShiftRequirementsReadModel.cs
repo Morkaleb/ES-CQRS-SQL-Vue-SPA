@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using Ops.Infra.EventStore;
 using Ops.Infra.ReadModels;
 
@@ -14,62 +16,68 @@ namespace Ops.ReadModels
             switch (anEvent.EventType)
             {
                 case "DailyShiftTypeRequirementsSet":
-                    string id = data["Id"];
-                    string dayOfTheWeek = data["DayOfTheWeek"];                    
-                    List<string> codes = new List<string>();
-                    foreach(string code in data["ShiftTypes"])
+                    if (readmodelCollection["LocationDailyShiftRequirements"].FindIndex(l => l.Id == anEvent.Id) == -1)
                     {
-                        codes.Add(code);
-                    }                    
-                    int locationIndax = readmodelCollection["LocationDailyShiftRequirements"].FindIndex(r => r.Id == id);
-                    if(locationIndax == -1)
-                    {
-                        LocationDailyShiftRequirementsData requirements = new LocationDailyShiftRequirementsData
+                        LocationDailyShiftRequirementsData locationShiftRequirements = new LocationDailyShiftRequirementsData
                         {
-                            Id = data["Id"],
-                            DaysOfTheWeek = new List<Day>()
+                            Id = anEvent.Id,
+                            Monday = StringListBuilder(data["Monday"]),
+                            Tuesday = StringListBuilder(data["Tuesday"]),
+                            Wednesday = StringListBuilder(data["Wednesday"]),
+                            Thursday = StringListBuilder(data["Thursday"]),
+                            Friday = StringListBuilder(data["Friday"]),
+                            Saturday = StringListBuilder(data["Saturday"]),
+                            Sunday = StringListBuilder(data["Sunday"])
                         };
-                        Day thisDay = new Day
-                        {
-                            DayOfTheWeek = dayOfTheWeek,
-                            ShiftCodes = codes
-                        };
-                        requirements.DaysOfTheWeek.Add(thisDay);
-                        readmodelCollection["LocationDailyShiftRequirements"].Add(requirements);
-                    }
-                    else
+                        readmodelCollection["LocationDailyShiftRequirements"].Add(locationShiftRequirements);
+                        return locationShiftRequirements;
+                    } else
                     {
-                        dayOfTheWeek = data["DayOfTheWeek"];
-                        LocationDailyShiftRequirementsData locationRequirements = (LocationDailyShiftRequirementsData)readmodelCollection["LocationDailyShiftRequirements"][locationIndax];
-                        int dayIndex = locationRequirements.DaysOfTheWeek.FindIndex(d => d.DayOfTheWeek == dayOfTheWeek);
-                        if(dayIndex == -1)
-                        {
-                            Day today = new Day
-                            {
-                                DayOfTheWeek = dayOfTheWeek,
-                                ShiftCodes = codes
-                            };
-                            locationRequirements.DaysOfTheWeek.Add(today);
-                        }
-                        else
-                        {
-                            locationRequirements.DaysOfTheWeek[dayIndex].ShiftCodes = codes;
-                        }
-
+                        int index = readmodelCollection["LocationDailyShiftRequirements"].FindIndex(l => l.Id == anEvent.Id);
+                        LocationDailyShiftRequirementsData locationShiftRequirements =
+                            (LocationDailyShiftRequirementsData)readmodelCollection["LocationDailyShiftRequirements"][index];
+                        locationShiftRequirements.Monday = StringListBuilder(data["Monday"]);
+                        locationShiftRequirements.Tuesday = StringListBuilder(data["Tuesday"]);
+                        locationShiftRequirements.Wednesday = StringListBuilder(data["Wednesday"]);
+                        locationShiftRequirements.Thursday = StringListBuilder(data["Thursday"]);
+                        locationShiftRequirements.Friday = StringListBuilder(data["Friday"]);
+                        locationShiftRequirements.Saturday = StringListBuilder(data["Saturday"]);
+                        locationShiftRequirements.Sunday = StringListBuilder(data["Sunday"]);
+                        return locationShiftRequirements;
                     }
-                    return readmodelCollection;
                     
             }return null;
+        }
+
+        private List<string> StringListBuilder(JArray array)
+        {
+            List<string> list = new List<string>();
+            try
+            {
+                foreach (var item in array)
+                {
+                    list.Add(item.ToString());
+                }
+                return list;
+            } catch (Exception e)
+            {
+                Console.Write(e);
+                return null;
+            }
         }
     }
 
     public class LocationDailyShiftRequirementsData : ReadModelData
     {
-       public List<Day> DaysOfTheWeek { get; set; }
+        public List<string> Monday { get; set; }
+        public List<string> Tuesday { get; set; }
+        public List<string> Wednesday { get; set; }
+        public List<string> Thursday { get; set; }
+        public List<string> Friday { get; set; }
+        public List<string> Saturday { get; set; }
+        public List<string> Sunday { get; set; }
     }
-    public class Day
-    {
-        public string DayOfTheWeek { get; set; }
-        public List<string> ShiftCodes { get; set; }
-    }
+
+    
+   
 }

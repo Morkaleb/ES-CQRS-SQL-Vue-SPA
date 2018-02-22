@@ -187,7 +187,6 @@ namespace Ops.Domain
             if (string.IsNullOrEmpty(cmd.Day)) { throw new Exception("Day is a required field"); }
             if (string.IsNullOrEmpty(cmd.ManagerId)) { throw new Exception("ManagerId is a required field"); }
             if (string.IsNullOrEmpty(cmd.ShiftCode)) { throw new Exception("shift code is a required field"); }
-            if (cmd.LocationId == 0 || cmd.LocationId == -1) { throw new Exception("Location Id is a required field"); }
             ManagerDayScheduleSet manager = new ManagerDayScheduleSet
             {
                 LocationId = cmd.LocationId,

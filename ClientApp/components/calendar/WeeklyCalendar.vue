@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container weekly">
     <day class="dayBox" :Day="this.monday"></day>
     <day class="dayBox" :Day="this.tuesday"></day>
     <day class="dayBox" :Day="this.wednesday"></day>
@@ -7,7 +7,7 @@
     <day class="dayBox" :Day="this.friday"></day>
     <day class="dayBox" :Day="this.saturday"></day>
     <day class="dayBox" :Day="this.sunday"></day>
-    <ScheduleConsequences :consequences="this.getManagers" class="dayBox"></ScheduleConsequences>
+    <ScheduleConsequences :consequences="this.getManagers" class="consequences"></ScheduleConsequences>
   </div>
 </template>
 
@@ -86,11 +86,31 @@
 </script>
 
 <style scoped>
-  .dayBox{
-    width:11%;
-    background: lightgray;
-    float:left;
-    margin: 5px ;
-    height: 100px;
-  }
+    .dayBox {
+        width: 13%;
+        background: white;
+        float: left;
+        margin:0px 8px;
+        height: 60vh;
+        box-shadow: 10px 10px 5px #999999;
+        border: 1px solid black;
+        border-radius:5px;
+    }
+    .weekly{
+        width:100%;
+        margin:0 0 0 10px 0;
+        padding:0px;
+    }
+    .consequences {
+        vertical-align: central;
+        margin: auto;
+        padding:auto;
+        float:none;
+        clear: both;
+        width: 80%;
+        height: 20vh;
+        border: 1px solid black;
+        border-radius: 5px;
+        box-shadow: 10px 10px 5px #999999;
+    }
 </style>

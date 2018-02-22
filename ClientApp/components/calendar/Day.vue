@@ -1,10 +1,10 @@
 <template>
-  <section class="card">
-    <div class="card-content">
+  <section class="day">
+    <div >
       <strong v-if="this.Day.date">{{ this.getDay(this.Day.date) }} {{ this.Day.date}}</strong>
-      <div v-for="shift in this.Day.shifts"><hr/>
-        <div>Shift: {{shift.shiftType}}</div>
-        <div>Manager: {{shift.managerName}}</div>
+      <div class="card" v-for="shift in this.Day.shifts">
+        <div style="padding:2px 2px;">Shift: {{shift.shiftType}}</div>
+        <div style="padding:2px 2px;">Manager: {{shift.managerName}}</div>
       </div>
     </div>
   </section>
@@ -26,11 +26,14 @@
 
 <style scoped>
   .card {
-    border-radius: 5px;
-    border: 1px solid darkgray;
-    height: 500px;
+      margin:6px 2px;
+      border:1px solid black;
+      border-radius:5px;
+      font-size:small;
+      padding:2px;
   }
   strong {
     text-align: right;
-  }
+    font-size:medium;
+  }  
 </style>

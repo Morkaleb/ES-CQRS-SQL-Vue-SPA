@@ -11,6 +11,16 @@ var instance = axios.create({
     headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
 })
 
+let preMutatedShiftsReq = {
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
+}
+
 // STATE
 const state = {
     schedule: [],
@@ -19,7 +29,24 @@ const state = {
     changeRequest: {},
     week: [],
     loggedInUser: {},
-    shiftRequirements: {}
+    shiftRequirements: {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
+    },
+    preSubmittedShiftsReq: {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
+    }
 }
 //GETTERS
 
@@ -44,6 +71,9 @@ const getters = {
     },
     getShiftRequirements: state => {
         return state.shiftRequirements
+    },
+    getUnSubShiftReq: state => {
+        return state.preSubmittedShiftsReq
     }
 }
 // MUTATIONS
@@ -68,7 +98,11 @@ const mutations = {
     },
     setShiftRequirements: (state, payload) => {
         state.shiftRequirements = payload
+    },
+    setPrepShiftRequirements: (state, payload) => {
+        state.preSubmittedShiftsReq = payload
     }
+
 }
 
 // ACTIONS
@@ -195,26 +229,55 @@ const actions = ({
             })
     },
     submitDailyShiftRequirements: ({ commit }, payload) => {
-        for (var i = 0; i < 7; i++) {
-            var shifts = {
-                Id: 104,
-                GmId: 1,
-                ShiftTypes: payload,
-                DayOfTheWeek: i
-            }
-            instance.post('http://localhost:8000/api/Restaurant/shiftrequirements', shifts)
-                .then((res) => {
-                })
+        let submittal = {
+            GmId: state.loggedInUser.id,
+            Id: state.loggedInUser.locationId,
+            Monday: [],
+            Tuesday: [],
+            Wednesday: [],
+            Thursday: [],
+            Friday: [],
+            Saturday: [],
+            Sunday: [],
         }
-    },
+        state.preSubmittedShiftsReq.Monday.forEach( (shift) => {
+            submittal.Monday.push(shift.shiftCode)
+        })
+        state.preSubmittedShiftsReq.Tuesday.forEach((shift) => {
+            submittal.Tuesday.push(shift.shiftCode)
+        })
+        state.preSubmittedShiftsReq.Wednesday.forEach((shift) => {
+            submittal.Wednesday.push(shift.shiftCode)
+        })
+        state.preSubmittedShiftsReq.Thursday.forEach((shift) => {
+            submittal.Thursday.push(shift.shiftCode)
+        })
+        state.preSubmittedShiftsReq.Friday.forEach((shift) => {
+            submittal.Friday.push(shift.shiftCode)
+        })
+        state.preSubmittedShiftsReq.Saturday.forEach((shift) => {
+            submittal.Saturday.push(shift.shiftCode)
+        })
+        state.preSubmittedShiftsReq.Sunday.forEach((shift) => {
+            submittal.Sunday.push(shift.shiftCode)
+        })
+        instance.post('http://localhost:8000/api/Restaurant/shiftrequirements', submittal)
+                .then((res) => {
+                    setTimeout(() => {
+                        instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId)
+                        .then((response) => {
+                        })
+                    }, 300)
+                })
+    },    
     gmRejectSchedule: ({ commit }, payload) => { },
     fetchLoggedInUser: ({ commit }, payload) => {
         var user = {}
         let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-        instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token)
+        return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
             .then( (index) => {
                 if (index.data != -1) {
-                    user = instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
+                    return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
                         .then((user) => {
                             commit('setLoggedInUser', user.data[0])
                         })
@@ -226,7 +289,71 @@ const actions = ({
             .then((res) => {
                 commit('setShiftRequirements', res.data[0])
             })
-    }   
+    },
+    addShiftToDay: ({ commit }, payload) => {
+        if (payload.day == "Monday") {
+            preMutatedShiftsReq.Monday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        if (payload.day == "Tuesday") {
+            preMutatedShiftsReq.Tuesday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        if (payload.day == "Wednesday") {
+            preMutatedShiftsReq.Wednesday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        if (payload.day == "Thursday") {
+            preMutatedShiftsReq.Thursday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        if (payload.day == "Friday") {
+            preMutatedShiftsReq.Friday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        if (payload.day == "Saturday") {
+            preMutatedShiftsReq.Saturday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        if (payload.day == "Sunday") {
+            preMutatedShiftsReq.Sunday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
+        }
+        commit('setPrepShiftRequirements', preMutatedShiftsReq)
+    },
+    removeShiftFromDay: ({ commit }, payload) => {
+        if (payload.day == "Monday") {
+            let index = preMutatedShiftsReq.Monday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Monday.splice(index, 1)
+        }
+        if (payload.day == "Tuesday") {
+            let index = preMutatedShiftsReq.Tuesday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Tuesday.splice(index, 1)
+        }
+        if (payload.day == "Wednesday") {
+            let index = preMutatedShiftsReq.Wednesday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Wednesday.splice(index, 1)
+        }
+        if (payload.day == "Thursday") {
+            let index = preMutatedShiftsReq.Thursday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Thursday.splice(index, 1)
+        }
+        if (payload.day == "Wednesday") {
+            let index = preMutatedShiftsReq.Wednesday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Wednesday.splice(index, 1)
+        }
+        if (payload.day == "Thursday") {
+            let index = preMutatedShiftsReq.Thursday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Thursday.splice(index, 1)
+        }
+        if (payload.day == "Friday") {
+            let index = preMutatedShiftsReq.Friday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Friday.splice(index, 1)
+        }
+        if (payload.day == "Saturday") {
+            let index = preMutatedShiftsReq.Saturday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Saturday.splice(index, 1)
+        }
+        if (payload.day == "Sunday") {
+            let index = preMutatedShiftsReq.Sunday.findIndex(s => s == payload.shiftCode)
+            preMutatedShiftsReq.Sunday.splice(index, 1)
+        }        
+        commit('setPrepShiftRequirements', preMutatedShiftsReq)
+    }
+    
 })
 
 const store = new Vuex.Store({
@@ -249,3 +376,5 @@ const stringifyRequest = (request) => {
         } return [returnable]
     } else { return requestArray }
 }
+
+

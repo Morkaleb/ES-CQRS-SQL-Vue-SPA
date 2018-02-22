@@ -29,13 +29,13 @@ namespace Ops.Controllers
 
         [HttpPost]
         [Route("api/[controller]/shiftrequirements")]
-        public ActionResult SetShiftRequirements([FromBody] SetDailyShiftTypeRequirements schedudailyshift)
+        public ActionResult SetShiftRequirements([FromBody] SetDailyShiftTypeRequirements scheduledailyshift)
         {
             try
             {
                 Aggregate restaurantAggreate = new RestaurantAggregate();
-                CommandHandler.ActivateCommand(schedudailyshift, restaurantAggreate);
-                return Ok(schedudailyshift.Id);
+                CommandHandler.ActivateCommand(scheduledailyshift, restaurantAggreate);
+                return Ok(scheduledailyshift.Id);
             }
             catch (Exception e)
             {

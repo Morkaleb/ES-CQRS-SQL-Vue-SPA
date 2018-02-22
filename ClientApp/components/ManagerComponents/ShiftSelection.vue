@@ -12,9 +12,9 @@
         clicked () {
           this.selected = !this.selected
           if (this.selected) {
-            this.$emit('AddShiftCode', this.ShiftCode)
+              this.$emit('AddShiftCode', { shiftCode:this.ShiftCode, ShiftDescription:this.shiftDescription })
           } else {
-            this.$emit('RemoveShiftCode', this.ShiftCode)
+              this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription })
           }
         }
       },

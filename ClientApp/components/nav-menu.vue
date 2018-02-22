@@ -14,75 +14,14 @@
                     <img src="../Assets/logo2_lq.png" style="width: 100px; height: 60px;  padding: 1em .5em 1em .5em" alt="logo" />
                 </a>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav"></ul>
-                <section class="section" aria-expanded="true">
-                    <div class="dropdown">
-                        <span>Supply Hub</span><span class="caret"></span>
-                            <div class="dropdown-content">
-                                <p>Home (NEW)</p>
-                                <hr />
-                                <p>Products</p>
-                                <p>SKUs</p>
-                                <p>Contracts</p>
-                                <p>Bids</p>
-                                <hr/>
-                                <p>Mapper</p>
-                                <p>Admin</p>
-                          </div>
-                        </div>
-                </section>
-                <section class="section">
-                    <div class="dropdown">
-                        <span>Menu Hub</span><span class="caret"></span>
-                        <div class="dropdown-content">
-                            <p>Products</p>
-                            <p>Recipes</p>
-                            <p>Menus</p>
-                            <p>Menu Items</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="section">
-                    <div class="dropdown">
-                        <span>Ops Hub</span><span class="caret"></span>
-                        <div class="dropdown-content">
-                            <p>My Pillars</p>
-                            <hr/>
-                            <p>OOO Grid</p>
-                            <p>OOO Pivot Data</p>
-                            <p>Mgmt Change</p>
-                            <p><router-link to="{path: '/schedule/?locationId=' + getUser.locationId}">Schedule</router-link> </p>
-                        </div>
-                    </div>
-                </section>
-                <section class="section">
-                    <div class="dropdown">
-                        <span>Finanace Hub</span><span class="caret"></span>
-                        <div class="dropdown-content">
-                            <p>Purchase Orders</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="section">
-                    <div class="dropdown">
-                        <span>Admin Hub</span><span class="caret"></span>
-                        <div class="dropdown-content">
-                            <p>Mgmt Change</p>
-                            <p>Mgmt Schedule</p>
-                            <p>Measure Units</p>
-                            <p>Ops Review</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="section">
-                    <div class="dropdown">
-                        <span>Inventory Hub</span><span class="caret"></span>
-                        <div class="dropdown-content">
-                            <p>Home</p>
-                        </div>
-                    </div>
-                </section>
+            <div>
+                <dropdown title="Supply Hub" :items="SupplyHub"></dropdown>
+                <dropdown title="Menu Hub" :items="MenuHub"></dropdown>
+                <dropdown title="Ops Hub" :items="OpsHub"></dropdown>
+                <dropdown title="Finance Hub" :items="FinanceHub"></dropdown>
+                <dropdown title="Admin Hub" :items="AdminHub"></dropdown>
+                <dropdown title="Inventory Hub" :items="InventoryHub"></dropdown>
+            </div>
                 <ul class="nav navbar-nav navbar-right">
                     <li style="width: 100px; height: 60px">
                         <a href="/wsbis" class="pull-right" style="padding:0; ">
@@ -99,16 +38,59 @@
 
 <script>
     import { routes } from '../routes'
-    import {mapGetters, mapActions} from 'vuex'
- 
+    import { mapGetters, mapActions } from 'vuex'
+    import dropdown from './layout/dropdown'
+
     export default {
         data() {
             return {
                 routes,
-                collapsed: true
+                collapsed: true,
+                SupplyHub: [
+                    { title: 'Home (NEW)', link: "" },
+                    { title: 'Products', link: "" },
+                    { title: 'SKUs', link: "" },
+                    { title: 'Contracts', link: "" },
+                    { title: 'Bids', link: "" },
+                    { title: 'Mapper', link: "" },
+                    { title: 'Admin', link: "" },
+                ],
+                MenuHub: [
+                    { title: 'Products', link: "" },
+                    { title: 'Recipes', link: "" },
+                    { title: 'Menus', link: "" },
+                    { title: 'Menus Items', link: "" }
+                ],
+                OpsHub: [
+                    { title: 'My Pillars', link: "" },
+                    { title: 'OOO Grid', link: "" },
+                    { title: 'OOO Pivot Data', link: "" },
+                    { title: 'Mgmt Change', link: "" },
+                    { title: 'Mgmt Scheduling', link: "http://localhost:8000/schedule/"},
+                    {title: "Gm Page", link: "http://localhost:8000/GmPage"}
+
+                ],
+                FinanceHub: [
+                    { title: 'PurchaseOrders', link: "" },
+                ],
+                AdminHub: [
+                    { title: 'Mgmt Change', link: "" },
+                    { title: 'Alerts', link: "" },
+                    { title: 'Measure Units', link: "" },
+                    { title: 'Ops Review', link: "" },
+                ],
+                InventoryHub: [
+                    { title: 'Home', link: "" }
+                ]
             }
         },
+        watch: {
+            
+        },
         methods: {
+            ...mapActions([
+                'fetchLoggedInUser'
+            ]),
             toggleCollapsed: function (event) {
                 this.collapsed = !this.collapsed;
             }
@@ -116,7 +98,26 @@
         computed: {
             ...mapGetters([
              'getUser'
-            ])
+            ]),
+            locationId: {
+                get: function () {
+                    return this.location
+                },
+                set: function (newValue){
+                    this.location = newValue
+                }
+            }
+        },
+        components: {
+            dropdown
+        },
+        created() {            
+            if (!this.$store.state.loggedInUser.locationId) {
+                this.fetchLoggedInUser()
+                    .then(() => {
+                        this.getUser
+                    })
+            }
         }
     }
 </script>
@@ -143,7 +144,6 @@
         position: relative;
         display: inline-block;
         margin-left: 2%;
-        margin-top:2%;
         float:left;
         font-size:smaller;
         height:100%;
@@ -157,7 +157,6 @@
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      
         z-index: 1;
         color:black;
-        margin-top:24%;
     }
     .dropdown:hover {
         background-color: #15a589;
