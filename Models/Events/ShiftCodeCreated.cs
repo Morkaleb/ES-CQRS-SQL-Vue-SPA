@@ -6,6 +6,7 @@ namespace Ops.Models.events
     {
         public string ShiftCode { get; set; }
         public string ShiftType { get; set; }
+        public int ShiftStatus { get; set; }
         public int DaysOwed { get; set; }
     }
 }

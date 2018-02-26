@@ -9,5 +9,6 @@ namespace Ops.Models.events
         public string ManagerId { get; set; }
         public string EOW { get; set; }
         public string Day { get; set; }
+        public string ShiftStatus { get; set; }
     }
 }

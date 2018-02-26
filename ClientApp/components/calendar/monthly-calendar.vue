@@ -29,7 +29,7 @@
         <shift-modal v-if="showChangeModal">
             <h3 slot="header" class="modal-card-title">Change The Shift</h3>
             <div slot="body">
-                <div>Shift Date {{ this.dayToChange }}</div>
+                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>
                 <div>
                     <span>Manager Name</span>
                     <select id='managerName1'
@@ -107,6 +107,17 @@
         shiftModal: ShiftModel,
         calendar: fullCalendar
     },
+    computed: {
+        ...mapGetters([
+            'getSchedule',
+            'getManagers',
+            'getShiftCodes',
+            'getUser'
+        ]),
+        regetSchedule() {
+            return this.fetchSchedule(this.state)
+        }
+    },
     methods: {
       ...mapActions([
         'fetchSchedule',
@@ -122,11 +133,13 @@
         this.shiftDate = moment(date).format("MM-DDYYYY")
         this.showModal = true
       },
-      changeShift (event) {
-        this.shiftCode = event.class
+      changeShift(event) {
+        console.log(event)
+        this.shiftCode = event.YOUR_DATA.class
         this.dayToChange = event.start
         this.showChangeModal = true
         this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]
+        this.managerFromId = event.YOUR_DATA.ManagerId
       },
       closeModal () {
         this.showModal = false
@@ -138,9 +151,10 @@
         let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)
         let aNewShift = {
           LocationId: this.$store.state.loggedInUser.locationId,
-          ShiftCode: this.getShiftCodes[shiftCodeIndex].code,
+          ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,
           ManagerId: this.getManagers[managerIndex].Id,
-          Day: this.shiftDate
+          Day: this.shiftDate,
+          ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus
         }
         this.submitNewShift(aNewShift)
         this.emptyFields()
@@ -151,6 +165,7 @@
         let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
         let GMIndex = this.getManagers.findIndex(m => m.Role === 3)
         let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)
+          console.log(this)
         let shiftChange = {
           RequestId: '',
           Id: this.getManagers[managerIndex].Id,
@@ -162,8 +177,12 @@
           Reason: this.reasonForChange,
           shiftDate: this.dayToChange,
           ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,
-          GMEmailAddress: this.getManagers[GMIndex].EmailAddress
+          GMEmailAddress: this.getManagers[GMIndex].EmailAddress,
+          LocationId: this.$store.state.loggedInUser.locationId,
+          RequestingManagerRole: this.$store.state.loggedInUser.role,
+          managerFromId:this.managerFromId
         }
+        console.log(shiftChange)
         this.submitShiftChange(shiftChange)
         this.closeModal()
         this.emptyFields()
@@ -182,23 +201,15 @@
           
       }
     },
-    computed: {
-      ...mapGetters([
-        'getSchedule',
-        'getManagers',
-        'getShiftCodes',
-        'getUser'
-      ]),
-      regetSchedule () {
-        return this.fetchSchedule(this.state)
-      }
-    },
+    
     async created() {
         this.fetchLoggedInUser()
             .then(() => {
                 this.fetchSchedule(this.$store.state.loggedInUser.locationId)
-                this.fetchManagers(this.$store.state.loggedInUser.locationId)
-                this.fetchShiftCodes(this.state)
+                    .then(() => {
+                        this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                        this.fetchShiftCodes(this.state)
+                    })
             })
       
     }

@@ -1,14 +1,19 @@
 <template>
-  <div class="container weekly">
-    <day class="dayBox" :Day="this.monday"></day>
-    <day class="dayBox" :Day="this.tuesday"></day>
-    <day class="dayBox" :Day="this.wednesday"></day>
-    <day class="dayBox" :Day="this.thursday"></day>
-    <day class="dayBox" :Day="this.friday"></day>
-    <day class="dayBox" :Day="this.saturday"></day>
-    <day class="dayBox" :Day="this.sunday"></day>
-    <ScheduleConsequences :consequences="this.getManagers" class="consequences"></ScheduleConsequences>
-  </div>
+    <div>
+        <div class="container weekly">
+            <day class="dayBox" :Day="this.monday"></day>
+            <day class="dayBox" :Day="this.tuesday"></day>
+            <day class="dayBox" :Day="this.wednesday"></day>
+            <day class="dayBox" :Day="this.thursday"></day>
+            <day class="dayBox" :Day="this.friday"></day>
+            <day class="dayBox" :Day="this.saturday"></day>
+            <day class="dayBox" :Day="this.sunday"></day>
+        </div>
+        <hr />
+        <div>
+            <ScheduleConsequences :consequences="this.getManagers" class="consequences"></ScheduleConsequences>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -91,7 +96,7 @@
         background: white;
         float: left;
         margin:0px 8px;
-        height: 60vh;
+        height: 80vh;
         box-shadow: 10px 10px 5px #999999;
         border: 1px solid black;
         border-radius:5px;
@@ -102,14 +107,16 @@
         padding:0px;
     }
     .consequences {
+        background: white;
         vertical-align: central;
+        text-align:center;
         margin: auto;
-        padding:auto;
-        float:none;
+        padding: auto;
+        float: none;
         clear: both;
         width: 80%;
-        height: 20vh;
-        border: 1px solid black;
+        height: 60vh !important;
+        border: 1px solid black !important;
         border-radius: 5px;
         box-shadow: 10px 10px 5px #999999;
     }

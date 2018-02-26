@@ -6,6 +6,7 @@ namespace Ops.Models.commands
     {
         public string RequestId { get; set; }
         public string ManagerId { get; set; }
+        public string ManagerFromId { get; set; }
         public string EOW { get; set; }
         public string ShiftCode { get; set; }
         public string Reason { get; set; }
@@ -15,5 +16,6 @@ namespace Ops.Models.commands
         public string ManagerEmailAddress { get; set; }
         public string ManagerToName { get; set; }
         public string ManagerFromName { get; set; }
+        public string RequestingManagerRole { get; set; }
     }
 }

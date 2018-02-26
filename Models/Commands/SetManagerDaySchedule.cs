@@ -1,4 +1,5 @@
 using Ops.Infra;
+using Ops.ReadModels;
 
 namespace Ops.Models.commands
 {
@@ -9,5 +10,6 @@ namespace Ops.Models.commands
         public string ShiftCode { get; set; }
         public string EOW { get; set; }
         public string Day { get; set; }
+        public string ShiftStatus { get; set; }
     }
 }

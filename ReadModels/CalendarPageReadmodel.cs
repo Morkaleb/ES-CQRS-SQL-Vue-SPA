@@ -130,18 +130,30 @@ namespace Ops.ReadModels
                     name = findManager(readModelCollection["ManagerTable"], managerId);
                     locationIndex = findLocationDay(locationId, shiftDate, readModelCollection["CalendarPage"]);
                     dayPage = readModelCollection["CalendarPage"][locationIndex];
-                     aDay = (CalendarPageData)dayPage;
+                    aDay = (CalendarPageData)dayPage;
                     ashiftIndex = aDay.Schedule.FindIndex(d => d.ShiftCode == code);
                     if (ashiftIndex != -1)
                     {
+                        
                         if (managerId == "Cancel Shift")
                         {
                             aDay.Schedule[ashiftIndex].ManagerName = "Cancelled";
                             aDay.Schedule[ashiftIndex].ManagerId = "0";
                             return readModelCollection;
-                        }
+                        } 
                         aDay.Schedule[ashiftIndex].ManagerId = data["ManagerId"];
                         aDay.Schedule[ashiftIndex].ManagerName = name;
+                    }
+                    else
+                    {
+                        string tryCode = code + "( Owed)";
+                        ashiftIndex = aDay.Schedule.FindIndex(d => d.ShiftCode == code + " (Owed)");
+                        if (ashiftIndex != -1)
+                        {
+                            aDay.Schedule[ashiftIndex].ManagerId = data["ManagerId"];
+                            aDay.Schedule[ashiftIndex].ManagerName = name;
+                            aDay.Schedule[ashiftIndex].ShiftCode = code;
+                        }
                     }
                     return readModelCollection;
 

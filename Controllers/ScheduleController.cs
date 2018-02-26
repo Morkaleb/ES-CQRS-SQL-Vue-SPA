@@ -17,16 +17,7 @@ namespace Ops.Controllers
         {
             try
             {
-                DateTime parsedDay = DateTime.Parse(setManagerDaySchedule.Day);
-                int dayOfWeek = (int)parsedDay.DayOfWeek;
-                if (dayOfWeek != 0)
-                {
-                    setManagerDaySchedule.EOW = parsedDay.AddDays(7 - dayOfWeek).Date.ToString("MM-dd-yyyy");
-                }
-                else
-                {
-                    setManagerDaySchedule.EOW = parsedDay.Date.ToString("MM-dd-yyyy");
-                }
+                setManagerDaySchedule.EOW = GetEOW(setManagerDaySchedule.Day);
                 setManagerDaySchedule.Id = setManagerDaySchedule.LocationId + "." + setManagerDaySchedule.EOW;
                 Aggregate managerAggreate = new ScheduleAggregate();
                 CommandHandler.ActivateCommand(setManagerDaySchedule, managerAggreate);
@@ -44,6 +35,7 @@ namespace Ops.Controllers
         {
             try
             {
+                requestChangeManagerDaySchedule.EOW = GetEOW(requestChangeManagerDaySchedule.ShiftDate);
                 requestChangeManagerDaySchedule.Id = requestChangeManagerDaySchedule.LocationId + "." + requestChangeManagerDaySchedule.EOW;
                 requestChangeManagerDaySchedule.RequestId = Guid.NewGuid().ToString();
                 Aggregate managerAggreate = new ScheduleAggregate();
@@ -149,6 +141,22 @@ namespace Ops.Controllers
             {
                 return BadRequest(e.Message.ToString());
             }
+        }
+
+        private string GetEOW(string date)
+        {
+            string EOW;
+            DateTime parsedDay = DateTime.Parse(date);
+            int dayOfWeek = (int)parsedDay.DayOfWeek;
+            if (dayOfWeek != 0)
+            {
+                EOW = parsedDay.AddDays(7 - dayOfWeek).Date.ToString("MM-dd-yyyy");
+            }
+            else
+            {
+                EOW = parsedDay.Date.ToString("MM-dd-yyyy");
+            }
+            return EOW;
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Ops.Domain
             {
                 ShiftCode = cmd.Id,
                 ShiftType = cmd.ShiftType,
+                ShiftStatus = cmd.ShiftStatus,
                 DaysOwed = cmd.DaysOwed
             };
             return new Events[] { created };

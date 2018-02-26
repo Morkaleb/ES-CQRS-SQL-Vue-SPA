@@ -5,6 +5,7 @@ namespace Ops.Models.events
     public class ManagerDayScheduleChanged : Events
     {
         public string Reason { get; set; }
+        public string ManagerFromId { get; set; }
         public string RequestId { get; set; }
         public string ManagerId { get; set; }
         public string ShiftCode { get; set; }

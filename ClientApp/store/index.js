@@ -46,7 +46,8 @@ const state = {
         Friday: [],
         Saturday: [],
         Sunday: []
-    }
+    },
+    managerDays: []
 }
 //GETTERS
 
@@ -74,6 +75,9 @@ const getters = {
     },
     getUnSubShiftReq: state => {
         return state.preSubmittedShiftsReq
+    },
+    getManagerDays: state => {
+        return state.managerDays
     }
 }
 // MUTATIONS
@@ -101,6 +105,9 @@ const mutations = {
     },
     setPrepShiftRequirements: (state, payload) => {
         state.preSubmittedShiftsReq = payload
+    },
+    setManagerDays: (state, payload) => {
+        state.managerDays = payload
     }
 
 }
@@ -115,6 +122,7 @@ const actions = ({
     },
     fetchSchedule: ({ commit }, payload) => {
         let managerSchedule = []
+        let theManagerDays = []
         let storeNumber = payload
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
@@ -126,7 +134,8 @@ const actions = ({
                             title: schedule[shift].managerName + ' ' + schedule[shift].shiftCode,
                             start: data[day].shiftdate,
                             end: data[day].shiftdate,
-                            YOUR_DATA : {
+                            YOUR_DATA: {
+                                ManagerId: schedule[shift].managerId,
                                 class: schedule[shift].shiftCode,
                                 EOW: data[day].eow,
                             }
@@ -135,6 +144,7 @@ const actions = ({
                     }
                 }
                 commit('setSchedule', managerSchedule)
+
             })
     },
     fetchShiftCodes: ({ commit }) => {
@@ -145,8 +155,11 @@ const actions = ({
                 for (var shift in data) {
                     var code = data[shift]
                     let shiftCode = {
-                        code: code.statusId,
-                        description: code.description
+                        statusId: code.statusId,
+                        description: code.description,
+                        daysToOwe: code.daysToOwe,
+                        shiftStatus: code.shiftStatus,
+                        id: code.Id
                     }
                     shiftCodes.push(shiftCode)
                 }
@@ -217,9 +230,19 @@ const actions = ({
             .then((response) => {
                 let data = response.data[0]
                 let weeklist = []
+                let theseManagerDays = []
                 for (var day in data.days) {
                     weeklist.push(data.days[day])
+                    for (var shift in data.days[day].shifts) {
+                        let index = theseManagerDays.findIndex(m => m.name == data.days[day].shifts[shift].managerName)
+                        if (index === -1) {
+                            theseManagerDays.push({ name: data.days[day].shifts[shift].managerName, shifts: 1 })
+                        } else {
+                            theseManagerDays[index].shifts++
+                        }
+                    }
                 }
+                commit('setManagerDays', theseManagerDays)
                 commit('setWeek', weeklist)
             })
     },
@@ -272,17 +295,21 @@ const actions = ({
     },    
     gmRejectSchedule: ({ commit }, payload) => { },
     fetchLoggedInUser: ({ commit }, payload) => {
-        var user = {}
-        let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-        return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
-            .then( (index) => {
-                if (index.data != -1) {
-                    return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
-                        .then((user) => {
-                            commit('setLoggedInUser', user.data[0])
-                        })
-                }
-            })
+        try {
+            var user = {}
+            let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
+            return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
+                .then((index) => {
+                    if (index.data != -1) {
+                        return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
+                            .then((user) => {
+                                commit('setLoggedInUser', user.data[0])
+                            })
+                    }
+                })
+        } catch (e) {
+            console.log(e)
+        }
     },
     fetchDailyShiftRequirements: ({ commit }, payload) => {
         instance.get('https://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
