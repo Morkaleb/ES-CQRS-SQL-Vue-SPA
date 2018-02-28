@@ -21,6 +21,7 @@
     import Buefy from 'buefy'
     import dropdown from './layout/dropdown'
     import Vuex from 'vuex'
+    import shift from './calendar/shift'
 
     Vue.component('counter-example', CounterExample);
     Vue.component('fetch-data', FetchData);
@@ -28,6 +29,7 @@
     Vue.component('nav-menu', NavMenu);
     Vue.component('monthly-calendar', MonthlyCalendar);
     Vue.component('dropdown', dropdown)
+    Vue.component('shift', shift)
     Vue.component('')
     Vue.use(Buefy)
     Vue.use(Vuex)

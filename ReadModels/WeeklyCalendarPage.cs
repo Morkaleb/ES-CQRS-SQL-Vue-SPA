@@ -40,7 +40,9 @@ namespace Ops.ReadModels
                         Shift shift = new Shift
                         {
                             ShiftType = shiftType,
-                            ManagerName = getName(managerId)
+                            ManagerName = getName(managerId),
+                            ManagerId = managerId,
+                            ShiftCode = shiftcode
                         };
                         calendarDay.Shifts.Add(shift);
                         weeklyCalendar.Days.Add(calendarDay);
@@ -61,7 +63,9 @@ namespace Ops.ReadModels
                             Shift shift = new Shift
                             {
                                 ShiftType = shiftType,
-                                ManagerName = getName(managerId)
+                                ManagerName = getName(managerId),
+                                ManagerId = managerId,
+                                ShiftCode = shiftcode
                             };
                             newDay.Shifts.Add(shift);
                             weeklyCalendar.Days.Add(newDay);
@@ -78,7 +82,12 @@ namespace Ops.ReadModels
                                     ShiftType = shiftType,
                                     ManagerName = managerName
                                 };
-                                calendarDay.Shifts.Add(shift);
+                                var managershiftIndex = calendarDay.Shifts.FindIndex(s => s.ManagerName == managerName);
+                                var shiftCodeShiftIndex = calendarDay.Shifts.FindIndex(s => s.ShiftType == shiftType);
+                                if (managershiftIndex == -1 && shiftCodeShiftIndex == -1)
+                                {
+                                    calendarDay.Shifts.Add(shift);
+                                }
                             }
 
                         }
@@ -102,6 +111,28 @@ namespace Ops.ReadModels
                             {
                                 var shift = aDay.Shifts.Find(s => s.ShiftType == shiftType);
                                 shift.ManagerName = aManagerName + " (pending)";
+                            }
+                        }
+                    }
+                    return readModelCollection;
+
+                case "ManagerDayScheduleChanged":
+                    locationId = data["LocationId"];
+                    day = data["ShiftDate"];
+                    EOW = data["EOW"].ToString().Split(" ")[0];
+                    shiftcode = data["ShiftCode"];
+                    shiftType = getShiftDescription(readModelCollection["ShiftStatusTable"], shiftcode);
+                    aManagerName = data["ManagerToName"];
+                    locationWeekIndex = findWeekByLocation(readModelCollection["WeeklyCalendarPage"], EOW, locationId);
+                    if (locationWeekIndex != -1)
+                    {
+                        WeeklyCalendarData week = (WeeklyCalendarData)readModelCollection["WeeklyCalendarPage"][locationWeekIndex];
+                        foreach (var aDay in week.Days)
+                        {
+                            if (aDay.Date == day)
+                            {
+                                var shift = aDay.Shifts.Find(s => s.ShiftType == shiftType);
+                                shift.ManagerName = aManagerName;
                             }
                         }
                     }
@@ -187,6 +218,8 @@ namespace Ops.ReadModels
 
     public class Shift
     {
+        public string ShiftCode { get; set; }
+        public string ManagerId { get; set; }
         public string ShiftType { get; set; }
         public string ManagerName { get; set; }
     }

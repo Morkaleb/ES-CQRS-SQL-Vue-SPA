@@ -6,6 +6,7 @@ import GMApproveSchedule from 'components/Scheduling/GMApproveSchedule'
 import PayrollApproval from 'components/Scheduling/PayrollApproval'
 import ReviewScheduleChange from './components/Scheduling/ReviewScheduleChange'
 import DailyShiftRequirements from './components/ManagerComponents/DailyShiftRequirements'
+import ShiftRequirementsWeek from './components/ManagerComponents/ShiftRequirementsWeek'
 import GmPage from './components/ManagerComponents/GmPage'
 import { store } from './store/index'
 import axios from 'axios'
@@ -18,7 +19,7 @@ export const routes = [
     { path: '/approveSchedule', component: GMApproveSchedule, display: 'GM Approval', beforeEnter: checkAuth},
     { path: '/payrollApproval', component: PayrollApproval, display: 'Payroll Approval', beforeEnter: checkAuth},
     { path: '/reviewScheduleChange', component: ReviewScheduleChange, display: 'Review Schedule Change Requeast', beforeEnter: checkAuth},
-    { path: '/dailyShiftRequirements', component: ReviewScheduleChange, display: 'Set restaurant requirements', beforeEnter: checkAuth },
+    { path: '/dailyShiftRequirements', component: ShiftRequirementsWeek, display: 'Set restaurant requirements', beforeEnter: checkAuth },
     {path: '/GmPage', component: GmPage, display: 'Restaurant Management', beforeEnter: checkAuth }
 ]
 

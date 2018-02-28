@@ -165,7 +165,6 @@
         let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
         let GMIndex = this.getManagers.findIndex(m => m.Role === 3)
         let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)
-          console.log(this)
         let shiftChange = {
           RequestId: '',
           Id: this.getManagers[managerIndex].Id,
@@ -182,7 +181,6 @@
           RequestingManagerRole: this.$store.state.loggedInUser.role,
           managerFromId:this.managerFromId
         }
-        console.log(shiftChange)
         this.submitShiftChange(shiftChange)
         this.closeModal()
         this.emptyFields()

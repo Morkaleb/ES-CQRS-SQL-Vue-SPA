@@ -231,19 +231,30 @@ const actions = ({
                 let data = response.data[0]
                 let weeklist = []
                 let theseManagerDays = []
-                for (var day in data.days) {
-                    weeklist.push(data.days[day])
-                    for (var shift in data.days[day].shifts) {
-                        let index = theseManagerDays.findIndex(m => m.name == data.days[day].shifts[shift].managerName)
-                        if (index === -1) {
-                            theseManagerDays.push({ name: data.days[day].shifts[shift].managerName, shifts: 1 })
-                        } else {
-                            theseManagerDays[index].shifts++
+                for (let i = 7; i > 0; i--) {
+                    let day = {
+                        date: moment(payload.eow).subtract(i - 1, 'day').format("MM-DD-YYYY"),
+                        shifts:[]
+                    }
+                    weeklist.push(day)
+                }
+                console.log(data)
+                if (data) {
+                    for (var day in data.days) {
+                        weeklist[weeklist.findIndex(d => d.date == data.days[day].date)].shifts = data.days[day].shifts
+                        for (var shift in data.days[day].shifts) {
+                            let index = theseManagerDays.findIndex(m => m.name == data.days[day].shifts[shift].managerName)
+                            if (index === -1) {
+                                theseManagerDays.push({ name: data.days[day].shifts[shift].managerName, shifts: 1 })
+                            } else {
+                                theseManagerDays[index].shifts++
+                            }
                         }
                     }
                 }
-                commit('setManagerDays', theseManagerDays)
                 commit('setWeek', weeklist)
+                commit('setManagerDays', theseManagerDays)
+               
             })
     },
     approveSchedule: ({ commit }, payload) => {

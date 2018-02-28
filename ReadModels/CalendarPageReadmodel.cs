@@ -137,8 +137,7 @@ namespace Ops.ReadModels
                         
                         if (managerId == "Cancel Shift")
                         {
-                            aDay.Schedule[ashiftIndex].ManagerName = "Cancelled";
-                            aDay.Schedule[ashiftIndex].ManagerId = "0";
+                            aDay.Schedule.Remove(aDay.Schedule[ashiftIndex]);
                             return readModelCollection;
                         } 
                         aDay.Schedule[ashiftIndex].ManagerId = data["ManagerId"];

@@ -1,17 +1,18 @@
 <template>
-  <section class="day">
+  <section class="day" v-on:click="$emit('dayClicked', Day.date)">
     <div >
       <strong v-if="this.Day.date">{{ this.getDay(this.Day.date) }} {{ this.Day.date}}</strong>
-      <div class="card" v-for="shift in this.Day.shifts">
-        <div style="padding:2px 2px;">Shift: {{shift.shiftType}}</div>
-        <div style="padding:2px 2px;">Manager: {{shift.managerName}}</div>
+      <div v-for="theshift in this.Day.shifts" >
+          <shift :date="Day.date" :shiftCode="theshift.shiftCode" :shiftType="theshift.shiftType" :managerName="theshift.managerName" :managerFromId="theshift.managerId" v-on:eventClicked="eventClicked($event)"></shift>
       </div>
+        
     </div>
   </section>
 </template>
 
 <script>
-   import moment from 'moment'
+    import moment from 'moment'
+    import shift from './Shift'
 
    export default {
      name: 'day',
@@ -19,7 +20,12 @@
      methods: {
        getDay (date) {
          return moment(date, 'MM-DD-YYYY').format('dddd')
-       }
+         },
+       eventClicked(event) {
+           event.shiftDate = this.Day.date
+           this.$emit('eventClicked', event)
+       },
+       components: { shift:shift }
      }
    }
 </script>

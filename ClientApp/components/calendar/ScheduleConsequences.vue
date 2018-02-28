@@ -1,13 +1,13 @@
 <template>
   <section class="card">
       <div class="card-content">
-          <strong>Things TO Consider</strong><hr />
+          <strong>Things To Consider</strong><hr />
           <div class="numberofshifts">
-             <p v-for="manager in getManagerDays">
-                  {{manager.name}}
-                 <span v-if="manager.shifts < 5 || manager.shifts > 5" style="color:red">has {{manager.shifts}} shifts</span>
-                 <span v-if="manager.shifts === 5">has 5 shifts</span>
-            </p>
+             <p v-for="manager in getManagerDays" v-if="manager.name != 'Cancel Shift'">
+                     {{manager.name}}
+                     <span v-if="manager.shifts < 5 || manager.shifts > 5" style="color:red">has {{manager.shifts}} shifts</span>
+                     <span v-if="manager.shifts === 5">has 5 shifts</span>
+              </p>
           </div>
           <div v-for="manager in this.consequences">
               <div v-if="manager.Role">
