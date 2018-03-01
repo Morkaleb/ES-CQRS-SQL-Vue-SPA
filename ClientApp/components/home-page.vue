@@ -2,6 +2,7 @@
     <div>
        <br/><hr /><hr />
         Welcome {{getUser.managerName}}
+        {{this.document.cookie}}
     </div>
 </template>
 
@@ -25,6 +26,7 @@ export default {
         },
         created(){
             this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
+            console.log(window)
         }    
 }
 </script>

@@ -124,6 +124,7 @@ const actions = ({
         let managerSchedule = []
         let theManagerDays = []
         let storeNumber = payload
+        console.log(document.cookie)
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data

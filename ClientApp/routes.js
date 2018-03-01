@@ -29,19 +29,27 @@ var instance = axios.create({
 })
 
 function checkAuth(to, from, next) {
-    let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-    if (token) {
-        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token)
-            .then((res) => {
-                if (res.data == -1) {
-                    window.sessionStorage.setItem('lastPage', window.location.href)
-                    window.location('http://localhost:8001')
-                } else next()
-            })
-    } else {
-        if (res.data == -1) {
-            window.sessionStorage.setItem('lastPage', window.location.href)
-            window.location('http://localhost:8001')
-        }        
+    let retrievedToken = window.localStorage.getItem("Auth-Token")
+    if (retrievedToken) {
+        let token = retrievedToken.split(':')[1].split('"')[1]
+        if (token) {
+            instance.get('http:/localhost:8001/api/Auth/checkToken/?token=' + token)
+                .then((res) => {
+                    if (res.data == -1) {
+                        window.sessionStorage.setItem('lastPage', window.location.href)
+                        window.location.href = 'http://localhost:8001'
+                    } else next()
+                })
+        }
+        else {
+            if (res.data == -1) {
+                window.sessionStorage.setItem('lastPage', window.location.href)
+                window.location.href = 'http://localhost:8001'
+            }
+        }
+    }
+    else {
+        window.sessionStorage.setItem('lastPage', window.location.href)
+        window.location.href = 'http://localhost:8001'
     }
 }

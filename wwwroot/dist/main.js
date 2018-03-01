@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "cbef8c80fb72e0ba02e5"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "648dfdc7ccf877758413"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -17890,7 +17890,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"home-page.vue","sourceRoot":""}]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"home-page.vue","sourceRoot":""}]);
 
 // exports
 
@@ -18055,19 +18055,25 @@ var instance = _axios2.default.create({
 });
 
 function checkAuth(to, from, next) {
-    var token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1];
-    if (token) {
-        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token).then(function (res) {
+    var retrievedToken = window.localStorage.getItem("Auth-Token");
+    if (retrievedToken) {
+        var token = retrievedToken.split(':')[1].split('"')[1];
+        if (token) {
+            instance.get('http:/localhost:8001/api/Auth/checkToken/?token=' + token).then(function (res) {
+                if (res.data == -1) {
+                    window.sessionStorage.setItem('lastPage', window.location.href);
+                    window.location.href = 'http://localhost:8001';
+                } else next();
+            });
+        } else {
             if (res.data == -1) {
                 window.sessionStorage.setItem('lastPage', window.location.href);
-                window.location('http://localhost:8001');
-            } else next();
-        });
-    } else {
-        if (res.data == -1) {
-            window.sessionStorage.setItem('lastPage', window.location.href);
-            window.location('http://localhost:8001');
+                window.location.href = 'http://localhost:8001';
+            }
         }
+    } else {
+        window.sessionStorage.setItem('lastPage', window.location.href);
+        window.location.href = 'http://localhost:8001';
     }
 }
 
@@ -18226,6 +18232,7 @@ var actions = {
         var managerSchedule = [];
         var theManagerDays = [];
         var storeNumber = payload;
+        console.log(document.cookie);
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber).then(function (response) {
             var data = response.data;
             for (var day in data) {
@@ -33346,6 +33353,7 @@ exports.default = {
     computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUser'])),
     created: function created() {
         this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]);
+        console.log(window);
     }
 };
 
@@ -40936,7 +40944,7 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('br'), _c('hr'), _c('hr'), _vm._v("\n    Welcome " + _vm._s(_vm.getUser.managerName) + "\n")])
+  return _c('div', [_c('br'), _c('hr'), _c('hr'), _vm._v("\n    Welcome " + _vm._s(_vm.getUser.managerName) + "\n    " + _vm._s(this.document.cookie) + "\n")])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (true) {
