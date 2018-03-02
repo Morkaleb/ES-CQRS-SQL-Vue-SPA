@@ -29,27 +29,20 @@ var instance = axios.create({
 })
 
 function checkAuth(to, from, next) {
-    let retrievedToken = window.localStorage.getItem("Auth-Token")
-    if (retrievedToken) {
-        let token = retrievedToken.split(':')[1].split('"')[1]
-        if (token) {
-            instance.get('http:/localhost:8001/api/Auth/checkToken/?token=' + token)
-                .then((res) => {
-                    if (res.data == -1) {
-                        window.sessionStorage.setItem('lastPage', window.location.href)
-                        window.location.href = 'http://localhost:8001'
-                    } else next()
-                })
-        }
-        else {
-            if (res.data == -1) {
-                window.sessionStorage.setItem('lastPage', window.location.href)
-                window.location.href = 'http://localhost:8001'
-            }
-        }
+    let retrievedToken = document.cookie
+    if (retrievedToken[0] != "AuthToken") {
+        var token = retrievedToken.split('=')[1]
+        instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
+            .then((res) => {
+                if (res.data == -1) {                   
+                    window.sessionStorage.setItem('lastPage', window.location.href)
+                    window.location.href = 'http://localhost:8001'
+                } else next()
+            })
     }
     else {
         window.sessionStorage.setItem('lastPage', window.location.href)
-        window.location.href = 'http://localhost:8001'
+       // window.location.href = 'http://localhost:8001'
+
     }
 }

@@ -47,7 +47,8 @@ const state = {
         Saturday: [],
         Sunday: []
     },
-    managerDays: []
+    managerDays: [],
+    historicalVacation:[]
 }
 //GETTERS
 
@@ -78,6 +79,9 @@ const getters = {
     },
     getManagerDays: state => {
         return state.managerDays
+    },
+    getVacationHistory: state => {
+        return state.historicalVacation
     }
 }
 // MUTATIONS
@@ -108,6 +112,9 @@ const mutations = {
     },
     setManagerDays: (state, payload) => {
         state.managerDays = payload
+    },
+    setVacationHistory: (state, payload) => {
+        state.historicalVacation = payload
     }
 
 }
@@ -124,7 +131,6 @@ const actions = ({
         let managerSchedule = []
         let theManagerDays = []
         let storeNumber = payload
-        console.log(document.cookie)
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data
@@ -239,23 +245,32 @@ const actions = ({
                     }
                     weeklist.push(day)
                 }
-                console.log(data)
                 if (data) {
                     for (var day in data.days) {
                         weeklist[weeklist.findIndex(d => d.date == data.days[day].date)].shifts = data.days[day].shifts
                         for (var shift in data.days[day].shifts) {
                             let index = theseManagerDays.findIndex(m => m.name == data.days[day].shifts[shift].managerName)
+                            var owed = 0
+                            if (data.days[day].shifts[shift].shiftCode != null) {
+                                if (data.days[day].shifts[shift].shiftCode.split(" ")[1] == "(Owed)") {
+                                    owed = 1
+                                }
+                            }
                             if (index === -1) {
-                                theseManagerDays.push({ name: data.days[day].shifts[shift].managerName, shifts: 1 })
+                                theseManagerDays.push({
+                                    name: data.days[day].shifts[shift].managerName,
+                                    shifts: 1,
+                                    daysToOwe: owed
+                                })
                             } else {
                                 theseManagerDays[index].shifts++
+                                theseManagerDays[index].daysToOwe += owed
                             }
                         }
                     }
                 }
                 commit('setWeek', weeklist)
-                commit('setManagerDays', theseManagerDays)
-               
+                commit('setManagerDays', theseManagerDays)               
             })
     },
     approveSchedule: ({ commit }, payload) => {
@@ -309,22 +324,24 @@ const actions = ({
     fetchLoggedInUser: ({ commit }, payload) => {
         try {
             var user = {}
-            let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
+            let retrievedToken = document.cookie
+            var token = retrievedToken.split('=')[1]
             return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
-                .then((index) => {
+                .then((index) => {                  
                     if (index.data != -1) {
                         return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
                             .then((user) => {
                                 commit('setLoggedInUser', user.data[0])
                             })
                     }
+                   // if(index.data == -1) window.location.href = 'http://localhost:8001'
                 })
         } catch (e) {
             console.log(e)
         }
     },
     fetchDailyShiftRequirements: ({ commit }, payload) => {
-        instance.get('https://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
+        instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
             .then((res) => {
                 commit('setShiftRequirements', res.data[0])
             })
@@ -391,6 +408,12 @@ const actions = ({
             preMutatedShiftsReq.Sunday.splice(index, 1)
         }        
         commit('setPrepShiftRequirements', preMutatedShiftsReq)
+    },
+    fetchVacationHistory: ({ commit }, payload) => {
+        instance.get('http://localhost:8000/api/r/HistoricalVacationTable/?locationId=' + payload)
+            .then((res) => {
+                commit('setVacationHistory', res.data)
+            })
     }
     
 })

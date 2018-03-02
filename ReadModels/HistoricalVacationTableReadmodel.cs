@@ -18,9 +18,10 @@ namespace Ops.ReadModels
                     HistoricalVacationTableData historicalVacationData = new HistoricalVacationTableData
                     {
                         Id = data["ManagerId"],
+                        ManagerName = data["Name"],
                         LastUpdated = anEvent.TimeStamp,
                         VacationOwed = 0,
-                        locationId = null
+                        locationId = data["LocationId"]
                     };
 
                     readModelCollection["HistoricalVacationTable"].Add(historicalVacationData);
@@ -52,6 +53,7 @@ namespace Ops.ReadModels
     public class HistoricalVacationTableData : ReadModelData
     {
         public string LastUpdated { get; set; }
+        public string ManagerName { get; set; }
         public double VacationOwed { get; set; }
         public int StatHolidaysOwed { get; set; }
         public string locationId { get; set; }

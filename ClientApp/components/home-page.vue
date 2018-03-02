@@ -2,7 +2,6 @@
     <div>
        <br/><hr /><hr />
         Welcome {{getUser.managerName}}
-        {{this.document.cookie}}
     </div>
 </template>
 
@@ -11,7 +10,8 @@
 export default {
         data() {
             return {
-                user: {}
+                user: {},
+                chui:""
             }
         },
         methods: {
@@ -24,9 +24,8 @@ export default {
                 'getUser'
             ])
         },
-        created(){
-            this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
-            console.log(window)
+        created() {
+           // this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
         }    
 }
 </script>

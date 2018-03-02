@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "648dfdc7ccf877758413"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "eaec99644df1e7ec115a"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -17694,7 +17694,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.dayBox[data-v-13e0a9bb] {\n    width: 13%;\n    background: white;\n    float: left;\n    margin:0px 8px;\n    height: 55vh;\n    box-shadow: 10px 10px 5px #999999;\n    border: 1px solid black;\n    border-radius:5px;\n}\n.weekly[data-v-13e0a9bb]{\n    width:100%;\n    margin:0 0 0 10px 0;\n    padding:0px;\n}\n.consequences[data-v-13e0a9bb] {\n    background: white;\n    vertical-align: central;\n    text-align:center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    width: 80%;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Users/josho/source/repos/WhiteSpot-Work/Ops/ClientApp/components/Calendar/WeeklyCalendar.vue?0f9397a6"],"names":[],"mappings":";AA+PA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;IACA,eAAA;IACA,aAAA;IACA,kCAAA;IACA,wBAAA;IACA,kBAAA;CACA;AACA;IACA,WAAA;IACA,oBAAA;IACA,YAAA;CACA;AACA;IACA,kBAAA;IACA,wBAAA;IACA,kBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,WAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"WeeklyCalendar.vue","sourcesContent":["<template>\r\n    <div>\r\n        <shift-modal v-if=\"showDayClickedModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.workingDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div style=\"vertical-align:middle; margin-bottom:5px;\">\r\n            <button><a :href=this.lastWeekString><</a></button>\r\n            <button><a :href=this.nextweekString>></a></button>\r\n        </div>\r\n        <div class=\"container weekly\">\r\n            <day class=\"dayBox\" :Day=\"this.monday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.tuesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.wednesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.thursday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.friday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.saturday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.sunday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n        </div>\r\n        <hr />\r\n        <div>\r\n            <ScheduleConsequences :consequences=\"this.getManagers\" class=\"consequences\"></ScheduleConsequences>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import moment from 'moment'\r\n  import Day from './Day'\r\n  import ScheduleConsequences from './ScheduleConsequences'\r\n  import ShiftModal from './ShiftModal.vue'\n  import shift from './Shift'\r\n  import Toasted from 'vue-toasted';\r\n\r\n  export default {\r\n        name: 'weekly-calendar',\r\n        components: { Day, ScheduleConsequences, ShiftModal, shift},\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchWeek',\r\n        'fetchManagers',\n        'fetchShiftCodes',\n        'submitNewShift',\n        'submitShiftChange'\r\n        ]),\n        nextWeek() {\n            let eowString = moment(this.eow).add(7, 'day').format('MM-DD-YYYY')\n           return eowString\r\n        },\n        lastWeek() {\n            let eowString = moment(this.eow).subtract(7, 'day').format('MM-DD-YYYY')\n            return eowString;\r\n        },\n        addShift(event) {\r\n            let dateArray = event.toString().split(' ')\r\n            let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\r\n            this.shiftDate = moment(date).format(\"MM-DDYYYY\")\r\n            this.showModal = true\r\n        },\n        dayClicked(event) {\n            console.log('hit')\n              this.showDayClickedModal = true\n              this.workingDate = event\r\n        },\n        eventClicked(event, date) {\n            console.log('argh-')\n            this.showDayClickedModal = false\n            this.showChangeModal = true\n            this.managerFromId = event.managerFromId\n            this.managerChangeFrom = event.name\n            this.shiftCode = event.shiftCode\n            this.dayToChange = event.shiftDate\r\n        },\n        submitChange() {\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n            let shiftChange = {\r\n                RequestId: '',\r\n                Id: this.getManagers[managerIndex].Id,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                ManagerToName: this.getManagers[managerIndex].Name,\r\n                ManagerFromName: this.managerChangeFrom,\r\n                EOW: this.eow,\r\n                ShiftCode: this.shiftCode,\r\n                Reason: this.reasonForChange,\r\n                shiftDate: this.dayToChange,\r\n                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n                managerFromId: this.managerFromId\r\n            }\r\n            this.submitShiftChange(shiftChange)\r\n            this.closeModal()\r\n            this.emptyFields()\r\n            this.submissionCompletion()\r\n        },\n        emptyFields() {\r\n            this.selectedManager = ''\r\n            this.newShiftCode = ''\r\n            this.reasonForChange = ''\r\n        },\r\n        submissionCompletion() {\r\n            setTimeout(() => { this.fetchWeek(this.$store.state.loggedInUser.locationId, this.eow) }, 200)\r\n            Toasted.show('Shift change saved')\r\n        },\r\n        distributeWeek(week) {\r\n            for (var day in week) {\r\n              var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')\r\n              if (dotw === 'Mon') {\r\n                this.monday = week[day]\r\n              }\r\n              if (dotw === 'Tue') {\r\n                this.tuesday = week[day]\r\n              }\r\n              if (dotw === 'Wed') {\r\n                this.wednesday = week[day]\r\n              }\r\n              if (dotw === 'Thu') {\r\n                this.thursday = week[day]\r\n              }\r\n              if (dotw === 'Fri') {\r\n                this.friday = week[day]\r\n              }\r\n              if (dotw === 'Sat') {\r\n                this.saturday = week[day]\r\n              }\r\n              if (dotw === 'Sun') {\r\n                this.sunday = week[day]\r\n              }\r\n            }\r\n          },\r\n        closeModal() {\r\n            this.showDayClickedModal = false\n            this.showChangeModal = false\r\n        },\n        submit() {\r\n            let shiftDay = moment(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY')\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n            let aNewShift = {\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                Day: shiftDay,\r\n                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n            }\r\n            this.submitNewShift(aNewShift)\r\n            this.emptyFields()\r\n            this.closeModal()\r\n            this.submissionCompletion()\r\n        }\r\n    },\r\n    data () {\r\n        return {\n            showDayClickedModal: false,\n            selectedManager: '',\n            newShiftCode: '',\n            eow: this.$route.query.eow,\n            locationId: this.$store.state.loggedInUser.locationId,\n            workingDate: \"\",\r\n            monday: {},\r\n            tuesday: {},\r\n            wednesday: {},\r\n            thursday: {},\r\n            friday: {},\r\n            saturday: {},\r\n            sunday: {},\r\n            week: [],\n            nextweekString: \"\",\n            lastWeekString: \"\",\n            showChangeModal: false,\n            dayToChange: \"\",\n            shiftCode: \"\",\n            reasonForChange: \"\",\n            managerFromId:\"\"\r\n        }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n        'getWeek',\r\n        'getManagers',\n        'getShiftCodes',\n        'getSchedule'\r\n      ])\r\n    },\r\n    created () {\r\n      var param = {\r\n        eow: this.eow,\r\n        locationId: this.locationId\r\n      }\r\n      this.fetchManagers()\r\n      this.fetchWeek(param)\r\n        .then(() => {\r\n            this.distributeWeek(this.getWeek)\n            this.fetchManagers(this.$store.state.loggedInUser.locationId)\r\n            this.fetchShiftCodes(this.state) \n            this.nextweekString = \"/approveSchedule/?eow=\" + this.nextWeek()\n            this.lastWeekString = \"/approveSchedule/?eow=\" + this.lastWeek()\r\n        })\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n    .dayBox {\r\n        width: 13%;\r\n        background: white;\r\n        float: left;\r\n        margin:0px 8px;\r\n        height: 55vh;\r\n        box-shadow: 10px 10px 5px #999999;\r\n        border: 1px solid black;\r\n        border-radius:5px;\r\n    }\r\n    .weekly{\r\n        width:100%;\r\n        margin:0 0 0 10px 0;\r\n        padding:0px;\r\n    }\r\n    .consequences {\r\n        background: white;\r\n        vertical-align: central;\r\n        text-align:center;\r\n        margin: auto;\r\n        padding: auto;\r\n        float: none;\r\n        clear: both;\r\n        width: 80%;\r\n        height: 50vh !important;\r\n        border: 1px solid black !important;\r\n        border-radius: 5px;\r\n        box-shadow: 10px 10px 5px #999999;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.dayBox[data-v-13e0a9bb] {\n    width: 13%;\n    background: white;\n    float: left;\n    margin:0px 8px;\n    height: 55vh;\n    box-shadow: 10px 10px 5px #999999;\n    border: 1px solid black;\n    border-radius:5px;\n}\n.weekly[data-v-13e0a9bb]{\n    width:100%;\n    margin:0 0 0 10px 0;\n    padding:0px;\n}\n.consequences[data-v-13e0a9bb] {\n    background: white;\n    vertical-align: central;\n    text-align:center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Users/josho/source/repos/WhiteSpot-Work/Ops/ClientApp/components/Calendar/WeeklyCalendar.vue?a56ed034"],"names":[],"mappings":";AAgQA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;IACA,eAAA;IACA,aAAA;IACA,kCAAA;IACA,wBAAA;IACA,kBAAA;CACA;AACA;IACA,WAAA;IACA,oBAAA;IACA,YAAA;CACA;AACA;IACA,kBAAA;IACA,wBAAA;IACA,kBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"WeeklyCalendar.vue","sourcesContent":["<template>\r\n    <div>\r\n        <shift-modal v-if=\"showDayClickedModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.workingDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div style=\"vertical-align:middle; margin-bottom:5px;\">\r\n            <button><a :href=this.lastWeekString><</a></button>\r\n            <button><a :href=this.nextweekString>></a></button>\r\n        </div>\r\n        <div class=\"container weekly\">\r\n            <day class=\"dayBox\" :Day=\"this.monday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.tuesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.wednesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.thursday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.friday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.saturday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.sunday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n        </div>\r\n        <hr />\r\n        <div>\r\n            <ScheduleConsequences :consequences=\"this.getManagers\" class=\"consequences\"></ScheduleConsequences>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import moment from 'moment'\r\n  import Day from './Day'\r\n  import ScheduleConsequences from './ScheduleConsequences'\r\n  import ShiftModal from './ShiftModal.vue'\n  import shift from './Shift'\r\n  import Toasted from 'vue-toasted';\r\n\r\n  export default {\r\n        name: 'weekly-calendar',\r\n        components: { Day, ScheduleConsequences, ShiftModal, shift},\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchWeek',\r\n        'fetchManagers',\n        'fetchShiftCodes',\n        'submitNewShift',\n        'submitShiftChange'\r\n        ]),\n        nextWeek() {\n            let eowString = moment(this.eow).add(7, 'day').format('MM-DD-YYYY')\n           return eowString\r\n        },\n        lastWeek() {\n            let eowString = moment(this.eow).subtract(7, 'day').format('MM-DD-YYYY')\n            return eowString;\r\n        },\n        addShift(event) {\r\n            let dateArray = event.toString().split(' ')\r\n            let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\r\n            this.shiftDate = moment(date).format(\"MM-DDYYYY\")\r\n            this.showModal = true\r\n        },\n        dayClicked(event) {\n            console.log('hit')\n              this.showDayClickedModal = true\n              this.workingDate = event\r\n        },\n        eventClicked(event, date) {\n            console.log('argh-')\n            this.showDayClickedModal = false\n            this.showChangeModal = true\n            this.managerFromId = event.managerFromId\n            this.managerChangeFrom = event.name\n            this.shiftCode = event.shiftCode\n            this.dayToChange = event.shiftDate\r\n        },\n        submitChange() {\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n            let shiftChange = {\r\n                RequestId: '',\r\n                Id: this.getManagers[managerIndex].Id,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                ManagerToName: this.getManagers[managerIndex].Name,\r\n                ManagerFromName: this.managerChangeFrom,\r\n                EOW: this.eow,\r\n                ShiftCode: this.shiftCode,\r\n                Reason: this.reasonForChange,\r\n                shiftDate: this.dayToChange,\r\n                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n                managerFromId: this.managerFromId\r\n            }\r\n            this.submitShiftChange(shiftChange)\r\n            this.closeModal()\r\n            this.emptyFields()\r\n            this.submissionCompletion()\r\n        },\n        emptyFields() {\r\n            this.selectedManager = ''\r\n            this.newShiftCode = ''\r\n            this.reasonForChange = ''\r\n        },\r\n        submissionCompletion() {\r\n            setTimeout(() => { this.fetchWeek(this.$store.state.loggedInUser.locationId, this.eow) }, 200)\r\n            Toasted.show('Shift change saved')\r\n        },\r\n        distributeWeek(week) {\r\n            for (var day in week) {\r\n              var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')\r\n              if (dotw === 'Mon') {\r\n                this.monday = week[day]\r\n              }\r\n              if (dotw === 'Tue') {\r\n                this.tuesday = week[day]\r\n              }\r\n              if (dotw === 'Wed') {\r\n                this.wednesday = week[day]\r\n              }\r\n              if (dotw === 'Thu') {\r\n                this.thursday = week[day]\r\n              }\r\n              if (dotw === 'Fri') {\r\n                this.friday = week[day]\r\n              }\r\n              if (dotw === 'Sat') {\r\n                this.saturday = week[day]\r\n              }\r\n              if (dotw === 'Sun') {\r\n                this.sunday = week[day]\r\n              }\r\n            }\r\n          },\r\n        closeModal() {\r\n            this.showDayClickedModal = false\n            this.showChangeModal = false\r\n        },\n        submit() {\r\n            let shiftDay = moment(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY')\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n            let aNewShift = {\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                Day: shiftDay,\r\n                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n            }\r\n            this.submitNewShift(aNewShift)\r\n            this.emptyFields()\r\n            this.closeModal()\r\n            this.submissionCompletion()\r\n        }\r\n    },\r\n    data () {\r\n        return {\n            showDayClickedModal: false,\n            selectedManager: '',\n            newShiftCode: '',\n            eow: this.$route.query.eow,\n            locationId: this.$store.state.loggedInUser.locationId,\n            workingDate: \"\",\r\n            monday: {},\r\n            tuesday: {},\r\n            wednesday: {},\r\n            thursday: {},\r\n            friday: {},\r\n            saturday: {},\r\n            sunday: {},\r\n            week: [],\n            nextweekString: \"\",\n            lastWeekString: \"\",\n            showChangeModal: false,\n            dayToChange: \"\",\n            shiftCode: \"\",\n            reasonForChange: \"\",\n            managerFromId:\"\"\r\n        }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n        'getWeek',\r\n        'getManagers',\n        'getShiftCodes',\n        'getSchedule'\r\n      ])\r\n    },\r\n    created() {\n        console.log(this.locationId)\r\n      var param = {\r\n        eow: this.eow,\r\n        locationId: this.locationId\r\n      }\r\n      this.fetchManagers()\r\n      this.fetchWeek(param)\r\n        .then(() => {\r\n            this.distributeWeek(this.getWeek)\n            this.fetchManagers(this.$store.state.loggedInUser.locationId)\r\n            this.fetchShiftCodes(this.state) \n            this.nextweekString = \"/approveSchedule/?eow=\" + this.nextWeek()\n            this.lastWeekString = \"/approveSchedule/?eow=\" + this.lastWeek()\r\n        })\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n    .dayBox {\r\n        width: 13%;\r\n        background: white;\r\n        float: left;\r\n        margin:0px 8px;\r\n        height: 55vh;\r\n        box-shadow: 10px 10px 5px #999999;\r\n        border: 1px solid black;\r\n        border-radius:5px;\r\n    }\r\n    .weekly{\r\n        width:100%;\r\n        margin:0 0 0 10px 0;\r\n        padding:0px;\r\n    }\r\n    .consequences {\r\n        background: white;\r\n        vertical-align: central;\r\n        text-align:center;\r\n        margin: auto;\r\n        padding: auto;\r\n        float: none;\r\n        clear: both;\r\n        height: 50vh !important;\r\n        border: 1px solid black !important;\r\n        border-radius: 5px;\r\n        box-shadow: 10px 10px 5px #999999;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17890,7 +17890,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"home-page.vue","sourceRoot":""}]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"home-page.vue","sourceRoot":""}]);
 
 // exports
 
@@ -17918,7 +17918,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.card[data-v-cb1cdcba] {\n  border-radius: 5px;\n  border: 1px solid darkgray;\n  height: 500px;\n}\nstrong[data-v-cb1cdcba] {\n  text-align: right;\n}\n.numberofshifts[data-v-cb1cdcba] {\n      border-radius:5px;\n      padding:2px;\n      margin-left: 5px;\n      float:left;\n      text-align:left;\n      border:1px solid black;\n}\n", "", {"version":3,"sources":["C:/Users/josho/source/repos/WhiteSpot-Work/Ops/ClientApp/components/Calendar/ScheduleConsequences.vue?e615c6b0"],"names":[],"mappings":";AAkDA;EACA,mBAAA;EACA,2BAAA;EACA,cAAA;CACA;AACA;EACA,kBAAA;CACA;AACA;MACA,kBAAA;MACA,YAAA;MACA,iBAAA;MACA,WAAA;MACA,gBAAA;MACA,uBAAA;CACA","file":"ScheduleConsequences.vue","sourcesContent":["<template>\r\n  <section class=\"card\">\r\n      <div class=\"card-content\">\r\n          <strong>Things To Consider</strong><hr />\r\n          <div class=\"numberofshifts\">\r\n             <p v-for=\"manager in getManagerDays\" v-if=\"manager.name != 'Cancel Shift'\">\r\n                     {{manager.name}}\r\n                     <span v-if=\"manager.shifts < 5 || manager.shifts > 5\" style=\"color:red\">has {{manager.shifts}} shifts</span>\r\n                     <span v-if=\"manager.shifts === 5\">has 5 shifts</span>\r\n              </p>\r\n          </div>\r\n          <div v-for=\"manager in this.consequences\">\r\n              <div v-if=\"manager.Role\">\r\n                  {{manager.Name}}\r\n              </div>\r\n          </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n\r\n<script>\r\n    import { mapActions, mapGetters } from 'vuex'\r\n\r\n    export default {\r\n        name: 'schedule-consequences',\r\n        props: ['consequences'],\r\n        data() {\r\n            return {\r\n                managerDays: [],\r\n                schedule: []\r\n            }\r\n        },\r\n        methods: {\r\n            ...mapActions([]),\r\n            getThisWeek () {\r\n                this.schedule = this.$store.state.week\r\n            }\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n                'getWeek',\r\n                'getManagerDays'\r\n            ])\r\n        },\r\n        created() {\r\n        }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n  .card {\r\n    border-radius: 5px;\r\n    border: 1px solid darkgray;\r\n    height: 500px;\r\n  }\r\n  strong {\r\n    text-align: right;\r\n  }\r\n    .numberofshifts {\r\n        border-radius:5px;\r\n        padding:2px;\r\n        margin-left: 5px;\r\n        float:left;\r\n        text-align:left;\r\n        border:1px solid black;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.card[data-v-cb1cdcba] {\n  border-radius: 5px;\n  border: 1px solid darkgray;\n  height: 500px;\n  width:80%\n}\nstrong[data-v-cb1cdcba] {\n  text-align: right;\n}\n.ConsiderationCard[data-v-cb1cdcba] {\n      border-radius: 5px;\n      padding: 2px;\n      margin-left: 5px;\n      float: left;\n      text-align: left;\n      border: 1px solid black;\n      height:80%;\n      width:28%;\n}\n", "", {"version":3,"sources":["C:/Users/josho/source/repos/WhiteSpot-Work/Ops/ClientApp/components/Calendar/ScheduleConsequences.vue?e4164d96"],"names":[],"mappings":";AAuDA;EACA,mBAAA;EACA,2BAAA;EACA,cAAA;EACA,SAAA;CACA;AACA;EACA,kBAAA;CACA;AACA;MACA,mBAAA;MACA,aAAA;MACA,iBAAA;MACA,YAAA;MACA,iBAAA;MACA,wBAAA;MACA,WAAA;MACA,UAAA;CACA","file":"ScheduleConsequences.vue","sourcesContent":["<template>\r\n  <section class=\"card \">\r\n      <div class=\"card-content container\">\r\n          <strong>Things To Consider</strong><hr />\r\n          <div class=\"ConsiderationCard\">\n              <strong style=\"margin-left:15%; margin-bottom:5px;\">Shift break down for the week</strong>\r\n             <p v-for=\"manager in getManagerDays\" v-if=\"manager.name != 'Cancel Shift'\">\r\n                     {{manager.name}}\r\n                     <span v-if=\"manager.shifts !=5\" style=\"color:red\">has {{manager.shifts}} shifts</span>\r\n                     <span v-if=\"manager.shifts === 5\">has 5 shifts</span>\n                     <span v-if=\"manager.daysToOwe != 0\"> Will be owed {{manager.daysToOwe}} shift</span>\r\n              </p>\r\n          </div>\n          <div class=\"ConsiderationCard\"></div>\n          <div class=\"ConsiderationCard\">\r\n          <div v-for=\"history in getVacationHistory\">\r\n              <p>{{history.managerName}} has {{history.statHolidaysOwed + history.vacationOwed}} days owed</p>\r\n              </div>\r\n          </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n\r\n<script>\r\n    import { mapActions, mapGetters } from 'vuex'\r\n\r\n    export default {\r\n        name: 'schedule-consequences',\r\n        props: ['consequences'],\r\n        data() {\r\n            return {\r\n                managerDays: [],\r\n                schedule: []\r\n            }\r\n        },\r\n        methods: {\r\n            ...mapActions([\n                'fetchVacationHistory'\n            ])\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n                'getWeek',\r\n                'getManagerDays',\n                'getUser',\n                'getVacationHistory'\r\n            ])\r\n        },\r\n        created() {\n            this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\r\n        }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n  .card {\r\n    border-radius: 5px;\r\n    border: 1px solid darkgray;\r\n    height: 500px;\n    width:80%\r\n  }\r\n  strong {\r\n    text-align: right;\r\n  }\r\n    .ConsiderationCard {\r\n        border-radius: 5px;\r\n        padding: 2px;\r\n        margin-left: 5px;\r\n        float: left;\r\n        text-align: left;\r\n        border: 1px solid black;\n        height:80%;\n        width:28%;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -18055,25 +18055,17 @@ var instance = _axios2.default.create({
 });
 
 function checkAuth(to, from, next) {
-    var retrievedToken = window.localStorage.getItem("Auth-Token");
-    if (retrievedToken) {
-        var token = retrievedToken.split(':')[1].split('"')[1];
-        if (token) {
-            instance.get('http:/localhost:8001/api/Auth/checkToken/?token=' + token).then(function (res) {
-                if (res.data == -1) {
-                    window.sessionStorage.setItem('lastPage', window.location.href);
-                    window.location.href = 'http://localhost:8001';
-                } else next();
-            });
-        } else {
+    var retrievedToken = document.cookie;
+    if (retrievedToken[0] != "AuthToken") {
+        var token = retrievedToken.split('=')[1];
+        instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token).then(function (res) {
             if (res.data == -1) {
                 window.sessionStorage.setItem('lastPage', window.location.href);
                 window.location.href = 'http://localhost:8001';
-            }
-        }
+            } else next();
+        });
     } else {
         window.sessionStorage.setItem('lastPage', window.location.href);
-        window.location.href = 'http://localhost:8001';
     }
 }
 
@@ -18156,7 +18148,8 @@ var state = {
         Saturday: [],
         Sunday: []
     },
-    managerDays: []
+    managerDays: [],
+    historicalVacation: []
 };
 
 
@@ -18187,6 +18180,9 @@ var getters = {
     },
     getManagerDays: function getManagerDays(state) {
         return state.managerDays;
+    },
+    getVacationHistory: function getVacationHistory(state) {
+        return state.historicalVacation;
     }
 };
 
@@ -18217,6 +18213,9 @@ var mutations = {
     },
     setManagerDays: function setManagerDays(state, payload) {
         state.managerDays = payload;
+    },
+    setVacationHistory: function setVacationHistory(state, payload) {
+        state.historicalVacation = payload;
     }
 
 };
@@ -18232,7 +18231,6 @@ var actions = {
         var managerSchedule = [];
         var theManagerDays = [];
         var storeNumber = payload;
-        console.log(document.cookie);
         instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber).then(function (response) {
             var data = response.data;
             for (var day in data) {
@@ -18349,7 +18347,6 @@ var actions = {
                 };
                 weeklist.push(_day);
             }
-            console.log(data);
             if (data) {
                 for (var day in data.days) {
                     weeklist[weeklist.findIndex(function (d) {
@@ -18359,10 +18356,21 @@ var actions = {
                         var index = theseManagerDays.findIndex(function (m) {
                             return m.name == data.days[day].shifts[shift].managerName;
                         });
+                        var owed = 0;
+                        if (data.days[day].shifts[shift].shiftCode != null) {
+                            if (data.days[day].shifts[shift].shiftCode.split(" ")[1] == "(Owed)") {
+                                owed = 1;
+                            }
+                        }
                         if (index === -1) {
-                            theseManagerDays.push({ name: data.days[day].shifts[shift].managerName, shifts: 1 });
+                            theseManagerDays.push({
+                                name: data.days[day].shifts[shift].managerName,
+                                shifts: 1,
+                                daysToOwe: owed
+                            });
                         } else {
                             theseManagerDays[index].shifts++;
+                            theseManagerDays[index].daysToOwe += owed;
                         }
                     }
                 }
@@ -18425,7 +18433,8 @@ var actions = {
 
         try {
             var user = {};
-            var token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1];
+            var retrievedToken = document.cookie;
+            var token = retrievedToken.split('=')[1];
             return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token).then(function (index) {
                 if (index.data != -1) {
                     return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data).then(function (user) {
@@ -18440,7 +18449,7 @@ var actions = {
     fetchDailyShiftRequirements: function fetchDailyShiftRequirements(_ref15, payload) {
         var commit = _ref15.commit;
 
-        instance.get('https://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload).then(function (res) {
+        instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload).then(function (res) {
             commit('setShiftRequirements', res.data[0]);
         });
     },
@@ -18528,6 +18537,13 @@ var actions = {
             preMutatedShiftsReq.Sunday.splice(_index8, 1);
         }
         commit('setPrepShiftRequirements', preMutatedShiftsReq);
+    },
+    fetchVacationHistory: function fetchVacationHistory(_ref18, payload) {
+        var commit = _ref18.commit;
+
+        instance.get('http://localhost:8000/api/r/HistoricalVacationTable/?locationId=' + payload).then(function (res) {
+            commit('setVacationHistory', res.data);
+        });
     }
 
 };
@@ -32184,13 +32200,11 @@ exports.default = {
         };
     },
 
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)([]), {
-        getThisWeek: function getThisWeek() {
-            this.schedule = this.$store.state.week;
-        }
-    }),
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays'])),
-    created: function created() {}
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchVacationHistory'])),
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays', 'getUser', 'getVacationHistory'])),
+    created: function created() {
+        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId);
+    }
 };
 
 /***/ }),
@@ -32448,6 +32462,7 @@ exports.default = {
     created: function created() {
         var _this4 = this;
 
+        console.log(this.locationId);
         var param = {
             eow: this.eow,
             locationId: this.locationId
@@ -33345,16 +33360,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
     data: function data() {
         return {
-            user: {}
+            user: {},
+            chui: ""
         };
     },
 
     methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchLoggedInUser'])),
     computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUser'])),
-    created: function created() {
-        this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]);
-        console.log(window);
-    }
+    created: function created() {}
 };
 
 /***/ }),
@@ -40944,7 +40957,7 @@ if (true) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('br'), _c('hr'), _c('hr'), _vm._v("\n    Welcome " + _vm._s(_vm.getUser.managerName) + "\n    " + _vm._s(this.document.cookie) + "\n")])
+  return _c('div', [_c('br'), _c('hr'), _c('hr'), _vm._v("\n    Welcome " + _vm._s(_vm.getUser.managerName) + "\n")])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (true) {
@@ -41018,20 +41031,29 @@ if (true) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('section', {
-    staticClass: "card"
+    staticClass: "card "
   }, [_c('div', {
-    staticClass: "card-content"
+    staticClass: "card-content container"
   }, [_c('strong', [_vm._v("Things To Consider")]), _c('hr'), _vm._v(" "), _c('div', {
-    staticClass: "numberofshifts"
-  }, _vm._l((_vm.getManagerDays), function(manager) {
-    return (manager.name != 'Cancel Shift') ? _c('p', [_vm._v("\n                   " + _vm._s(manager.name) + "\n                   "), (manager.shifts < 5 || manager.shifts > 5) ? _c('span', {
+    staticClass: "ConsiderationCard"
+  }, [_c('strong', {
+    staticStyle: {
+      "margin-left": "15%",
+      "margin-bottom": "5px"
+    }
+  }, [_vm._v("Shift break down for the week")]), _vm._v(" "), _vm._l((_vm.getManagerDays), function(manager) {
+    return (manager.name != 'Cancel Shift') ? _c('p', [_vm._v("\n                   " + _vm._s(manager.name) + "\n                   "), (manager.shifts != 5) ? _c('span', {
       staticStyle: {
         "color": "red"
       }
-    }, [_vm._v("has " + _vm._s(manager.shifts) + " shifts")]) : _vm._e(), _vm._v(" "), (manager.shifts === 5) ? _c('span', [_vm._v("has 5 shifts")]) : _vm._e()]) : _vm._e()
-  })), _vm._v(" "), _vm._l((this.consequences), function(manager) {
-    return _c('div', [(manager.Role) ? _c('div', [_vm._v("\n                " + _vm._s(manager.Name) + "\n            ")]) : _vm._e()])
-  })], 2)])
+    }, [_vm._v("has " + _vm._s(manager.shifts) + " shifts")]) : _vm._e(), _vm._v(" "), (manager.shifts === 5) ? _c('span', [_vm._v("has 5 shifts")]) : _vm._e(), _vm._v(" "), (manager.daysToOwe != 0) ? _c('span', [_vm._v(" Will be owed " + _vm._s(manager.daysToOwe) + " shift")]) : _vm._e()]) : _vm._e()
+  })], 2), _vm._v(" "), _c('div', {
+    staticClass: "ConsiderationCard"
+  }), _vm._v(" "), _c('div', {
+    staticClass: "ConsiderationCard"
+  }, _vm._l((_vm.getVacationHistory), function(history) {
+    return _c('div', [_c('p', [_vm._v(_vm._s(history.managerName) + " has " + _vm._s(history.statHolidaysOwed + history.vacationOwed) + " days owed")])])
+  }))])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (true) {

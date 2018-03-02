@@ -234,7 +234,8 @@
         'getSchedule'
       ])
     },
-    created () {
+    created() {
+        console.log(this.locationId)
       var param = {
         eow: this.eow,
         locationId: this.locationId
@@ -276,7 +277,6 @@
         padding: auto;
         float: none;
         clear: both;
-        width: 80%;
         height: 50vh !important;
         border: 1px solid black !important;
         border-radius: 5px;
