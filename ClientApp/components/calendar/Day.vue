@@ -3,7 +3,12 @@
     <div >
       <strong v-if="this.Day.date">{{ this.getDay(this.Day.date) }} {{ this.Day.date}}</strong>
       <div v-for="theshift in this.Day.shifts" >
-          <shift :date="Day.date" :shiftCode="theshift.shiftCode" :shiftType="theshift.shiftType" :managerName="theshift.managerName" :managerFromId="theshift.managerId" v-on:eventClicked="eventClicked($event)"></shift>
+          <shift :date="Day.date"
+                 :shiftCode="theshift.shiftCode"
+                 :shiftType="theshift.shiftType"
+                 :managerName="theshift.managerName"
+                 :managerFromId="theshift.managerId"
+                 v-on:eventClicked="eventClicked($event)"></shift>
       </div>
         
     </div>
@@ -25,7 +30,7 @@
            event.shiftDate = this.Day.date
            this.$emit('eventClicked', event)
        },
-       components: { shift:shift }
+       components: { shift: shift }
      }
    }
 </script>

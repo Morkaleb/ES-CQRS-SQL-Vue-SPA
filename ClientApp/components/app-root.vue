@@ -12,8 +12,6 @@
 
 <script>
     import Vue from 'vue'
-    import CounterExample from './counter-example'
-    import FetchData from './fetch-data'
     import HomePage from './home-page'
     import NavMenu from './nav-menu'
     import MonthlyCalendar from './calendar/monthly-calendar'
@@ -22,9 +20,7 @@
     import dropdown from './layout/dropdown'
     import Vuex from 'vuex'
     import shift from './calendar/shift'
-
-    Vue.component('counter-example', CounterExample);
-    Vue.component('fetch-data', FetchData);
+    
     Vue.component('home-page', HomePage);
     Vue.component('nav-menu', NavMenu);
     Vue.component('monthly-calendar', MonthlyCalendar);

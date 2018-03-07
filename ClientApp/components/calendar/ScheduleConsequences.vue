@@ -11,8 +11,14 @@
                      <span v-if="manager.daysToOwe != 0"> Will be owed {{manager.daysToOwe}} shift</span>
               </p>
           </div>
-          <div class="ConsiderationCard"></div>
           <div class="ConsiderationCard">
+              <strong style="margin-left:14%; margin-bottom:5px;">Make sure that these shifts are covered:</strong>
+              <div v-for="day in Object.keys(getWeeklyRequirements)" v-if="day != 'id'" > {{day}}:
+                  <span v-for="shift in getWeeklyRequirements[day]">{{shift}}, </span>
+              </div>
+          </div>
+          <div class="ConsiderationCard">
+              <strong style="margin-left:0; margin-bottom:5px;">The following managers have accrued this number of days:</strong>
           <div v-for="history in getVacationHistory">
               <p>{{history.managerName}} has {{history.statHolidaysOwed + history.vacationOwed}} days owed</p>
               </div>
@@ -25,29 +31,32 @@
     import { mapActions, mapGetters } from 'vuex'
 
     export default {
-        name: 'schedule-consequences',
-        props: ['consequences'],
-        data() {
-            return {
-                managerDays: [],
-                schedule: []
-            }
-        },
-        methods: {
-            ...mapActions([
-                'fetchVacationHistory'
-            ])
-        },
-        computed: {
-            ...mapGetters([
-                'getWeek',
-                'getManagerDays',
-                'getUser',
-                'getVacationHistory'
-            ])
-        },
-        created() {
-            this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
+    name: 'schedule-consequences',
+    props: ['consequences'],
+    data() {
+    return {
+    managerDays: [],
+    schedule: []
+    }
+    },
+    methods: {
+    ...mapActions([
+    'fetchVacationHistory',
+    'fetchRequiredShifts',
+    'fetchLoggedInUser'
+    ])
+    },
+    computed: {
+    ...mapGetters([
+    'getWeek',
+    'getManagerDays',
+    'getUser',
+    'getVacationHistory',
+    'getWeeklyRequirements'
+    ])
+    },
+    created() {
+          
         }
     }
 </script>

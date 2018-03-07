@@ -7,7 +7,7 @@ import moment from 'moment'
 Vue.use(Vuex)
 
 var instance = axios.create({
-    baseURL: 'http://localhost:8000/api/',
+    baseURL: 'http://192.168.0.37:8000/api/',
     headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
 })
 
@@ -48,7 +48,8 @@ const state = {
         Sunday: []
     },
     managerDays: [],
-    historicalVacation:[]
+    historicalVacation: [],
+    weeklyRequirements:{}
 }
 //GETTERS
 
@@ -82,6 +83,9 @@ const getters = {
     },
     getVacationHistory: state => {
         return state.historicalVacation
+    },
+    getWeeklyRequirements: state => {
+        return state.weeklyRequirements
     }
 }
 // MUTATIONS
@@ -115,6 +119,9 @@ const mutations = {
     },
     setVacationHistory: (state, payload) => {
         state.historicalVacation = payload
+    },
+    setRequiredShifts: (state, payload) => {
+        state.weeklyRequirements = payload
     }
 
 }
@@ -123,7 +130,7 @@ const mutations = {
 const actions = ({
     checkAuth: () => {
         let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token)
+        instance.get('http://192.168.0.37:8001/api/Auth/checkToken/?token=' + token)
             .then((res) =>{
             })
     },
@@ -131,7 +138,7 @@ const actions = ({
         let managerSchedule = []
         let theManagerDays = []
         let storeNumber = payload
-        instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
+        instance.get('http://192.168.0.37:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data
                 for (var day in data) {
@@ -156,7 +163,7 @@ const actions = ({
     },
     fetchShiftCodes: ({ commit }) => {
         let shiftCodes = []
-       instance.get('http://localhost:8000/api/r/ShiftStatusTable')
+       instance.get('http://192.168.0.37:8000/api/r/ShiftStatusTable')
             .then((response) => {
                 let data = response.data
                 for (var shift in data) {
@@ -173,10 +180,19 @@ const actions = ({
                 commit('setShiftCodes', shiftCodes)
             })
     },
+    fetchChangeRequest: ({ commit }, payload) => {
+        let changeRequest = {}
+        let requestString = stringifyRequest(payload)
+        return instance.get('http://192.168.0.37:8000/api/r/ChangeRequestsTable' + requestString)
+            .then((response) => {
+                changeRequest = response.data
+                commit('setChangeRequest', changeRequest)
+            })
+    },
     fetchManagers: ({ commit }, payload) => {
         var managerList = []
         let storeNumber = payload
-        instance.get('http://localhost:8000/api/r/ManagerTable/?locationId='+ storeNumber)
+        instance.get('http://192.168.0.37:8000/api/r/ManagerTable/?locationId='+ storeNumber)
             .then((response) => {
                 let data = response.data
                 for (let person in data) {
@@ -197,43 +213,34 @@ const actions = ({
                 commit('setManagers', managerList)
             })
     },
-    submitNewShift: ({ commit }, payload) => {
-       instance.post('http://localhost:8000/api/Schedule/set', payload)
-            .then((res) => {
-            })
+    fetchLoggedInUser: ({ commit }, payload) => {
+        try {
+            var user = {}
+            let retrievedToken = document.cookie
+            var token = retrievedToken.split('=')[1]
+            return instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token)
+                .then((index) => {
+                    if (index.data != -1) {
+                        return instance.get('http://192.168.0.37:8000/api/r/ManagerTable/?Id=' + index.data)
+                            .then((user) => {
+                                commit('setLoggedInUser', user.data[0])
+                            })
+                    }
+                    // if(index.data == -1) window.location.href = 'http://192.168.0.37:8001'
+                })
+        } catch (e) {
+            console.log(e)
+        }
     },
-    submitShiftChange: ({ commit }, newshift) => {
-       instance.post('http://localhost:8000/api/Schedule/changeDay', newshift)
+    fetchDailyShiftRequirements: ({ commit }, payload) => {
+        instance.get('http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
             .then((res) => {
-            })
-    },
-    fetchChangeRequest: ({ commit }, payload) => {
-        let changeRequest = {}
-        let requestString = stringifyRequest(payload)
-        return instance.get('http://localhost:8000/api/r/ChangeRequestsTable' + requestString)
-            .then((response) => {
-                changeRequest = response.data
-                commit('setChangeRequest', changeRequest)
-            })
-    },
-    gmAcceptShiftChange: ({ commit }, payload) => {
-        instance.post('http://localhost:8000/api/Schedule/GMApproveChange', payload)
-            .then((res) => {
-            })
-    },
-    payrollAcceptShiftChange: ({ commit }, payload) => {
-        instance.post('http://localhost:8000/api/Schedule/PayrollApproveChange', payload)
-            .then((res) => {
-            })
-    },
-    gmRejectShiftChange: ({ commit }, payload) => {
-        instance.post('http://localhost:8000/api/Schedule/GMRejectChange', payload)
-            .then((res) => {
+                commit('setShiftRequirements', res.data[0])
             })
     },
     fetchWeek: ({ commit }, payload) => {
         let requestString = stringifyRequest(payload)
-        return instance.get('http://localhost:8000/api/r/WeeklyCalendarPage' + requestString)
+        return instance.get('http://192.168.0.37:8000/api/r/WeeklyCalendarPage' + requestString)
             .then((response) => {
                 let data = response.data[0]
                 let weeklist = []
@@ -241,7 +248,7 @@ const actions = ({
                 for (let i = 7; i > 0; i--) {
                     let day = {
                         date: moment(payload.eow).subtract(i - 1, 'day').format("MM-DD-YYYY"),
-                        shifts:[]
+                        shifts: []
                     }
                     weeklist.push(day)
                 }
@@ -270,11 +277,48 @@ const actions = ({
                     }
                 }
                 commit('setWeek', weeklist)
-                commit('setManagerDays', theseManagerDays)               
+                commit('setManagerDays', theseManagerDays)
+            })
+    },
+    fetchVacationHistory: ({ commit }, payload) => {
+        instance.get('http://192.168.0.37:8000/api/r/HistoricalVacationTable/?locationId=' + payload)
+            .then((res) => {
+                commit('setVacationHistory', res.data)
+            })
+    },
+    fetchRequiredShifts: ({ commit }, payload) => {
+        instance.get("http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?id=" + payload)
+            .then((res) => {
+                commit('setRequiredShifts', res.data[0])
+            })
+    },
+    submitNewShift: ({ commit }, payload) => {
+        instance.post('http://192.168.0.37:8000/api/Schedule/set',  payload)
+           .then((res) => {
+            })
+    },
+    submitShiftChange: ({ commit }, newshift) => {
+       instance.post('http://192.168.0.37:8000/api/Schedule/changeDay', newshift)
+            .then((res) => {
+            })
+    },
+    gmAcceptShiftChange: ({ commit }, payload) => {
+        instance.post('http://192.168.0.37:8000/api/Schedule/GMApproveChange', payload)
+            .then((res) => {
+            })
+    },
+    payrollAcceptShiftChange: ({ commit }, payload) => {
+        instance.post('http://192.168.0.37:8000/api/Schedule/PayrollApproveChange', payload)
+            .then((res) => {
+            })
+    },
+    gmRejectShiftChange: ({ commit }, payload) => {
+        instance.post('http://192.168.0.37:8000/api/Schedule/GMRejectChange', payload)
+            .then((res) => {
             })
     },
     approveSchedule: ({ commit }, payload) => {
-        instance.post('http://localhost:8000/api/Schedule/approveSchedule', payload)
+        instance.post('http://192.168.0.37:8000/api/Schedule/approveSchedule', payload)
             .then((res) => {
             })
     },
@@ -311,41 +355,16 @@ const actions = ({
         state.preSubmittedShiftsReq.Sunday.forEach((shift) => {
             submittal.Sunday.push(shift.shiftCode)
         })
-        instance.post('http://localhost:8000/api/Restaurant/shiftrequirements', submittal)
+        instance.post('http://192.168.0.37:8000/api/Restaurant/shiftrequirements', submittal)
                 .then((res) => {
                     setTimeout(() => {
-                        instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId)
+                        instance.get('http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId)
                         .then((response) => {
                         })
                     }, 300)
                 })
     },    
     gmRejectSchedule: ({ commit }, payload) => { },
-    fetchLoggedInUser: ({ commit }, payload) => {
-        try {
-            var user = {}
-            let retrievedToken = document.cookie
-            var token = retrievedToken.split('=')[1]
-            return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
-                .then((index) => {                  
-                    if (index.data != -1) {
-                        return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data)
-                            .then((user) => {
-                                commit('setLoggedInUser', user.data[0])
-                            })
-                    }
-                   // if(index.data == -1) window.location.href = 'http://localhost:8001'
-                })
-        } catch (e) {
-            console.log(e)
-        }
-    },
-    fetchDailyShiftRequirements: ({ commit }, payload) => {
-        instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
-            .then((res) => {
-                commit('setShiftRequirements', res.data[0])
-            })
-    },
     addShiftToDay: ({ commit }, payload) => {
         if (payload.day == "Monday") {
             preMutatedShiftsReq.Monday.push({ shiftCode: payload.shift.shiftCode, shiftDescription: payload.shift.ShiftDescription })
@@ -408,14 +427,7 @@ const actions = ({
             preMutatedShiftsReq.Sunday.splice(index, 1)
         }        
         commit('setPrepShiftRequirements', preMutatedShiftsReq)
-    },
-    fetchVacationHistory: ({ commit }, payload) => {
-        instance.get('http://localhost:8000/api/r/HistoricalVacationTable/?locationId=' + payload)
-            .then((res) => {
-                commit('setVacationHistory', res.data)
-            })
-    }
-    
+    }    
 })
 
 const store = new Vuex.Store({

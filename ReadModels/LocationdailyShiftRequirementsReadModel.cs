@@ -16,11 +16,12 @@ namespace Ops.ReadModels
             switch (anEvent.EventType)
             {
                 case "DailyShiftTypeRequirementsSet":
-                    if (readmodelCollection["LocationDailyShiftRequirements"].FindIndex(l => l.Id == anEvent.Id) == -1)
+                    var id = data["Id"].Value;
+                    if (readmodelCollection["LocationDailyShiftRequirements"].FindIndex(l => l.Id == id) == -1)
                     {
                         LocationDailyShiftRequirementsData locationShiftRequirements = new LocationDailyShiftRequirementsData
                         {
-                            Id = anEvent.Id,
+                            Id = anEvent.Id.Split('.')[1],
                             Monday = StringListBuilder(data["Monday"]),
                             Tuesday = StringListBuilder(data["Tuesday"]),
                             Wednesday = StringListBuilder(data["Wednesday"]),
@@ -33,7 +34,7 @@ namespace Ops.ReadModels
                         return locationShiftRequirements;
                     } else
                     {
-                        int index = readmodelCollection["LocationDailyShiftRequirements"].FindIndex(l => l.Id == anEvent.Id);
+                        int index = readmodelCollection["LocationDailyShiftRequirements"].FindIndex(l => l.Id == id);
                         LocationDailyShiftRequirementsData locationShiftRequirements =
                             (LocationDailyShiftRequirementsData)readmodelCollection["LocationDailyShiftRequirements"][index];
                         locationShiftRequirements.Monday = StringListBuilder(data["Monday"]);

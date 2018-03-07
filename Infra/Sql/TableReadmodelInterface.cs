@@ -11,7 +11,7 @@ namespace Ops.Infra.Sql
     public class TableReadmodelInterface
     {
         static SqlConnection myConnection =
-            new SqlConnection("Data Source=LT-257\\SQLEXPRESS;Initial Catalog=\"WhiteSpot-Dev\";Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            new SqlConnection("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Ops;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
         static string nspace = "Ops.ReadModels";
         public static void CheckForTables()
         {

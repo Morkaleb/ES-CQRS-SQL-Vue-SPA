@@ -59,6 +59,7 @@
             submit() {
                 this.submitDailyShiftRequirements();
                 this.showModal = false
+                window.location.href='http://192.168.0.37:8000/GmPage'
             }
         }
     }

@@ -27,7 +27,6 @@
                     shiftCode: this.shiftCode,
                     shiftDate:""
                 }
-                console.log(event)
                 this.$emit('eventClicked', Event)
             }
         }

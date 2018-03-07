@@ -3,19 +3,17 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-          <div class="modal-header">
-            Reason for refusal
+          <div class="modal-header">A quick weekly review
           </div>
           <div class="modal-body">
             <label>
-              Reason for rejecting the schedule
-              <input type="text" v-model="reason" class="rejection">
+              This Will say things
             </label>
           </div>
           <div class="modal-footer">
           </div>
-          <button class="modal-default-button" @click="$emit('rejecting', reason)">Reject</button>
-            <button class="modal-default-button" @click="$emit('close', reason)">Close</button>
+           <button class="modal-default-button" @click="$emit('close', reason)">close</button>
+          <button class="modal-default-button" @click="$emit('accept', reason)">Submit</button>
         </div>
       </div>
     </div>
@@ -25,7 +23,7 @@
 
 <script>
     export default {
-      name: 'disapprove-modal',
+      name: 'approve-modal',
       data () {
         return {
           reason: ''

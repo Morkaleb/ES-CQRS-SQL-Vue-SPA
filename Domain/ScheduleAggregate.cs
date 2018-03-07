@@ -112,7 +112,7 @@ namespace Ops.Domain
         private Events[] _RequestChangeManagerSchedule(RequestChangeManagerSchedule cmd)
         {
             var managerToIndex = _managerDays.FindIndex(m => m.ManagerId == cmd.ManagerId);
-            if(managerToIndex != -1)
+            if(managerToIndex != -1 && cmd.ManagerId != "Cancel Shift")
             {
                 if(_managerDays[managerToIndex].shifts < 5)
                 {
@@ -121,7 +121,7 @@ namespace Ops.Domain
                     cmd.ShiftCode = shiftCode;
                 }
             }
-            if(managerToIndex == -1)
+            if(managerToIndex == -1 && cmd.ManagerId != "Cancel Shift")
             {
                 var code = cmd.ShiftCode.Split('(');
                 string shiftCode = code[0].Trim();
@@ -319,7 +319,7 @@ namespace Ops.Domain
             _Id = evt.StreamId;
             _approved = false;
             var shiftStatus = evt.Data["ShiftStatus"].ToString();
-            if (shiftStatus == "1")
+            if (shiftStatus == "1" || shiftStatus == "3")
             {
                 var managerId = evt.Data["ManagerId"].ToString();
                 var index = _managerDays.FindIndex(m => m.ManagerId == managerId);
@@ -346,7 +346,7 @@ namespace Ops.Domain
             string body = managerToName + " from location " +
                 locationId + " has requested that their shift on " + date + "  "
                 + "Be changed with " + managerFromName + "<br/> The reason that they gave was: '" +
-                reason + ".'<br/> " + "Please click  <a href='http://localhost:8080/" + page + "/?Id=" + requestId + "'>here</a> to check.";
+                reason + ".'<br/> " + "Please click  <a href='http://192.168.0.37:8080/" + page + "/?Id=" + requestId + "'>here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
 
@@ -364,7 +364,7 @@ namespace Ops.Domain
             string receiver = theReceiver;
             string subject = "Schedule for the week ending on " + eow;
             string body = "The weekly schedule ending on " + eow + " at restaurant " +
-                locationId + " has been set.</br>" + "Please click  <a href=http://localhost:8080/#/schedule >here</a> to check.";
+                locationId + " has been set.</br>" + "Please click  <a href=http://192.168.0.37:8080/#/schedule >here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
     }

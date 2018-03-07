@@ -89,6 +89,10 @@ namespace Ops.ReadModels
                                     calendarDay.Shifts.Add(shift);
                                 }
                             }
+                            else if(shiftIndex != -1 && calendarDay.Shifts[shiftIndex].ManagerName == "Cancel Shift")
+                            {
+                                calendarDay.Shifts[shiftIndex].ManagerName  = getName(managerId);
+                            }
 
                         }
                     }
@@ -127,14 +131,20 @@ namespace Ops.ReadModels
                     if (locationWeekIndex != -1)
                     {
                         WeeklyCalendarData week = (WeeklyCalendarData)readModelCollection["WeeklyCalendarPage"][locationWeekIndex];
-                        foreach (var aDay in week.Days)
+                        var theDay = week.Days.Find(d => d.Date == day);
+                        if(aManagerName == "Cancel Shift")
                         {
-                            if (aDay.Date == day)
+                            int dayShiftIndex = theDay.Shifts.FindIndex(s => s.ShiftCode == shiftcode);
+                            if (dayShiftIndex != -1)
                             {
-                                var shift = aDay.Shifts.Find(s => s.ShiftType == shiftType);
-                                shift.ManagerName = aManagerName;
+                                theDay.Shifts.RemoveAt(dayShiftIndex);
                             }
                         }
+                        else
+                        {
+                            theDay.Shifts.Find(s => s.ShiftCode == shiftcode).ManagerName = aManagerName;
+                        }
+                                
                     }
                     return readModelCollection;
 

@@ -59,8 +59,8 @@
                     font-size:x-small;
                     border-radius:5px;
                     border:1px solid black;"
-                    :onclick="gotoShift"
-                   >Change Daily Shift Requirements
+                    :onclick="gotoShift">
+                ><router-link to="/dailyShiftRequirements">Change Daily shift requirements</router-link>
             </button>
         </div>    
         <calendar :events='getSchedule'
@@ -130,11 +130,10 @@
       addShift(event) {          
         let dateArray = event.toString().split(' ')
         let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
-        this.shiftDate = moment(date).format("MM-DDYYYY")
+        this.shiftDate = moment(date).format("MM-DD-YYYY")
         this.showModal = true
       },
       changeShift(event) {
-        console.log(event)
         this.shiftCode = event.YOUR_DATA.class
         this.dayToChange = event.start
         this.showChangeModal = true

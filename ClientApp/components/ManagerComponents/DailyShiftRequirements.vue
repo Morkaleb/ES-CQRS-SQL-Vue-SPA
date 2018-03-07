@@ -6,7 +6,7 @@
           <ul class="shiftList">
               <li v-for="shiftCode in getShiftCodes" style="text-align:left">
                   <label>
-                      <shift :ShiftCode="shiftCode.code"
+                      <shift :ShiftCode="shiftCode.statusId"
                              :shiftDescription="shiftCode.description"
                              v-on:AddShiftCode="addShift($event)"
                              @RemoveShiftCode="removeShift($event)"></shift>

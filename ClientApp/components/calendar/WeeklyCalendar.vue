@@ -64,11 +64,7 @@
             <day class="dayBox" :Day="this.friday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
             <day class="dayBox" :Day="this.saturday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
             <day class="dayBox" :Day="this.sunday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
-        </div>
-        <hr />
-        <div>
-            <ScheduleConsequences :consequences="this.getManagers" class="consequences"></ScheduleConsequences>
-        </div>
+        </div> 
     </div>
 </template>
 
@@ -76,14 +72,22 @@
   import { mapActions, mapGetters } from 'vuex'
   import moment from 'moment'
   import Day from './Day'
-  import ScheduleConsequences from './ScheduleConsequences'
   import ShiftModal from './ShiftModal.vue'
   import shift from './Shift'
   import Toasted from 'vue-toasted';
 
   export default {
         name: 'weekly-calendar',
-        components: { Day, ScheduleConsequences, ShiftModal, shift},
+        components: { Day, ShiftModal, shift },
+        props: [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+            ],
     methods: {
       ...mapActions([
         'fetchWeek',
@@ -107,12 +111,10 @@
             this.showModal = true
         },
         dayClicked(event) {
-            console.log('hit')
               this.showDayClickedModal = true
               this.workingDate = event
         },
         eventClicked(event, date) {
-            console.log('argh-')
             this.showDayClickedModal = false
             this.showChangeModal = true
             this.managerFromId = event.managerFromId
@@ -151,35 +153,8 @@
             this.reasonForChange = ''
         },
         submissionCompletion() {
-            setTimeout(() => { this.fetchWeek(this.$store.state.loggedInUser.locationId, this.eow) }, 200)
-            Toasted.show('Shift change saved')
+            this.$emit('shiftSubmitted')
         },
-        distributeWeek(week) {
-            for (var day in week) {
-              var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')
-              if (dotw === 'Mon') {
-                this.monday = week[day]
-              }
-              if (dotw === 'Tue') {
-                this.tuesday = week[day]
-              }
-              if (dotw === 'Wed') {
-                this.wednesday = week[day]
-              }
-              if (dotw === 'Thu') {
-                this.thursday = week[day]
-              }
-              if (dotw === 'Fri') {
-                this.friday = week[day]
-              }
-              if (dotw === 'Sat') {
-                this.saturday = week[day]
-              }
-              if (dotw === 'Sun') {
-                this.sunday = week[day]
-              }
-            }
-          },
         closeModal() {
             this.showDayClickedModal = false
             this.showChangeModal = false
@@ -195,10 +170,13 @@
                 Day: shiftDay,
                 ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus
             }
-            this.submitNewShift(aNewShift)
-            this.emptyFields()
-            this.closeModal()
-            this.submissionCompletion()
+            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {
+                this.submitNewShift(aNewShift)
+                this.emptyFields()
+                this.closeModal()
+                this.submissionCompletion()
+            }
+            else alert('unable to submit new shift')
         }
     },
     data () {
@@ -209,14 +187,6 @@
             eow: this.$route.query.eow,
             locationId: this.$store.state.loggedInUser.locationId,
             workingDate: "",
-            monday: {},
-            tuesday: {},
-            wednesday: {},
-            thursday: {},
-            friday: {},
-            saturday: {},
-            sunday: {},
-            week: [],
             nextweekString: "",
             lastWeekString: "",
             showChangeModal: false,
@@ -234,21 +204,9 @@
         'getSchedule'
       ])
     },
-    created() {
-        console.log(this.locationId)
-      var param = {
-        eow: this.eow,
-        locationId: this.locationId
-      }
-      this.fetchManagers()
-      this.fetchWeek(param)
-        .then(() => {
-            this.distributeWeek(this.getWeek)
-            this.fetchManagers(this.$store.state.loggedInUser.locationId)
-            this.fetchShiftCodes(this.state) 
-            this.nextweekString = "/approveSchedule/?eow=" + this.nextWeek()
-            this.lastWeekString = "/approveSchedule/?eow=" + this.lastWeek()
-        })
+    created() {      
+        this.nextweekString = "/approveSchedule/?eow=" + this.nextWeek()
+        this.lastWeekString = "/approveSchedule/?eow=" + this.lastWeek()
     }
   }
 </script>

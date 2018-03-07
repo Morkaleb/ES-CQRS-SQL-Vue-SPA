@@ -6,23 +6,23 @@
 
 <script>
     export default {
-      name: 'shift',
-      props: ['ShiftCode', 'shiftDescription'],
-      methods: {
-        clicked () {
-          this.selected = !this.selected
-          if (this.selected) {
-              this.$emit('AddShiftCode', { shiftCode:this.ShiftCode, ShiftDescription:this.shiftDescription })
-          } else {
-              this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription })
-          }
-        }
-      },
-      data () {
-        return {
-          selected: false
-        }
-      }
+    name: 'shift',
+    props: ['ShiftCode', 'shiftDescription'],
+    methods: {
+    clicked () {
+    this.selected = !this.selected
+    if (this.selected) {
+    this.$emit('AddShiftCode', { shiftCode:this.ShiftCode, ShiftDescription:this.shiftDescription })
+    } else {
+    this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription })
+    }
+    }
+    },
+    data () {
+    return {
+    selected: false
+    }
+    }
     }
 </script>
 
