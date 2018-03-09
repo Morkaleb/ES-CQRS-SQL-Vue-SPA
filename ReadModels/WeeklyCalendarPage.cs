@@ -17,6 +17,9 @@ namespace Ops.ReadModels
                 case "ManagerDayScheduleSet":
                     int locationId = (int)data["LocationId"];                    
                     string day = data["Day"];
+                    DateTime dayOfTheWeek;
+                    DateTime.TryParse(day, out dayOfTheWeek);
+                    string stringDayOfWeek = dayOfTheWeek.DayOfWeek.ToString();
                     string EOW = data["EOW"].ToString().Split(" ")[0];
                     string shiftcode = data["ShiftCode"];
                     string shiftType = getShiftDescription(readModelCollection["ShiftStatusTable"], shiftcode);
@@ -24,13 +27,30 @@ namespace Ops.ReadModels
                     string managerId = data["ManagerId"];
                     if(locationWeekIndex == -1)
                     {
+                        LocationDailyShiftRequirementsData dailyShiftRequirements =
+                            (LocationDailyShiftRequirementsData)readModelCollection["LocationDailyShiftRequirements"]
+                            .Find(l => l.Id == locationId.ToString());
+                        if(dailyShiftRequirements == null)
+                        {
+                            dailyShiftRequirements = new LocationDailyShiftRequirementsData()
+                            {
+                                Monday = new List<string>(),
+                                Tuesday = new List<string>(),
+                                Wednesday = new List<string>(),
+                                Thursday = new List<string>(),
+                                Friday = new List<string>(),
+                                Saturday = new List<string>(),
+                                Sunday = new List<string>(),
+                            };
+                        }
                         WeeklyCalendarData weeklyCalendar = new WeeklyCalendarData
                         {
                             Approved = false,
                             EOW = EOW,
                             LocationId = locationId,
                             Days = new List<WeeklyCalendarDay>(),
-                            Id = Guid.NewGuid().ToString()
+                            Id = Guid.NewGuid().ToString(),
+                            MissingShifts = dailyShiftRequirements
                         };
                         WeeklyCalendarDay calendarDay = new WeeklyCalendarDay
                         {
@@ -44,6 +64,7 @@ namespace Ops.ReadModels
                             ManagerId = managerId,
                             ShiftCode = shiftcode
                         };
+                        weeklyCalendar = removeShiftFromRequirements(weeklyCalendar, stringDayOfWeek, shiftcode);
                         calendarDay.Shifts.Add(shift);
                         weeklyCalendar.Days.Add(calendarDay);
                         weeklyCalendar.Days.Sort();
@@ -67,6 +88,7 @@ namespace Ops.ReadModels
                                 ManagerId = managerId,
                                 ShiftCode = shiftcode
                             };
+                            weeklyCalendar = removeShiftFromRequirements(weeklyCalendar, stringDayOfWeek, shiftcode);
                             newDay.Shifts.Add(shift);
                             weeklyCalendar.Days.Add(newDay);
                         }
@@ -88,6 +110,7 @@ namespace Ops.ReadModels
                                 {
                                     calendarDay.Shifts.Add(shift);
                                 }
+                                weeklyCalendar = removeShiftFromRequirements(weeklyCalendar, stringDayOfWeek, shiftcode);
                             }
                             else if(shiftIndex != -1 && calendarDay.Shifts[shiftIndex].ManagerName == "Cancel Shift")
                             {
@@ -180,7 +203,66 @@ namespace Ops.ReadModels
             return null;
         }
 
-        
+        private WeeklyCalendarData removeShiftFromRequirements(WeeklyCalendarData weeklyCalendar, string stringDayOfWeek, string shiftcode)
+        {
+            if(stringDayOfWeek == "Monday")
+            {
+                int index = weeklyCalendar.MissingShifts.Monday.FindIndex(code => code == shiftcode);
+                if(index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Monday.RemoveAt(index);
+                }
+            }
+            if (stringDayOfWeek == "Tuesday")
+            {
+                int index = weeklyCalendar.MissingShifts.Tuesday.FindIndex(code => code == shiftcode);
+                if (index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Tuesday.RemoveAt(index);
+                }
+            }
+            if (stringDayOfWeek == "Wednesday")
+            {
+                int index = weeklyCalendar.MissingShifts.Wednesday.FindIndex(code => code == shiftcode);
+                if (index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Wednesday.RemoveAt(index);
+                }
+            }
+            if (stringDayOfWeek == "Thursday")
+            {
+                int index = weeklyCalendar.MissingShifts.Thursday.FindIndex(code => code == shiftcode);
+                if (index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Thursday.RemoveAt(index);
+                }
+            }
+            if (stringDayOfWeek == "Friday")
+            {
+                int index = weeklyCalendar.MissingShifts.Friday.FindIndex(code => code == shiftcode);
+                if (index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Friday.RemoveAt(index);
+                }
+            }
+            if (stringDayOfWeek == "Saturday")
+            {
+                int index = weeklyCalendar.MissingShifts.Saturday.FindIndex(code => code == shiftcode);
+                if (index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Saturday.RemoveAt(index);
+                }
+            }
+            if (stringDayOfWeek == "Sunday")
+            {
+                int index = weeklyCalendar.MissingShifts.Sunday.FindIndex(code => code == shiftcode);
+                if (index != -1)
+                {
+                    weeklyCalendar.MissingShifts.Sunday.RemoveAt(index);
+                }
+            }
+            return weeklyCalendar;
+        }
 
         private string getShiftDescription(List<ReadModelData> list, string shiftCode)
         {
@@ -217,6 +299,7 @@ namespace Ops.ReadModels
         public string EOW { get; set; }
         public int LocationId { get; set; }
         public List<WeeklyCalendarDay> Days { get; set; }
+        public LocationDailyShiftRequirementsData MissingShifts { get; set; }
 
     }
 
@@ -233,4 +316,5 @@ namespace Ops.ReadModels
         public string ShiftType { get; set; }
         public string ManagerName { get; set; }
     }
+   
 }

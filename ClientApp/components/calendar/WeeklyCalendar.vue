@@ -64,7 +64,7 @@
             <day class="dayBox" :Day="this.friday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
             <day class="dayBox" :Day="this.saturday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
             <day class="dayBox" :Day="this.sunday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -90,11 +90,12 @@
             ],
     methods: {
       ...mapActions([
-        'fetchWeek',
-        'fetchManagers',
-        'fetchShiftCodes',
-        'submitNewShift',
-        'submitShiftChange'
+            'fetchWeek',
+            'fetchManagers',
+            'fetchShiftCodes',
+            'submitNewShift',
+            'submitShiftChange',
+            'checkMissingShifts'
         ]),
         nextWeek() {
             let eowString = moment(this.eow).add(7, 'day').format('MM-DD-YYYY')
@@ -153,6 +154,7 @@
             this.reasonForChange = ''
         },
         submissionCompletion() {
+            this.checkMissingShifts()
             this.$emit('shiftSubmitted')
         },
         closeModal() {
@@ -204,7 +206,7 @@
         'getSchedule'
       ])
     },
-    created() {      
+    created() {
         this.nextweekString = "/approveSchedule/?eow=" + this.nextWeek()
         this.lastWeekString = "/approveSchedule/?eow=" + this.lastWeek()
     }

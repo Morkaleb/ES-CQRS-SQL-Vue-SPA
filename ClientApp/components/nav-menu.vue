@@ -66,8 +66,8 @@
                     { title: 'OOO Grid', link: "" },
                     { title: 'OOO Pivot Data', link: "" },
                     { title: 'Mgmt Change', link: "" },
-                    { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/"},
-                    {title: "Gm Page", link: "http://192.168.0.37:8000/GmPage"}
+                    { title: 'Mgmt Scheduling', link: "http://localhost:8000/schedule/"},
+                    {title: "Gm Page", link: "http://localhost:8000/GmPage"}
 
                 ],
                 FinanceHub: [

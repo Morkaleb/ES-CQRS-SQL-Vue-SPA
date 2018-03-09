@@ -18,9 +18,11 @@
             <ScheduleConsequences :consequences="this.getManagers" class="consequences"></ScheduleConsequences>
         </div>
         <DisapproveModal v-if="disapproveModal" @close="closeModal"></DisapproveModal>
-        <ApproveModal v-if="approvalModal" @close="closeModal"></ApproveModal>
+        <ApproveModal v-if="approvalModal" @close="closeModal" @accept="approveThisSchedule">
+
+        </ApproveModal>
         <div style="width:50%; margin: 5px auto; vertical-align:central">
-            <button class="button is-info" @click="this.approveScehudule">Approve</button>
+            <button class="button is-info" @click="this.modalScheduleApproval">Approve</button>
             <button class="button is-warning" @click="this.rejectSchedule">Reject</button>
         </div>
     </div>
@@ -46,7 +48,8 @@
             'fetchRequiredShifts',
             'fetchManagers',
             'fetchWeek',
-            'fetchShiftCodes'
+            'fetchShiftCodes',
+            'checkShiftRequirements'
         ]),
         distributeWeek(week) {
             for (var day in week) {
@@ -89,7 +92,7 @@
         rejectSchedule() {
             this.disapproveModal = true
         },
-        approveScehudule() {
+        modalScheduleApproval() {
             this.approvalModal = true
         },
         shiftSubmitted() {
@@ -138,16 +141,18 @@
                 }
                 this.fetchWeek(param)
                     .then(() => {
-                        this.distributeWeek(this.getWeek)
-                        this.fetchManagers(this.$store.state.loggedInUser.locationId)
-                        this.fetchShiftCodes(this.state)
-                        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
                         this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)
-                        this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                            .then(() => {
+                                this.distributeWeek(this.getWeek)
+                                this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                                this.fetchShiftCodes(this.state)
+                                this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
+                                this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                            })
                     })
             })
-          
-           
+
+
         }
     }
 </script>

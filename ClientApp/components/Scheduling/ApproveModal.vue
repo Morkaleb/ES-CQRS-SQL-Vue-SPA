@@ -3,17 +3,32 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
+
           <div class="modal-header">A quick weekly review
           </div>
+
           <div class="modal-body">
-            <label>
-              This Will say things
-            </label>
+
+              <div v-for="manager in getManagerDays">
+                  <p v-if="manager.shifts > 5 "> {{manager.name}} has more than 5 shifts and will be owed <strong style="color: red">{{ ( manager.shifts - 5) }} </strong> days</p>
+                  <p v-if="manager.shifts < 5 "> {{manager.name}} has less than 5 shifts and will need to use <strong style="color: red">{{5 -  manager.shifts }}</strong>  days owed</p>
+              </div>
+
+              <hr>
+
+              <div v-for="(value, key) in getMissingShifts">
+                  <div v-if="value">
+                      {{key}} <span v-for="code in value" v-if="code"> {{code}}, </span>
+                  </div>
+              </div>
           </div>
+
           <div class="modal-footer">
           </div>
+
            <button class="modal-default-button" @click="$emit('close', reason)">close</button>
-          <button class="modal-default-button" @click="$emit('accept', reason)">Submit</button>
+           <button class="modal-default-button" @click="$emit('accept', reason)">Submit</button>
+
         </div>
       </div>
     </div>
@@ -22,13 +37,28 @@
 </template>
 
 <script>
+    import { mapActions, mapGetters } from 'vuex'
+
     export default {
-      name: 'approve-modal',
-      data () {
-        return {
-          reason: ''
+        name: 'approve-modal',
+        data () {
+          return {
+            reason: ''
+          }
+        },
+        methods:{
+            ...mapActions(['checkShiftRequirements'])
+        },
+        computed:{
+            ...mapGetters([
+                 'getWeek',
+                 'getManagerDays',
+                 'getVacationHistory',
+                 'getMissingShifts'
+            ])
+        },
+        created(){
         }
-      }
     }
 </script>
 

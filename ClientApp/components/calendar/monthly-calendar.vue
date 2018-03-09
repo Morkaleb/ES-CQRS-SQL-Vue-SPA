@@ -63,7 +63,8 @@
                 ><router-link to="/dailyShiftRequirements">Change Daily shift requirements</router-link>
             </button>
         </div>    
-        <calendar :events='getSchedule'
+        <calendar :firstDay="1"
+                  :events='getSchedule'
                   local="en"
                   @dayClick="addShift($event)"
                   @eventClick="changeShift($event)">

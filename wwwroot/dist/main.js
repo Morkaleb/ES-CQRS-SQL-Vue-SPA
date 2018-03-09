@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "6a1a87e965d151367e81"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "049fba238ce29d755cf5"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -16673,27 +16673,10 @@ function applyToTag (styleElement, obj) {
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var store = __webpack_require__(123)('wks');
-var uid = __webpack_require__(66);
-var Symbol = __webpack_require__(12).Symbol;
-var USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function (name) {
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
 module.exports = (__webpack_require__(29))(16);
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16720,6 +16703,23 @@ exports.default = _assign2.default || function (target) {
 
   return target;
 };
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store = __webpack_require__(123)('wks');
+var uid = __webpack_require__(66);
+var Symbol = __webpack_require__(12).Symbol;
+var USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function (name) {
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+
 
 /***/ }),
 /* 10 */
@@ -17090,7 +17090,7 @@ module.exports = {};
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.31 Array.prototype[@@unscopables]
-var UNSCOPABLES = __webpack_require__(7)('unscopables');
+var UNSCOPABLES = __webpack_require__(9)('unscopables');
 var ArrayProto = Array.prototype;
 if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(27)(ArrayProto, UNSCOPABLES, {});
 module.exports = function (key) {
@@ -17460,7 +17460,7 @@ module.exports = function (it) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = __webpack_require__(23);
-var TAG = __webpack_require__(7)('toStringTag');
+var TAG = __webpack_require__(9)('toStringTag');
 // ES3 wrong here
 var ARG = cof(function () { return arguments; }()) == 'Arguments';
 
@@ -17535,7 +17535,7 @@ module.exports = function (bitmap, value) {
 
 var def = __webpack_require__(37).f;
 var has = __webpack_require__(35);
-var TAG = __webpack_require__(7)('toStringTag');
+var TAG = __webpack_require__(9)('toStringTag');
 
 module.exports = function (it, tag, stat) {
   if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
@@ -17587,7 +17587,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.day{\n    position:relative;\n    float:left;\n    width:14%;\n}\n.week{\n    display:inline-block;\n    width:100%;\n}\n.header{\n    vertical-align: central;\n    text-align: center;\n    width: 0px auto;\n    margin:0px;\n    padding:0px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/ShiftRequirementsWeek.vue?07f6533e"],"names":[],"mappings":";AAoEA;IACA,kBAAA;IACA,WAAA;IACA,UAAA;CACA;AACA;IACA,qBAAA;IACA,WAAA;CACA;AACA;IACA,wBAAA;IACA,mBAAA;IACA,gBAAA;IACA,WAAA;IACA,YAAA;CACA","file":"ShiftRequirementsWeek.vue","sourcesContent":["<template>\r\n    <div class=\"week\">\r\n\r\n        <ShiftRequirementsModal v-if=\"showModal\" @close=\"closeModal()\" @submit=\"submit()\"></ShiftRequirementsModal>\r\n        <h2 class=\"header\">Set Daily Shift Requirements</h2>\r\n        <DailyShiftRequirements class=\"day\" day=\"Monday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Tuesday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Wednesday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Thursday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Friday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Saturday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements v-on:AddShiftDayCode=\"addshiftDay($event)\"class=\"day\" day=\"Sunday\"></DailyShiftRequirements>\r\n        <button\r\n                v-on:click=\"submitShiftsRequirements\"\r\n                class=\"btn btn-default\"\r\n                style=\"vertical-align:central;\r\n                background-color:#015351;\r\n                color: white;\r\n                margin-top:10px;\r\n                margin-left:45%\">\r\n        Submit</button>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    import DailyShiftRequirements from './DailyShiftRequirements'\r\n    import { mapActions, mapGetters } from 'vuex'\r\n    import ShiftRequirementsModal from './ShiftRequirementsModal'\r\n\r\n    export default {\r\n        name: 'GmPage',\r\n        data() {\r\n            return {\r\n                showModal: false\r\n            }\r\n        },\r\n        components: {\r\n            DailyShiftRequirements,\r\n            ShiftRequirementsModal\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n                'getUnSubShiftReq'\r\n            ])\r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'submitDailyShiftRequirements'\r\n            ]),\r\n            addShiftDay(event) {\r\n                console.log(1)\r\n            },\r\n            submitShiftsRequirements() {\r\n                this.showModal = true\r\n            },\r\n            closeModal() {\r\n                this.showModal = false\r\n            },\r\n            submit() {\r\n                this.submitDailyShiftRequirements();\r\n                this.showModal = false\n                window.location.href='http://192.168.0.37:8000/GmPage'\r\n            }\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .day{\r\n        position:relative;\r\n        float:left;\r\n        width:14%;\r\n    }\r\n    .week{\r\n        display:inline-block;\r\n        width:100%;\r\n    }\r\n    .header{\r\n        vertical-align: central;\r\n        text-align: center;\r\n        width: 0px auto;\r\n        margin:0px;\r\n        padding:0px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.day{\n    position:relative;\n    float:left;\n    width:14%;\n}\n.week{\n    display:inline-block;\n    width:100%;\n}\n.header{\n    vertical-align: central;\n    text-align: center;\n    width: 0 auto;\n    margin:0px;\n    padding:0px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/ShiftRequirementsWeek.vue?1a7eb512"],"names":[],"mappings":";AAmEA;IACA,kBAAA;IACA,WAAA;IACA,UAAA;CACA;AACA;IACA,qBAAA;IACA,WAAA;CACA;AACA;IACA,wBAAA;IACA,mBAAA;IACA,cAAA;IACA,WAAA;IACA,YAAA;CACA","file":"ShiftRequirementsWeek.vue","sourcesContent":["<template>\n    <div class=\"week\">\n\n        <ShiftRequirementsModal v-if=\"showModal\" @close=\"closeModal()\" @submit=\"submit()\"></ShiftRequirementsModal>\n        <h2 class=\"header\">Set Daily Shift Requirements</h2>\n        <DailyShiftRequirements class=\"day\" day=\"Monday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Tuesday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Wednesday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Thursday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Friday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Saturday\"></DailyShiftRequirements>\n        <DailyShiftRequirements v-on:AddShiftDayCode=\"addshiftDay($event)\"class=\"day\" day=\"Sunday\"></DailyShiftRequirements>\n        <button\n                v-on:click=\"submitShiftsRequirements\"\n                class=\"btn btn-default\"\n                style=\"vertical-align:central;\n                background-color:#015351;\n                color: white;\n                margin-top:10px;\n                margin-left:45%\">\n        Submit</button>\n    </div>\n</template>\n\n<script>\n    import DailyShiftRequirements from './DailyShiftRequirements'\n    import { mapActions, mapGetters } from 'vuex'\n    import ShiftRequirementsModal from './ShiftRequirementsModal'\n\n    export default {\n        name: 'GmPage',\n        data() {\n            return {\n                showModal: false\n            }\n        },\n        components: {\n            DailyShiftRequirements,\n            ShiftRequirementsModal\n        },\n        computed: {\n            ...mapGetters([\n                'getUnSubShiftReq'\n            ])\n        },\n        methods: {\n            ...mapActions([\n                'submitDailyShiftRequirements'\n            ]),\n            addShiftDay(event) {\n            },\n            submitShiftsRequirements() {\n                this.showModal = true\n            },\n            closeModal() {\n                this.showModal = false\n            },\n            submit() {\n                this.submitDailyShiftRequirements();\n                this.showModal = false\n                window.location.href='http://localhost:8000/GmPage'\n            }\n        }\n    }\n</script>\n\n<style>\n    .day{\n        position:relative;\n        float:left;\n        width:14%;\n    }\n    .week{\n        display:inline-block;\n        width:100%;\n    }\n    .header{\n        vertical-align: central;\n        text-align: center;\n        width: 0 auto;\n        margin:0px;\n        padding:0px;\n    }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17629,7 +17629,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.dayBox[data-v-13e0a9bb] {\n    width: 13%;\n    background: white;\n    float: left;\n    margin:0px 8px;\n    height: 55vh;\n    box-shadow: 10px 10px 5px #999999;\n    border: 1px solid black;\n    border-radius:5px;\n}\n.weekly[data-v-13e0a9bb]{\n    width:100%;\n    margin:0 0 0 10px 0;\n    padding:0px;\n}\n.consequences[data-v-13e0a9bb] {\n    background: white;\n    vertical-align: central;\n    text-align:center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/WeeklyCalendar.vue?6e64c5f7"],"names":[],"mappings":";AAsNA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;IACA,eAAA;IACA,aAAA;IACA,kCAAA;IACA,wBAAA;IACA,kBAAA;CACA;AACA;IACA,WAAA;IACA,oBAAA;IACA,YAAA;CACA;AACA;IACA,kBAAA;IACA,wBAAA;IACA,kBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"WeeklyCalendar.vue","sourcesContent":["<template>\r\n    <div>\r\n        <shift-modal v-if=\"showDayClickedModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.workingDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div style=\"vertical-align:middle; margin-bottom:5px;\">\r\n            <button><a :href=this.lastWeekString><</a></button>\r\n            <button><a :href=this.nextweekString>></a></button>\r\n        </div>\r\n        <div class=\"container weekly\">\r\n            <day class=\"dayBox\" :Day=\"this.monday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.tuesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.wednesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.thursday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.friday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.saturday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.sunday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n        </div> \r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import moment from 'moment'\r\n  import Day from './Day'\r\n  import ShiftModal from './ShiftModal.vue'\r\n  import shift from './Shift'\r\n  import Toasted from 'vue-toasted';\r\n\r\n  export default {\r\n        name: 'weekly-calendar',\r\n        components: { Day, ShiftModal, shift },\n        props: [\n            'monday',\r\n            'tuesday',\r\n            'wednesday',\r\n            'thursday',\r\n            'friday',\r\n            'saturday',\r\n            'sunday',\r\n            ],\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchWeek',\r\n        'fetchManagers',\r\n        'fetchShiftCodes',\r\n        'submitNewShift',\r\n        'submitShiftChange'\r\n        ]),\r\n        nextWeek() {\r\n            let eowString = moment(this.eow).add(7, 'day').format('MM-DD-YYYY')\r\n           return eowString\r\n        },\r\n        lastWeek() {\r\n            let eowString = moment(this.eow).subtract(7, 'day').format('MM-DD-YYYY')\r\n            return eowString;\r\n        },\r\n        addShift(event) {\r\n            let dateArray = event.toString().split(' ')\r\n            let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\r\n            this.shiftDate = moment(date).format(\"MM-DDYYYY\")\r\n            this.showModal = true\r\n        },\r\n        dayClicked(event) {\r\n              this.showDayClickedModal = true\r\n              this.workingDate = event\r\n        },\r\n        eventClicked(event, date) {\r\n            this.showDayClickedModal = false\r\n            this.showChangeModal = true\r\n            this.managerFromId = event.managerFromId\r\n            this.managerChangeFrom = event.name\r\n            this.shiftCode = event.shiftCode\r\n            this.dayToChange = event.shiftDate\r\n        },\r\n        submitChange() {\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n            let shiftChange = {\r\n                RequestId: '',\r\n                Id: this.getManagers[managerIndex].Id,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                ManagerToName: this.getManagers[managerIndex].Name,\r\n                ManagerFromName: this.managerChangeFrom,\r\n                EOW: this.eow,\r\n                ShiftCode: this.shiftCode,\r\n                Reason: this.reasonForChange,\r\n                shiftDate: this.dayToChange,\r\n                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n                managerFromId: this.managerFromId\r\n            }\r\n            this.submitShiftChange(shiftChange)\r\n            this.closeModal()\r\n            this.emptyFields()\r\n            this.submissionCompletion()\r\n        },\r\n        emptyFields() {\r\n            this.selectedManager = ''\r\n            this.newShiftCode = ''\r\n            this.reasonForChange = ''\r\n        },\r\n        submissionCompletion() {\n            this.$emit('shiftSubmitted')\r\n        },\r\n        closeModal() {\r\n            this.showDayClickedModal = false\r\n            this.showChangeModal = false\r\n        },\r\n        submit() {\r\n            let shiftDay = moment(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY')\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n            let aNewShift = {\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                Day: shiftDay,\r\n                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n            }\n            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {\r\n                this.submitNewShift(aNewShift)\r\n                this.emptyFields()\r\n                this.closeModal()\r\n                this.submissionCompletion()\n            }\n            else alert('unable to submit new shift')\r\n        }\r\n    },\r\n    data () {\r\n        return {\r\n            showDayClickedModal: false,\r\n            selectedManager: '',\r\n            newShiftCode: '',\r\n            eow: this.$route.query.eow,\r\n            locationId: this.$store.state.loggedInUser.locationId,\r\n            workingDate: \"\",\r\n            nextweekString: \"\",\r\n            lastWeekString: \"\",\r\n            showChangeModal: false,\r\n            dayToChange: \"\",\r\n            shiftCode: \"\",\r\n            reasonForChange: \"\",\r\n            managerFromId:\"\"\r\n        }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n        'getWeek',\r\n        'getManagers',\r\n        'getShiftCodes',\r\n        'getSchedule'\r\n      ])\r\n    },\r\n    created() {      \n        this.nextweekString = \"/approveSchedule/?eow=\" + this.nextWeek()\n        this.lastWeekString = \"/approveSchedule/?eow=\" + this.lastWeek()\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n    .dayBox {\r\n        width: 13%;\r\n        background: white;\r\n        float: left;\r\n        margin:0px 8px;\r\n        height: 55vh;\r\n        box-shadow: 10px 10px 5px #999999;\r\n        border: 1px solid black;\r\n        border-radius:5px;\r\n    }\r\n    .weekly{\r\n        width:100%;\r\n        margin:0 0 0 10px 0;\r\n        padding:0px;\r\n    }\r\n    .consequences {\r\n        background: white;\r\n        vertical-align: central;\r\n        text-align:center;\r\n        margin: auto;\r\n        padding: auto;\r\n        float: none;\r\n        clear: both;\r\n        height: 50vh !important;\r\n        border: 1px solid black !important;\r\n        border-radius: 5px;\r\n        box-shadow: 10px 10px 5px #999999;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.dayBox[data-v-13e0a9bb] {\n    width: 13%;\n    background: white;\n    float: left;\n    margin:0px 8px;\n    height: 55vh;\n    box-shadow: 10px 10px 5px #999999;\n    border: 1px solid black;\n    border-radius:5px;\n}\n.weekly[data-v-13e0a9bb]{\n    width:100%;\n    margin:0 0 0 10px 0;\n    padding:0px;\n}\n.consequences[data-v-13e0a9bb] {\n    background: white;\n    vertical-align: central;\n    text-align:center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/WeeklyCalendar.vue?2ede5b71"],"names":[],"mappings":";AAwNA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;IACA,eAAA;IACA,aAAA;IACA,kCAAA;IACA,wBAAA;IACA,kBAAA;CACA;AACA;IACA,WAAA;IACA,oBAAA;IACA,YAAA;CACA;AACA;IACA,kBAAA;IACA,wBAAA;IACA,kBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"WeeklyCalendar.vue","sourcesContent":["<template>\n    <div>\n        <shift-modal v-if=\"showDayClickedModal\">\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\n            <div slot=\"body\">\n                <div>Shift Date {{ this.workingDate }}</div>\n                <div>\n                    <span>Manager Name</span>\n                    <select id='managerName'\n                            class=\"form-control\"\n                            v-model=\"selectedManager\">\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\n                    </select>\n                </div>\n                <div>\n                    <span>Shift</span>\n                    <select id='ShiftCode'\n                            class=\"form-control\"\n                            v-model=\"newShiftCode\">\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\n                    </select>\n                </div>\n            </div>\n            <div slot=\"footer\">\n                <button @click=\"submit()\"> Submit </button>\n                <button @click=\"closeModal()\">Close</button>\n            </div>\n        </shift-modal>\n        <shift-modal v-if=\"showChangeModal\">\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\n            <div slot=\"body\">\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\n                <div>\n                    <span>Manager Name</span>\n                    <select id='managerName1'\n                            class=\"form-control\"\n                            v-model=\"selectedManager\">\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\n                    </select>\n                </div>\n                <div>\n                    <div>\n                        Reason For Change\n                    </div>\n                    <div>\n                        <input type=\"text\" v-model=\"reasonForChange\">\n                    </div>\n                </div>\n            </div>\n            <div slot=\"footer\">\n                <button @click=\"submitChange()\"> Submit </button>\n                <button @click=\"closeModal()\">Close</button>\n            </div>\n        </shift-modal>\n        <div style=\"vertical-align:middle; margin-bottom:5px;\">\n            <button><a :href=this.lastWeekString><</a></button>\n            <button><a :href=this.nextweekString>></a></button>\n        </div>\n        <div class=\"container weekly\">\n            <day class=\"dayBox\" :Day=\"this.monday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.tuesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.wednesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.thursday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.friday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.saturday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.sunday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n        </div>\n    </div>\n</template>\n\n<script>\n  import { mapActions, mapGetters } from 'vuex'\n  import moment from 'moment'\n  import Day from './Day'\n  import ShiftModal from './ShiftModal.vue'\n  import shift from './Shift'\n  import Toasted from 'vue-toasted';\n\n  export default {\n        name: 'weekly-calendar',\n        components: { Day, ShiftModal, shift },\n        props: [\n            'monday',\n            'tuesday',\n            'wednesday',\n            'thursday',\n            'friday',\n            'saturday',\n            'sunday',\n            ],\n    methods: {\n      ...mapActions([\n            'fetchWeek',\n            'fetchManagers',\n            'fetchShiftCodes',\n            'submitNewShift',\n            'submitShiftChange',\n            'checkMissingShifts'\n        ]),\n        nextWeek() {\n            let eowString = moment(this.eow).add(7, 'day').format('MM-DD-YYYY')\n           return eowString\n        },\n        lastWeek() {\n            let eowString = moment(this.eow).subtract(7, 'day').format('MM-DD-YYYY')\n            return eowString;\n        },\n        addShift(event) {\n            let dateArray = event.toString().split(' ')\n            let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\n            this.shiftDate = moment(date).format(\"MM-DDYYYY\")\n            this.showModal = true\n        },\n        dayClicked(event) {\n              this.showDayClickedModal = true\n              this.workingDate = event\n        },\n        eventClicked(event, date) {\n            this.showDayClickedModal = false\n            this.showChangeModal = true\n            this.managerFromId = event.managerFromId\n            this.managerChangeFrom = event.name\n            this.shiftCode = event.shiftCode\n            this.dayToChange = event.shiftDate\n        },\n        submitChange() {\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\n            let shiftChange = {\n                RequestId: '',\n                Id: this.getManagers[managerIndex].Id,\n                ManagerId: this.getManagers[managerIndex].Id,\n                ManagerToName: this.getManagers[managerIndex].Name,\n                ManagerFromName: this.managerChangeFrom,\n                EOW: this.eow,\n                ShiftCode: this.shiftCode,\n                Reason: this.reasonForChange,\n                shiftDate: this.dayToChange,\n                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\n                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\n                LocationId: this.$store.state.loggedInUser.locationId,\n                RequestingManagerRole: this.$store.state.loggedInUser.role,\n                managerFromId: this.managerFromId\n            }\n            this.submitShiftChange(shiftChange)\n            this.closeModal()\n            this.emptyFields()\n            this.submissionCompletion()\n        },\n        emptyFields() {\n            this.selectedManager = ''\n            this.newShiftCode = ''\n            this.reasonForChange = ''\n        },\n        submissionCompletion() {\n            this.checkMissingShifts()\n            this.$emit('shiftSubmitted')\n        },\n        closeModal() {\n            this.showDayClickedModal = false\n            this.showChangeModal = false\n        },\n        submit() {\n            let shiftDay = moment(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY')\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\n            let aNewShift = {\n                LocationId: this.$store.state.loggedInUser.locationId,\n                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\n                ManagerId: this.getManagers[managerIndex].Id,\n                Day: shiftDay,\n                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\n            }\n            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {\n                this.submitNewShift(aNewShift)\n                this.emptyFields()\n                this.closeModal()\n                this.submissionCompletion()\n            }\n            else alert('unable to submit new shift')\n        }\n    },\n    data () {\n        return {\n            showDayClickedModal: false,\n            selectedManager: '',\n            newShiftCode: '',\n            eow: this.$route.query.eow,\n            locationId: this.$store.state.loggedInUser.locationId,\n            workingDate: \"\",\n            nextweekString: \"\",\n            lastWeekString: \"\",\n            showChangeModal: false,\n            dayToChange: \"\",\n            shiftCode: \"\",\n            reasonForChange: \"\",\n            managerFromId:\"\"\n        }\n    },\n    computed: {\n      ...mapGetters([\n        'getWeek',\n        'getManagers',\n        'getShiftCodes',\n        'getSchedule'\n      ])\n    },\n    created() {\n        this.nextweekString = \"/approveSchedule/?eow=\" + this.nextWeek()\n        this.lastWeekString = \"/approveSchedule/?eow=\" + this.lastWeek()\n    }\n  }\n</script>\n\n<style scoped>\n    .dayBox {\n        width: 13%;\n        background: white;\n        float: left;\n        margin:0px 8px;\n        height: 55vh;\n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius:5px;\n    }\n    .weekly{\n        width:100%;\n        margin:0 0 0 10px 0;\n        padding:0px;\n    }\n    .consequences {\n        background: white;\n        vertical-align: central;\n        text-align:center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        height: 50vh !important;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n    }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17699,7 +17699,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.consequences[data-v-3aaf9f48] {\n    background: white;\n    vertical-align: central;\n    text-align: center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/GMApproveSchedule.vue?6d6fa4a4"],"names":[],"mappings":";AA4JA;IACA,kBAAA;IACA,wBAAA;IACA,mBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"GMApproveSchedule.vue","sourcesContent":["<template>\r\n    <div class=\"container\" style=\"width:100%\">\r\n        <h1 class=\"title\" style=\"margin: 0 auto; font-size: x-large; text-align: center\">\r\n            Please confirm the week's schedule\r\n        </h1>\r\n        <hr />\r\n        <weekly-calendar\n                         :monday=\"this.monday\"\n                         :tuesday=\"this.tuesday\"\n                         :wednesday=\"this.wednesday\"\n                         :thursday=\"this.thursday\"\n                         :friday=\"this.friday\"\n                         :saturday=\"this.saturday\"\n                         :sunday=\"this.sunday\"\n                         @shiftSubmitted=\"this.shiftSubmitted\">\n            </weekly-calendar> <hr />\r\n        <div>\r\n            <ScheduleConsequences :consequences=\"this.getManagers\" class=\"consequences\"></ScheduleConsequences>\r\n        </div>\r\n        <DisapproveModal v-if=\"disapproveModal\" @close=\"closeModal\"></DisapproveModal>\r\n        <ApproveModal v-if=\"approvalModal\" @close=\"closeModal\"></ApproveModal>\r\n        <div style=\"width:50%; margin: 5px auto; vertical-align:central\">\r\n            <button class=\"button is-info\" @click=\"this.approveScehudule\">Approve</button>\r\n            <button class=\"button is-warning\" @click=\"this.rejectSchedule\">Reject</button>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n    import WeeklyCalendar from '../Calendar/WeeklyCalendar'\n    import DisapproveModal from './DisapproveModal'\n    import ApproveModal from './ApproveModal'\n    import shift from '../Calendar/Shift'\r\n    import ScheduleConsequences from '../Calendar/ScheduleConsequences'\n    import moment from 'moment'\n\n    export default {\n    name: 'gmapproveschedule',\n    components: { WeeklyCalendar, DisapproveModal, ApproveModal, ScheduleConsequences },\n    methods: {\n        ...mapActions([\n            'approveSchedule',\n            'fetchLoggedInUser',\n            'fetchVacationHistory',\n            'fetchRequiredShifts',\n            'fetchManagers',\n            'fetchWeek',\n            'fetchShiftCodes'\n        ]),\r\n        distributeWeek(week) {\r\n            for (var day in week) {\r\n                var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')\r\n                if (dotw === 'Mon') {\r\n                    this.monday = week[day]\r\n                }\r\n                if (dotw === 'Tue') {\r\n                    this.tuesday = week[day]\r\n                }\r\n                if (dotw === 'Wed') {\r\n                    this.wednesday = week[day]\r\n                }\r\n                if (dotw === 'Thu') {\r\n                    this.thursday = week[day]\r\n                }\r\n                if (dotw === 'Fri') {\r\n                    this.friday = week[day]\r\n                }\r\n                if (dotw === 'Sat') {\r\n                    this.saturday = week[day]\r\n                }\r\n                if (dotw === 'Sun') {\r\n                    this.sunday = week[day]\r\n                }\r\n            }\r\n        },\n        closeModal() {\n            this.disapproveModal = false\n            this.approvalModal = false\n        },\n        approveThisSchedule() {\n            let approval = {\n                eow: this.eow,\n                GmId: this.$store.state.loggedInUser.id,\n                RestaurantId: this.$store.state.loggedInUser.locationId\n            }\n            this.approveSchedule(approval)\n        },\n        rejectSchedule() {\n            this.disapproveModal = true\n        },\n        approveScehudule() {\n            this.approvalModal = true\n        },\n        shiftSubmitted() {\n            var param = {\n                eow: this.eow,\n                locationId: this.$store.state.loggedInUser.locationId\n            }\n            setTimeout(() => {\n                this.fetchWeek(param)\n                    .then(() => {\n                        this.distributeWeek(this.getWeek)\n                    })\n            }, 200)\n        },\n        rejected (event) {\n            this.disapproveModal = false\n        }\n    },\n    computed: {\n        ...mapGetters([\n            'getWeek',\n            'getManagers'\n        ])\n    },\n    data () {\n        return {\n            eow: this.$route.query.eow,\n            reason: '',\n            disapproveModal: false,\n            approvalModal: false,\n            monday: {},\r\n            tuesday: {},\r\n            wednesday: {},\r\n            thursday: {},\r\n            friday: {},\r\n            saturday: {},\r\n            sunday: {},\n        }\n    },\n    created () {\n        this.fetchLoggedInUser()\n            .then(() => {\n                var param = {\n                    eow: this.eow,\n                    locationId: this.$store.state.loggedInUser.locationId\n                }\n                this.fetchWeek(param)\n                    .then(() => {\n                        this.distributeWeek(this.getWeek)\n                        this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                        this.fetchShiftCodes(this.state)\n                        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\n                        this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)\n                        this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                    })\n            })\n          \n           \n        }\n    }\n</script>\r\n\r\n<style scoped>\r\n\r\n    .consequences {\r\n        background: white;\r\n        vertical-align: central;\r\n        text-align: center;\r\n        margin: auto;\r\n        padding: auto;\r\n        float: none;\r\n        clear: both;\r\n        height: 50vh !important;\r\n        border: 1px solid black !important;\r\n        border-radius: 5px;\r\n        box-shadow: 10px 10px 5px #999999;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.consequences[data-v-3aaf9f48] {\n    background: white;\n    vertical-align: central;\n    text-align: center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/GMApproveSchedule.vue?2363fca1"],"names":[],"mappings":";AAiKA;IACA,kBAAA;IACA,wBAAA;IACA,mBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"GMApproveSchedule.vue","sourcesContent":["<template>\n    <div class=\"container\" style=\"width:100%\">\n        <h1 class=\"title\" style=\"margin: 0 auto; font-size: x-large; text-align: center\">\n            Please confirm the week's schedule\n        </h1>\n        <hr />\n        <weekly-calendar\n                         :monday=\"this.monday\"\n                         :tuesday=\"this.tuesday\"\n                         :wednesday=\"this.wednesday\"\n                         :thursday=\"this.thursday\"\n                         :friday=\"this.friday\"\n                         :saturday=\"this.saturday\"\n                         :sunday=\"this.sunday\"\n                         @shiftSubmitted=\"this.shiftSubmitted\">\n            </weekly-calendar> <hr />\n        <div>\n            <ScheduleConsequences :consequences=\"this.getManagers\" class=\"consequences\"></ScheduleConsequences>\n        </div>\n        <DisapproveModal v-if=\"disapproveModal\" @close=\"closeModal\"></DisapproveModal>\n        <ApproveModal v-if=\"approvalModal\" @close=\"closeModal\" @accept=\"approveThisSchedule\">\n\n        </ApproveModal>\n        <div style=\"width:50%; margin: 5px auto; vertical-align:central\">\n            <button class=\"button is-info\" @click=\"this.modalScheduleApproval\">Approve</button>\n            <button class=\"button is-warning\" @click=\"this.rejectSchedule\">Reject</button>\n        </div>\n    </div>\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n    import WeeklyCalendar from '../Calendar/WeeklyCalendar'\n    import DisapproveModal from './DisapproveModal'\n    import ApproveModal from './ApproveModal'\n    import shift from '../Calendar/Shift'\n    import ScheduleConsequences from '../Calendar/ScheduleConsequences'\n    import moment from 'moment'\n\n    export default {\n    name: 'gmapproveschedule',\n    components: { WeeklyCalendar, DisapproveModal, ApproveModal, ScheduleConsequences },\n    methods: {\n        ...mapActions([\n            'approveSchedule',\n            'fetchLoggedInUser',\n            'fetchVacationHistory',\n            'fetchRequiredShifts',\n            'fetchManagers',\n            'fetchWeek',\n            'fetchShiftCodes',\n            'checkShiftRequirements'\n        ]),\n        distributeWeek(week) {\n            for (var day in week) {\n                var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')\n                if (dotw === 'Mon') {\n                    this.monday = week[day]\n                }\n                if (dotw === 'Tue') {\n                    this.tuesday = week[day]\n                }\n                if (dotw === 'Wed') {\n                    this.wednesday = week[day]\n                }\n                if (dotw === 'Thu') {\n                    this.thursday = week[day]\n                }\n                if (dotw === 'Fri') {\n                    this.friday = week[day]\n                }\n                if (dotw === 'Sat') {\n                    this.saturday = week[day]\n                }\n                if (dotw === 'Sun') {\n                    this.sunday = week[day]\n                }\n            }\n        },\n        closeModal() {\n            this.disapproveModal = false\n            this.approvalModal = false\n        },\n        approveThisSchedule() {\n            let approval = {\n                eow: this.eow,\n                GmId: this.$store.state.loggedInUser.id,\n                RestaurantId: this.$store.state.loggedInUser.locationId\n            }\n            this.approveSchedule(approval)\n        },\n        rejectSchedule() {\n            this.disapproveModal = true\n        },\n        modalScheduleApproval() {\n            this.approvalModal = true\n        },\n        shiftSubmitted() {\n            var param = {\n                eow: this.eow,\n                locationId: this.$store.state.loggedInUser.locationId\n            }\n            setTimeout(() => {\n                this.fetchWeek(param)\n                    .then(() => {\n                        this.distributeWeek(this.getWeek)\n                    })\n            }, 200)\n        },\n        rejected (event) {\n            this.disapproveModal = false\n        }\n    },\n    computed: {\n        ...mapGetters([\n            'getWeek',\n            'getManagers'\n        ])\n    },\n    data () {\n        return {\n            eow: this.$route.query.eow,\n            reason: '',\n            disapproveModal: false,\n            approvalModal: false,\n            monday: {},\n            tuesday: {},\n            wednesday: {},\n            thursday: {},\n            friday: {},\n            saturday: {},\n            sunday: {},\n        }\n    },\n    created () {\n        this.fetchLoggedInUser()\n            .then(() => {\n                var param = {\n                    eow: this.eow,\n                    locationId: this.$store.state.loggedInUser.locationId\n                }\n                this.fetchWeek(param)\n                    .then(() => {\n                        this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)\n                            .then(() => {\n                                this.distributeWeek(this.getWeek)\n                                this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                                this.fetchShiftCodes(this.state)\n                                this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\n                                this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                            })\n                    })\n            })\n\n\n        }\n    }\n</script>\n\n<style scoped>\n\n    .consequences {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        height: 50vh !important;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n    }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17727,7 +17727,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.slide-enter-active, .slide-leave-active {\n    transition: max-height .35s\n}\n.slide-enter, .slide-leave-to {\n    max-height: 0px;\n}\n.slide-enter-to, .slide-leave {\n    max-height: 20em;\n}\n.logo1 {\n    margin-top: 3px;\n    height: 50px;\n}\n.dropdown {\n    color:white;\n    position: relative;\n    display: inline-block;\n    margin-left: 2%;\n    float:left;\n    font-size:smaller;\n    height:100%;\n}\n.dropdown-content {\n    display: none;\n    position: absolute;\n    background-color: #f9f9f9;\n    min-width: 160px;\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \n    z-index: 1;\n    color:black;\n}\n.dropdown:hover {\n    background-color: #15a589;\n}\n.dropdown:hover .dropdown-content {\n    display: block;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/nav-menu.vue?1b592654"],"names":[],"mappings":";AA6HA;IACA,2BAAA;CACA;AAEA;IACA,gBAAA;CACA;AAEA;IACA,iBAAA;CACA;AAEA;IACA,gBAAA;IACA,aAAA;CACA;AACA;IACA,YAAA;IACA,mBAAA;IACA,sBAAA;IACA,gBAAA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;CACA;AAEA;IACA,cAAA;IACA,mBAAA;IACA,0BAAA;IACA,iBAAA;IACA,6CAAA;IACA,WAAA;IACA,YAAA;CACA;AACA;IACA,0BAAA;CACA;AACA;IACA,eAAA;CACA","file":"nav-menu.vue","sourcesContent":["<template>\r\n    <div class=\"navbar navbar-inverse navbar-fixed-top gi-sm\">\r\n        <div class=\"container\">\r\n            <div class=\"navbar-header \">\r\n                <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                </button>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/Logo_Green_lq.jpg\" style=\"width: 100px; height: 60px; padding: .3em .5em .3em .5em\" alt=\"logo\" />\r\n                </a>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/logo2_lq.png\" style=\"width: 100px; height: 60px;  padding: 1em .5em 1em .5em\" alt=\"logo\" />\r\n                </a>\r\n            </div>\r\n            <div>\r\n                <dropdown title=\"Supply Hub\" :items=\"SupplyHub\"></dropdown>\r\n                <dropdown title=\"Menu Hub\" :items=\"MenuHub\"></dropdown>\r\n                <dropdown title=\"Ops Hub\" :items=\"OpsHub\"></dropdown>\r\n                <dropdown title=\"Finance Hub\" :items=\"FinanceHub\"></dropdown>\r\n                <dropdown title=\"Admin Hub\" :items=\"AdminHub\"></dropdown>\r\n                <dropdown title=\"Inventory Hub\" :items=\"InventoryHub\"></dropdown>\r\n            </div>\r\n                <ul class=\"nav navbar-nav navbar-right\">\r\n                    <li style=\"width: 100px; height: 60px\">\r\n                        <a href=\"/wsbis\" class=\"pull-right\" style=\"padding:0; \">\r\n                            <img src=\"../Assets/SmallLogo.png\" style=\"width: 100px; height: 60px; padding: .6em 1em .6em 1em\" alt=\"hub_logo\" />\r\n                        </a>\r\n                    </li>\r\n                </ul>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n</template>\r\n\r\n<script>\r\n    import { routes } from '../routes'\r\n    import { mapGetters, mapActions } from 'vuex'\r\n    import dropdown from './layout/dropdown'\r\n\r\n    export default {\r\n        data() {\r\n            return {\r\n                routes,\r\n                collapsed: true,\r\n                SupplyHub: [\r\n                    { title: 'Home (NEW)', link: \"\" },\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'SKUs', link: \"\" },\r\n                    { title: 'Contracts', link: \"\" },\r\n                    { title: 'Bids', link: \"\" },\r\n                    { title: 'Mapper', link: \"\" },\r\n                    { title: 'Admin', link: \"\" },\r\n                ],\r\n                MenuHub: [\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'Recipes', link: \"\" },\r\n                    { title: 'Menus', link: \"\" },\r\n                    { title: 'Menus Items', link: \"\" }\r\n                ],\r\n                OpsHub: [\r\n                    { title: 'My Pillars', link: \"\" },\r\n                    { title: 'OOO Grid', link: \"\" },\r\n                    { title: 'OOO Pivot Data', link: \"\" },\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Mgmt Scheduling', link: \"http://192.168.0.37:8000/schedule/\"},\r\n                    {title: \"Gm Page\", link: \"http://192.168.0.37:8000/GmPage\"}\r\n\r\n                ],\r\n                FinanceHub: [\r\n                    { title: 'PurchaseOrders', link: \"\" },\r\n                ],\r\n                AdminHub: [\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Alerts', link: \"\" },\r\n                    { title: 'Measure Units', link: \"\" },\r\n                    { title: 'Ops Review', link: \"\" },\r\n                ],\r\n                InventoryHub: [\r\n                    { title: 'Home', link: \"\" }\r\n                ]\r\n            }\r\n        },\r\n        watch: {\r\n            \r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'fetchLoggedInUser'\r\n            ]),\r\n            toggleCollapsed: function (event) {\r\n                this.collapsed = !this.collapsed;\r\n            }\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n             'getUser'\r\n            ]),\r\n            locationId: {\r\n                get: function () {\r\n                    return this.location\r\n                },\r\n                set: function (newValue){\r\n                    this.location = newValue\r\n                }\r\n            }\r\n        },\r\n        components: {\r\n            dropdown\r\n        },\r\n        created() {            \r\n            if (!this.$store.state.loggedInUser.locationId) {\r\n                this.fetchLoggedInUser()\r\n                    .then(() => {\r\n                        this.getUser\r\n                    })\r\n            }\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .slide-enter-active, .slide-leave-active {\r\n        transition: max-height .35s\r\n    }\r\n\r\n    .slide-enter, .slide-leave-to {\r\n        max-height: 0px;\r\n    }\r\n\r\n    .slide-enter-to, .slide-leave {\r\n        max-height: 20em;\r\n    }\r\n\r\n    .logo1 {\r\n        margin-top: 3px;\r\n        height: 50px;\r\n    }\r\n    .dropdown {\r\n        color:white;\r\n        position: relative;\r\n        display: inline-block;\r\n        margin-left: 2%;\r\n        float:left;\r\n        font-size:smaller;\r\n        height:100%;\r\n    }\r\n\r\n    .dropdown-content {\r\n        display: none;\r\n        position: absolute;\r\n        background-color: #f9f9f9;\r\n        min-width: 160px;\r\n        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \r\n        z-index: 1;\r\n        color:black;\r\n    }\r\n    .dropdown:hover {\r\n        background-color: #15a589;\r\n    }\r\n    .dropdown:hover .dropdown-content {\r\n        display: block;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.slide-enter-active, .slide-leave-active {\n    transition: max-height .35s\n}\n.slide-enter, .slide-leave-to {\n    max-height: 0px;\n}\n.slide-enter-to, .slide-leave {\n    max-height: 20em;\n}\n.logo1 {\n    margin-top: 3px;\n    height: 50px;\n}\n.dropdown {\n    color:white;\n    position: relative;\n    display: inline-block;\n    margin-left: 2%;\n    float:left;\n    font-size:smaller;\n    height:100%;\n}\n.dropdown-content {\n    display: none;\n    position: absolute;\n    background-color: #f9f9f9;\n    min-width: 160px;\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \n    z-index: 1;\n    color:black;\n}\n.dropdown:hover {\n    background-color: #15a589;\n}\n.dropdown:hover .dropdown-content {\n    display: block;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/nav-menu.vue?337c672c"],"names":[],"mappings":";AA6HA;IACA,2BAAA;CACA;AAEA;IACA,gBAAA;CACA;AAEA;IACA,iBAAA;CACA;AAEA;IACA,gBAAA;IACA,aAAA;CACA;AACA;IACA,YAAA;IACA,mBAAA;IACA,sBAAA;IACA,gBAAA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;CACA;AAEA;IACA,cAAA;IACA,mBAAA;IACA,0BAAA;IACA,iBAAA;IACA,6CAAA;IACA,WAAA;IACA,YAAA;CACA;AACA;IACA,0BAAA;CACA;AACA;IACA,eAAA;CACA","file":"nav-menu.vue","sourcesContent":["<template>\r\n    <div class=\"navbar navbar-inverse navbar-fixed-top gi-sm\">\r\n        <div class=\"container\">\r\n            <div class=\"navbar-header \">\r\n                <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                </button>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/Logo_Green_lq.jpg\" style=\"width: 100px; height: 60px; padding: .3em .5em .3em .5em\" alt=\"logo\" />\r\n                </a>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/logo2_lq.png\" style=\"width: 100px; height: 60px;  padding: 1em .5em 1em .5em\" alt=\"logo\" />\r\n                </a>\r\n            </div>\r\n            <div>\r\n                <dropdown title=\"Supply Hub\" :items=\"SupplyHub\"></dropdown>\r\n                <dropdown title=\"Menu Hub\" :items=\"MenuHub\"></dropdown>\r\n                <dropdown title=\"Ops Hub\" :items=\"OpsHub\"></dropdown>\r\n                <dropdown title=\"Finance Hub\" :items=\"FinanceHub\"></dropdown>\r\n                <dropdown title=\"Admin Hub\" :items=\"AdminHub\"></dropdown>\r\n                <dropdown title=\"Inventory Hub\" :items=\"InventoryHub\"></dropdown>\r\n            </div>\r\n                <ul class=\"nav navbar-nav navbar-right\">\r\n                    <li style=\"width: 100px; height: 60px\">\r\n                        <a href=\"/wsbis\" class=\"pull-right\" style=\"padding:0; \">\r\n                            <img src=\"../Assets/SmallLogo.png\" style=\"width: 100px; height: 60px; padding: .6em 1em .6em 1em\" alt=\"hub_logo\" />\r\n                        </a>\r\n                    </li>\r\n                </ul>\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n</template>\r\n\r\n<script>\r\n    import { routes } from '../routes'\r\n    import { mapGetters, mapActions } from 'vuex'\r\n    import dropdown from './layout/dropdown'\r\n\r\n    export default {\r\n        data() {\r\n            return {\r\n                routes,\r\n                collapsed: true,\r\n                SupplyHub: [\r\n                    { title: 'Home (NEW)', link: \"\" },\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'SKUs', link: \"\" },\r\n                    { title: 'Contracts', link: \"\" },\r\n                    { title: 'Bids', link: \"\" },\r\n                    { title: 'Mapper', link: \"\" },\r\n                    { title: 'Admin', link: \"\" },\r\n                ],\r\n                MenuHub: [\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'Recipes', link: \"\" },\r\n                    { title: 'Menus', link: \"\" },\r\n                    { title: 'Menus Items', link: \"\" }\r\n                ],\r\n                OpsHub: [\r\n                    { title: 'My Pillars', link: \"\" },\r\n                    { title: 'OOO Grid', link: \"\" },\r\n                    { title: 'OOO Pivot Data', link: \"\" },\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Mgmt Scheduling', link: \"http://localhost:8000/schedule/\"},\r\n                    {title: \"Gm Page\", link: \"http://localhost:8000/GmPage\"}\r\n\r\n                ],\r\n                FinanceHub: [\r\n                    { title: 'PurchaseOrders', link: \"\" },\r\n                ],\r\n                AdminHub: [\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Alerts', link: \"\" },\r\n                    { title: 'Measure Units', link: \"\" },\r\n                    { title: 'Ops Review', link: \"\" },\r\n                ],\r\n                InventoryHub: [\r\n                    { title: 'Home', link: \"\" }\r\n                ]\r\n            }\r\n        },\r\n        watch: {\r\n            \r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'fetchLoggedInUser'\r\n            ]),\r\n            toggleCollapsed: function (event) {\r\n                this.collapsed = !this.collapsed;\r\n            }\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n             'getUser'\r\n            ]),\r\n            locationId: {\r\n                get: function () {\r\n                    return this.location\r\n                },\r\n                set: function (newValue){\r\n                    this.location = newValue\r\n                }\r\n            }\r\n        },\r\n        components: {\r\n            dropdown\r\n        },\r\n        created() {            \r\n            if (!this.$store.state.loggedInUser.locationId) {\r\n                this.fetchLoggedInUser()\r\n                    .then(() => {\r\n                        this.getUser\r\n                    })\r\n            }\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .slide-enter-active, .slide-leave-active {\r\n        transition: max-height .35s\r\n    }\r\n\r\n    .slide-enter, .slide-leave-to {\r\n        max-height: 0px;\r\n    }\r\n\r\n    .slide-enter-to, .slide-leave {\r\n        max-height: 20em;\r\n    }\r\n\r\n    .logo1 {\r\n        margin-top: 3px;\r\n        height: 50px;\r\n    }\r\n    .dropdown {\r\n        color:white;\r\n        position: relative;\r\n        display: inline-block;\r\n        margin-left: 2%;\r\n        float:left;\r\n        font-size:smaller;\r\n        height:100%;\r\n    }\r\n\r\n    .dropdown-content {\r\n        display: none;\r\n        position: absolute;\r\n        background-color: #f9f9f9;\r\n        min-width: 160px;\r\n        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \r\n        z-index: 1;\r\n        color:black;\r\n    }\r\n    .dropdown:hover {\r\n        background-color: #15a589;\r\n    }\r\n    .dropdown:hover .dropdown-content {\r\n        display: block;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17755,7 +17755,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-5400fe66] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-5400fe66] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-5400fe66] {\n  width: 500px;\n  height: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-5400fe66] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-5400fe66] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-5400fe66] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-5400fe66],\n.modal-leave-active .modal-container[data-v-5400fe66] {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n.rejection[data-v-5400fe66] {\n  width:100%\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/ApproveModal.vue?0a28bcd4"],"names":[],"mappings":";AAmCA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,cAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA;AACA;EACA,UAAA;CACA","file":"ApproveModal.vue","sourcesContent":["<template>\r\n  <transition name=\"modal\">\r\n    <div class=\"modal-mask\">\r\n      <div class=\"modal-wrapper\">\r\n        <div class=\"modal-container\">\r\n          <div class=\"modal-header\">A quick weekly review\r\n          </div>\r\n          <div class=\"modal-body\">\r\n            <label>\r\n              This Will say things\r\n            </label>\r\n          </div>\r\n          <div class=\"modal-footer\">\r\n          </div>\n           <button class=\"modal-default-button\" @click=\"$emit('close', reason)\">close</button>\r\n          <button class=\"modal-default-button\" @click=\"$emit('accept', reason)\">Submit</button>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </transition>\r\n\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n      name: 'approve-modal',\r\n      data () {\r\n        return {\r\n          reason: ''\r\n        }\r\n      }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n  .modal-mask {\r\n    position: fixed;\r\n    z-index: 9998;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, .5);\r\n    display: table;\r\n    transition: opacity .3s ease;\r\n  }\r\n\r\n  .modal-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n  }\r\n\r\n  .modal-container {\r\n    width: 500px;\r\n    height: 300px;\r\n    margin: 0px auto;\r\n    padding: 20px 30px;\r\n    background-color: #fff;\r\n    border-radius: 2px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\r\n    transition: all .3s ease;\r\n    font-family: Helvetica, Arial, sans-serif;\r\n  }\r\n\r\n  .modal-header h3 {\r\n    margin-top: 0;\r\n    color: #42b983;\r\n  }\r\n\r\n  .modal-body {\r\n    margin: 20px 0;\r\n  }\r\n\r\n  .modal-default-button {\r\n    float: right;\r\n  }\r\n\r\n  /*\r\n   * The following styles are auto-applied to elements with\r\n   * transition=\"modal\" when their visibility is toggled\r\n   * by Vue.js.\r\n   *\r\n   * You can easily play with the modal transition by editing\r\n   * these styles.\r\n   */\r\n\r\n  .modal-enter {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-leave-active {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-enter .modal-container,\r\n  .modal-leave-active .modal-container {\r\n    -webkit-transform: scale(1.1);\r\n    transform: scale(1.1);\r\n  }\r\n  .rejection {\r\n    width:100%\r\n  }\r\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.modal-mask[data-v-5400fe66] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-5400fe66] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-5400fe66] {\n  width: 500px;\n  height: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-5400fe66] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-5400fe66] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-5400fe66] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-5400fe66],\n.modal-leave-active .modal-container[data-v-5400fe66] {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n.rejection[data-v-5400fe66] {\n  width:100%\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/ApproveModal.vue?6efedd90"],"names":[],"mappings":";AAiEA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,cAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA;AACA;EACA,UAAA;CACA","file":"ApproveModal.vue","sourcesContent":["<template>\n  <transition name=\"modal\">\n    <div class=\"modal-mask\">\n      <div class=\"modal-wrapper\">\n        <div class=\"modal-container\">\n\n          <div class=\"modal-header\">A quick weekly review\n          </div>\n\n          <div class=\"modal-body\">\n\n              <div v-for=\"manager in getManagerDays\">\n                  <p v-if=\"manager.shifts > 5 \"> {{manager.name}} has more than 5 shifts and will be owed <strong style=\"color: red\">{{ ( manager.shifts - 5) }} </strong> days</p>\n                  <p v-if=\"manager.shifts < 5 \"> {{manager.name}} has less than 5 shifts and will need to use <strong style=\"color: red\">{{5 -  manager.shifts }}</strong>  days owed</p>\n              </div>\n\n              <hr>\n\n              <div v-for=\"(value, key) in getMissingShifts\">\n                  <div v-if=\"value\">\n                      {{key}} <span v-for=\"code in value\" v-if=\"code\"> {{code}}, </span>\n                  </div>\n              </div>\n          </div>\n\n          <div class=\"modal-footer\">\n          </div>\n\n           <button class=\"modal-default-button\" @click=\"$emit('close', reason)\">close</button>\n           <button class=\"modal-default-button\" @click=\"$emit('accept', reason)\">Submit</button>\n\n        </div>\n      </div>\n    </div>\n  </transition>\n\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n\n    export default {\n        name: 'approve-modal',\n        data () {\n          return {\n            reason: ''\n          }\n        },\n        methods:{\n            ...mapActions(['checkShiftRequirements'])\n        },\n        computed:{\n            ...mapGetters([\n                 'getWeek',\n                 'getManagerDays',\n                 'getVacationHistory',\n                 'getMissingShifts'\n            ])\n        },\n        created(){\n        }\n    }\n</script>\n\n<style scoped>\n  .modal-mask {\n    position: fixed;\n    z-index: 9998;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n  }\n\n  .modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n  }\n\n  .modal-container {\n    width: 500px;\n    height: 300px;\n    margin: 0px auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 2px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    font-family: Helvetica, Arial, sans-serif;\n  }\n\n  .modal-header h3 {\n    margin-top: 0;\n    color: #42b983;\n  }\n\n  .modal-body {\n    margin: 20px 0;\n  }\n\n  .modal-default-button {\n    float: right;\n  }\n\n  /*\n   * The following styles are auto-applied to elements with\n   * transition=\"modal\" when their visibility is toggled\n   * by Vue.js.\n   *\n   * You can easily play with the modal transition by editing\n   * these styles.\n   */\n\n  .modal-enter {\n    opacity: 0;\n  }\n\n  .modal-leave-active {\n    opacity: 0;\n  }\n\n  .modal-enter .modal-container,\n  .modal-leave-active .modal-container {\n    -webkit-transform: scale(1.1);\n    transform: scale(1.1);\n  }\n  .rejection {\n    width:100%\n  }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17769,7 +17769,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.full-calendar-body .dates .dates-events .events-week .events-day {\n    min-height:100px !important;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/calendar/monthly-calendar.vue?45862b2a"],"names":[],"mappings":";AAwNA;IACA,4BAAA;CACA","file":"monthly-calendar.vue","sourcesContent":["<template>\r\n    <div id=\"wrapper\" class=\"flex-container\">\r\n        <shift-modal v-if=\"showModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.shiftDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div class=\"title\">\r\n            <h1 style=\"text-align:center\">Schedule for Store {{getUser.locationId}} Manager shifts</h1>\r\n            <button v-if=\"this.getUser.role === 3\"\r\n                    style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    :onclick=\"gotoShift\">\r\n                ><router-link to=\"/dailyShiftRequirements\">Change Daily shift requirements</router-link>\r\n            </button>\r\n        </div>    \r\n        <calendar :events='getSchedule'\r\n                  local=\"en\"\r\n                  @dayClick=\"addShift($event)\"\r\n                  @eventClick=\"changeShift($event)\">\r\n            >\r\n        </calendar>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import fullCalendar from 'vue-fullcalendar'\r\n  import ShiftModel from './ShiftModal.vue'\r\n  import moment from 'moment'\r\n  //import calendar from 'ccalendar'\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import Toasted from 'vue-toasted';\r\n    \r\n    export default {\r\n    name: 'monthly-calendar',\r\n    data () {\r\n      return {\r\n        showModal: false,\r\n        manager: '',\r\n        shiftCode: '',\r\n        shiftDate: '',\r\n        shiftEOW: '',\r\n        Date: this.shiftDate,\r\n        newName: '',\r\n        newShiftCode: '',\r\n        reasonForChange: '',\r\n        selectedManager: '',\r\n        dayToChange: '',\r\n        shiftCodeToChangeFrom: '',\r\n        showChangeModal: false,\r\n        managerChangeFrom: '',\r\n        concerns: [{}],\r\n        params: '',\r\n        events: [{}]       \r\n      }\r\n    },\r\n    components: {\r\n        shiftModal: ShiftModel,\r\n        calendar: fullCalendar\r\n    },\r\n    computed: {\r\n        ...mapGetters([\r\n            'getSchedule',\r\n            'getManagers',\r\n            'getShiftCodes',\r\n            'getUser'\r\n        ]),\r\n        regetSchedule() {\r\n            return this.fetchSchedule(this.state)\r\n        }\r\n    },\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchSchedule',\r\n        'fetchManagers',\r\n        'fetchShiftCodes',\r\n        'submitNewShift',\r\n        'submitShiftChange',\r\n        'fetchLoggedInUser'\r\n        ]),\r\n      addShift(event) {          \r\n        let dateArray = event.toString().split(' ')\r\n        let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\r\n        this.shiftDate = moment(date).format(\"MM-DD-YYYY\")\r\n        this.showModal = true\r\n      },\r\n      changeShift(event) {\r\n        this.shiftCode = event.YOUR_DATA.class\r\n        this.dayToChange = event.start\r\n        this.showChangeModal = true\r\n        this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]\r\n        this.managerFromId = event.YOUR_DATA.ManagerId\r\n      },\r\n      closeModal () {\r\n        this.showModal = false\r\n        this.showChangeModal = false\r\n      },\r\n      submit () {\r\n        let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')\r\n        let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n        let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n        let aNewShift = {\r\n          LocationId: this.$store.state.loggedInUser.locationId,\r\n          ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n          ManagerId: this.getManagers[managerIndex].Id,\r\n          Day: this.shiftDate,\r\n          ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n        }\r\n        this.submitNewShift(aNewShift)\r\n        this.emptyFields()\r\n        this.closeModal()\r\n        this.submissionCompletion()\r\n      },\r\n      submitChange () {\r\n        let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n        let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n        let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n        let shiftChange = {\r\n          RequestId: '',\r\n          Id: this.getManagers[managerIndex].Id,\r\n          ManagerId: this.getManagers[managerIndex].Id,\r\n          ManagerToName: this.getManagers[managerIndex].Name,\r\n          ManagerFromName: this.managerChangeFrom,\r\n          EOW: this.getSchedule[shiftDayIndex].EOW,\r\n          ShiftCode: this.shiftCode,\r\n          Reason: this.reasonForChange,\r\n          shiftDate: this.dayToChange,\r\n          ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n          GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n          LocationId: this.$store.state.loggedInUser.locationId,\r\n          RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n          managerFromId:this.managerFromId\r\n        }\r\n        this.submitShiftChange(shiftChange)\r\n        this.closeModal()\r\n        this.emptyFields()\r\n        this.submissionCompletion()\r\n      },\r\n      emptyFields () {\r\n        this.selectedManager = ''\r\n        this.newShiftCode = ''\r\n        this.reasonForChange = ''\r\n      },\r\n      submissionCompletion() {\r\n          setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)\r\n          Toasted.show('Shift change saved')\r\n      },\r\n      gotoShift() {\r\n          \r\n      }\r\n    },\r\n    \r\n    async created() {\r\n        this.fetchLoggedInUser()\r\n            .then(() => {\r\n                this.fetchSchedule(this.$store.state.loggedInUser.locationId)\r\n                    .then(() => {\r\n                        this.fetchManagers(this.$store.state.loggedInUser.locationId)\r\n                        this.fetchShiftCodes(this.state)\r\n                    })\r\n            })\r\n      \r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n    .full-calendar-body .dates .dates-events .events-week .events-day {\r\n        min-height:100px !important;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.full-calendar-body .dates .dates-events .events-week .events-day {\n    min-height:100px !important;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/calendar/monthly-calendar.vue?e16f0350"],"names":[],"mappings":";AAyNA;IACA,4BAAA;CACA","file":"monthly-calendar.vue","sourcesContent":["<template>\r\n    <div id=\"wrapper\" class=\"flex-container\">\r\n        <shift-modal v-if=\"showModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.shiftDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div class=\"title\">\r\n            <h1 style=\"text-align:center\">Schedule for Store {{getUser.locationId}} Manager shifts</h1>\r\n            <button v-if=\"this.getUser.role === 3\"\r\n                    style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    :onclick=\"gotoShift\">\r\n                ><router-link to=\"/dailyShiftRequirements\">Change Daily shift requirements</router-link>\r\n            </button>\r\n        </div>    \r\n        <calendar :firstDay=\"1\"\n                  :events='getSchedule'\r\n                  local=\"en\"\r\n                  @dayClick=\"addShift($event)\"\r\n                  @eventClick=\"changeShift($event)\">\r\n            >\r\n        </calendar>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import fullCalendar from 'vue-fullcalendar'\r\n  import ShiftModel from './ShiftModal.vue'\r\n  import moment from 'moment'\r\n  //import calendar from 'ccalendar'\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import Toasted from 'vue-toasted';\r\n    \r\n    export default {\r\n    name: 'monthly-calendar',\r\n    data () {\r\n      return {\r\n        showModal: false,\r\n        manager: '',\r\n        shiftCode: '',\r\n        shiftDate: '',\r\n        shiftEOW: '',\r\n        Date: this.shiftDate,\r\n        newName: '',\r\n        newShiftCode: '',\r\n        reasonForChange: '',\r\n        selectedManager: '',\r\n        dayToChange: '',\r\n        shiftCodeToChangeFrom: '',\r\n        showChangeModal: false,\r\n        managerChangeFrom: '',\r\n        concerns: [{}],\r\n        params: '',\r\n        events: [{}]       \r\n      }\r\n    },\r\n    components: {\r\n        shiftModal: ShiftModel,\r\n        calendar: fullCalendar\r\n    },\r\n    computed: {\r\n        ...mapGetters([\r\n            'getSchedule',\r\n            'getManagers',\r\n            'getShiftCodes',\r\n            'getUser'\r\n        ]),\r\n        regetSchedule() {\r\n            return this.fetchSchedule(this.state)\r\n        }\r\n    },\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchSchedule',\r\n        'fetchManagers',\r\n        'fetchShiftCodes',\r\n        'submitNewShift',\r\n        'submitShiftChange',\r\n        'fetchLoggedInUser'\r\n        ]),\r\n      addShift(event) {          \r\n        let dateArray = event.toString().split(' ')\r\n        let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\r\n        this.shiftDate = moment(date).format(\"MM-DD-YYYY\")\r\n        this.showModal = true\r\n      },\r\n      changeShift(event) {\r\n        this.shiftCode = event.YOUR_DATA.class\r\n        this.dayToChange = event.start\r\n        this.showChangeModal = true\r\n        this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]\r\n        this.managerFromId = event.YOUR_DATA.ManagerId\r\n      },\r\n      closeModal () {\r\n        this.showModal = false\r\n        this.showChangeModal = false\r\n      },\r\n      submit () {\r\n        let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')\r\n        let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n        let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n        let aNewShift = {\r\n          LocationId: this.$store.state.loggedInUser.locationId,\r\n          ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n          ManagerId: this.getManagers[managerIndex].Id,\r\n          Day: this.shiftDate,\r\n          ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n        }\r\n        this.submitNewShift(aNewShift)\r\n        this.emptyFields()\r\n        this.closeModal()\r\n        this.submissionCompletion()\r\n      },\r\n      submitChange () {\r\n        let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n        let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n        let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n        let shiftChange = {\r\n          RequestId: '',\r\n          Id: this.getManagers[managerIndex].Id,\r\n          ManagerId: this.getManagers[managerIndex].Id,\r\n          ManagerToName: this.getManagers[managerIndex].Name,\r\n          ManagerFromName: this.managerChangeFrom,\r\n          EOW: this.getSchedule[shiftDayIndex].EOW,\r\n          ShiftCode: this.shiftCode,\r\n          Reason: this.reasonForChange,\r\n          shiftDate: this.dayToChange,\r\n          ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n          GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n          LocationId: this.$store.state.loggedInUser.locationId,\r\n          RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n          managerFromId:this.managerFromId\r\n        }\r\n        this.submitShiftChange(shiftChange)\r\n        this.closeModal()\r\n        this.emptyFields()\r\n        this.submissionCompletion()\r\n      },\r\n      emptyFields () {\r\n        this.selectedManager = ''\r\n        this.newShiftCode = ''\r\n        this.reasonForChange = ''\r\n      },\r\n      submissionCompletion() {\r\n          setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)\r\n          Toasted.show('Shift change saved')\r\n      },\r\n      gotoShift() {\r\n          \r\n      }\r\n    },\r\n    \r\n    async created() {\r\n        this.fetchLoggedInUser()\r\n            .then(() => {\r\n                this.fetchSchedule(this.$store.state.loggedInUser.locationId)\r\n                    .then(() => {\r\n                        this.fetchManagers(this.$store.state.loggedInUser.locationId)\r\n                        this.fetchShiftCodes(this.state)\r\n                    })\r\n            })\r\n      \r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n    .full-calendar-body .dates .dates-events .events-week .events-day {\r\n        min-height:100px !important;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17977,18 +17977,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var routes = exports.routes = [{ path: '/', component: _homePage2.default, display: 'Home', style: 'glyphicon glyphicon-home' }, { path: '/schedule', component: _monthlyCalendar2.default, display: 'Monthly Schedule', beforeEnter: checkAuth }, { path: '/approveSchedule', component: _GMApproveSchedule2.default, display: 'GM Approval', beforeEnter: checkAuth }, { path: '/payrollApproval', component: _PayrollApproval2.default, display: 'Payroll Approval', beforeEnter: checkAuth }, { path: '/reviewScheduleChange', component: _ReviewScheduleChange2.default, display: 'Review Schedule Change Requeast', beforeEnter: checkAuth }, { path: '/dailyShiftRequirements', component: _ShiftRequirementsWeek2.default, display: 'Set restaurant requirements', beforeEnter: checkAuth }, { path: '/GmPage', component: _GmPage2.default, display: 'Restaurant Management', beforeEnter: checkAuth }];
 
 var instance = _axios2.default.create({
-    baseURL: 'http://192.168.0.37:8000/api/',
-    headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
+    baseURL: 'http://localhost:8000/api/',
+    headers: { 'Access-Control-Allow-Origin': 'http://localhost:8001' }
 });
 
 function checkAuth(to, from, next) {
     var retrievedToken = document.cookie;
     if (retrievedToken[0] != "AuthToken") {
         var token = retrievedToken.split('=')[1];
-        instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token).then(function (res) {
+        instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token).then(function (res) {
             if (res.data == -1) {
                 window.sessionStorage.setItem('lastPage', window.location.href);
-                window.location.href = 'http://192.168.0.37:8001';
+                window.location.href = 'http://localhost:8001';
             } else next();
         });
     } else {
@@ -18015,7 +18015,7 @@ var _vue = __webpack_require__(2);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
@@ -18036,8 +18036,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _vue2.default.use(_vuex2.default);
 
 var instance = _axios2.default.create({
-    baseURL: 'http://192.168.0.37:8000/api/',
-    headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
+    baseURL: 'http://localhost:8000/api/',
+    headers: { 'Access-Control-Allow-Origin': 'http://localhost:8001' }
 });
 
 var preMutatedShiftsReq = {
@@ -18077,7 +18077,8 @@ var state = {
     },
     managerDays: [],
     historicalVacation: [],
-    weeklyRequirements: {}
+    weeklyRequirements: {},
+    missingShifts: {}
 };
 
 
@@ -18114,6 +18115,9 @@ var getters = {
     },
     getWeeklyRequirements: function getWeeklyRequirements(state) {
         return state.weeklyRequirements;
+    },
+    getMissingShifts: function getMissingShifts(state) {
+        return state.missingShifts;
     }
 };
 
@@ -18150,14 +18154,16 @@ var mutations = {
     },
     setRequiredShifts: function setRequiredShifts(state, payload) {
         state.weeklyRequirements = payload;
+    },
+    setMissingShifts: function setMissingShifts(state, payload) {
+        state.missingShifts = payload;
     }
-
 };
 
 var actions = {
     checkAuth: function checkAuth() {
         var token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1];
-        instance.get('http://192.168.0.37:8001/api/Auth/checkToken/?token=' + token).then(function (res) {});
+        instance.get('http://localhost:8001/api/Auth/checkToken/?token=' + token).then(function (res) {});
     },
     fetchSchedule: function fetchSchedule(_ref, payload) {
         var commit = _ref.commit;
@@ -18165,7 +18171,7 @@ var actions = {
         var managerSchedule = [];
         var theManagerDays = [];
         var storeNumber = payload;
-        instance.get('http://192.168.0.37:8000/api/r/CalendarPage/?LocationId=' + storeNumber).then(function (response) {
+        instance.get('http://localhost:8000/api/r/CalendarPage/?LocationId=' + storeNumber).then(function (response) {
             var data = response.data;
             for (var day in data) {
                 var schedule = data[day].schedule;
@@ -18190,7 +18196,7 @@ var actions = {
         var commit = _ref2.commit;
 
         var shiftCodes = [];
-        instance.get('http://192.168.0.37:8000/api/r/ShiftStatusTable').then(function (response) {
+        instance.get('http://localhost:8000/api/r/ShiftStatusTable').then(function (response) {
             var data = response.data;
             for (var shift in data) {
                 var code = data[shift];
@@ -18211,7 +18217,7 @@ var actions = {
 
         var changeRequest = {};
         var requestString = stringifyRequest(payload);
-        return instance.get('http://192.168.0.37:8000/api/r/ChangeRequestsTable' + requestString).then(function (response) {
+        return instance.get('http://localhost:8000/api/r/ChangeRequestsTable' + requestString).then(function (response) {
             changeRequest = response.data;
             commit('setChangeRequest', changeRequest);
         });
@@ -18221,7 +18227,7 @@ var actions = {
 
         var managerList = [];
         var storeNumber = payload;
-        instance.get('http://192.168.0.37:8000/api/r/ManagerTable/?locationId=' + storeNumber).then(function (response) {
+        instance.get('http://localhost:8000/api/r/ManagerTable/?locationId=' + storeNumber).then(function (response) {
             var data = response.data;
             for (var person in data) {
                 var human = data[person];
@@ -18248,9 +18254,9 @@ var actions = {
             var user = {};
             var retrievedToken = document.cookie;
             var token = retrievedToken.split('=')[1];
-            return instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token).then(function (index) {
+            return instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token).then(function (index) {
                 if (index.data != -1) {
-                    return instance.get('http://192.168.0.37:8000/api/r/ManagerTable/?Id=' + index.data).then(function (user) {
+                    return instance.get('http://localhost:8000/api/r/ManagerTable/?Id=' + index.data).then(function (user) {
                         commit('setLoggedInUser', user.data[0]);
                     });
                 }
@@ -18262,7 +18268,7 @@ var actions = {
     fetchDailyShiftRequirements: function fetchDailyShiftRequirements(_ref6, payload) {
         var commit = _ref6.commit;
 
-        instance.get('http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload).then(function (res) {
+        instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload).then(function (res) {
             commit('setShiftRequirements', res.data[0]);
         });
     },
@@ -18270,7 +18276,8 @@ var actions = {
         var commit = _ref7.commit;
 
         var requestString = stringifyRequest(payload);
-        return instance.get('http://192.168.0.37:8000/api/r/WeeklyCalendarPage' + requestString).then(function (response) {
+        return instance.get('http://localhost:8000/api/r/WeeklyCalendarPage' + requestString).then(function (response) {
+            console.log(data);
             var data = response.data[0];
             var weeklist = [];
             var theseManagerDays = [];
@@ -18311,51 +18318,53 @@ var actions = {
             }
             commit('setWeek', weeklist);
             commit('setManagerDays', theseManagerDays);
+            commit('setMissingShifts', data.missingShifts);
         });
     },
     fetchVacationHistory: function fetchVacationHistory(_ref8, payload) {
         var commit = _ref8.commit;
 
-        instance.get('http://192.168.0.37:8000/api/r/HistoricalVacationTable/?locationId=' + payload).then(function (res) {
+        instance.get('http://localhost:8000/api/r/HistoricalVacationTable/?locationId=' + payload).then(function (res) {
             commit('setVacationHistory', res.data);
         });
     },
     fetchRequiredShifts: function fetchRequiredShifts(_ref9, payload) {
         var commit = _ref9.commit;
 
-        instance.get("http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?id=" + payload).then(function (res) {
+        instance.get("http://localhost:8000/api/r/LocationDailyShiftRequirements/?id=" + payload).then(function (res) {
             commit('setRequiredShifts', res.data[0]);
         });
     },
     submitNewShift: function submitNewShift(_ref10, payload) {
         var commit = _ref10.commit;
 
-        instance.post('http://192.168.0.37:8000/api/Schedule/set', payload).then(function (res) {});
+        instance.post('http://localhost:8000/api/Schedule/set', payload).then(function (res) {});
     },
     submitShiftChange: function submitShiftChange(_ref11, newshift) {
         var commit = _ref11.commit;
 
-        instance.post('http://192.168.0.37:8000/api/Schedule/changeDay', newshift).then(function (res) {});
+        instance.post('http://localhost:8000/api/Schedule/changeDay', newshift).then(function (res) {});
     },
     gmAcceptShiftChange: function gmAcceptShiftChange(_ref12, payload) {
         var commit = _ref12.commit;
 
-        instance.post('http://192.168.0.37:8000/api/Schedule/GMApproveChange', payload).then(function (res) {});
+        instance.post('http://localhost:8000/api/Schedule/GMApproveChange', payload).then(function (res) {});
     },
     payrollAcceptShiftChange: function payrollAcceptShiftChange(_ref13, payload) {
         var commit = _ref13.commit;
 
-        instance.post('http://192.168.0.37:8000/api/Schedule/PayrollApproveChange', payload).then(function (res) {});
+        instance.post('http://localhost:8000/api/Schedule/PayrollApproveChange', payload).then(function (res) {});
     },
     gmRejectShiftChange: function gmRejectShiftChange(_ref14, payload) {
         var commit = _ref14.commit;
 
-        instance.post('http://192.168.0.37:8000/api/Schedule/GMRejectChange', payload).then(function (res) {});
+        instance.post('http://localhost:8000/api/Schedule/GMRejectChange', payload).then(function (res) {});
     },
     approveSchedule: function approveSchedule(_ref15, payload) {
         var commit = _ref15.commit;
 
-        instance.post('http://192.168.0.37:8000/api/Schedule/approveSchedule', payload).then(function (res) {});
+        console.log('hit');
+        instance.post('http://localhost:8000/api/Schedule/approveSchedule', payload).then(function (res) {});
     },
     submitDailyShiftRequirements: function submitDailyShiftRequirements(_ref16, payload) {
         var commit = _ref16.commit;
@@ -18392,9 +18401,9 @@ var actions = {
         state.preSubmittedShiftsReq.Sunday.forEach(function (shift) {
             submittal.Sunday.push(shift.shiftCode);
         });
-        instance.post('http://192.168.0.37:8000/api/Restaurant/shiftrequirements', submittal).then(function (res) {
+        instance.post('http://localhost:8000/api/Restaurant/shiftrequirements', submittal).then(function (res) {
             setTimeout(function () {
-                instance.get('http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId).then(function (response) {});
+                instance.get('http://localhost:8000/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId).then(function (response) {});
             }, 300);
         });
     },
@@ -18485,6 +18494,74 @@ var actions = {
             preMutatedShiftsReq.Sunday.splice(_index8, 1);
         }
         commit('setPrepShiftRequirements', preMutatedShiftsReq);
+    },
+    checkShiftRequirements: function checkShiftRequirements(_ref20, payload) {
+        var commit = _ref20.commit;
+
+        var missingShifts = {
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: [],
+            satruday: [],
+            sunday: []
+        };
+        var requirements = state.weeklyRequirements;
+        var schedule = state.week;
+        console.log(requirements);
+        for (shift in requirements.monday) {
+            var index = schedule[0].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.monday[shift];
+            });
+            if (index === -1) {
+                missingShifts.monday.push(requirements.monday[shift]);
+            }
+        }
+        for (shift in requirements.tuesday) {
+            var _index9 = schedule[1].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.tuesday[shift];
+            });
+            if (_index9 === -1) {
+                missingShifts.tuesday.push(requirements.tuesday[shift]);
+            }
+        }
+        for (shift in requirements.wednesday) {
+            if (schedule[2].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.wednesday[shift];
+            }) === -1) {
+                missingShifts.wednesday.push(requirements.wednesday[shift]);
+            }
+        }
+        for (shift in requirements.thursday) {
+            if (schedule[3].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.thursday[shift];
+            }) === -1) {
+                missingShifts.thursday.push(requirements.thursday[shift]);
+            }
+        }
+        for (shift in requirements.friday) {
+            if (schedule[4].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.friday[shift];
+            }) === -1) {
+                missingShifts.friday.push(requirements.friday[shift]);
+            }
+        }
+        for (shift in requirements.satruday) {
+            if (schedule[5].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.satruday[shift];
+            }) === -1) {
+                missingShifts.satruday.push(requirements.satruday[shift]);
+            }
+        }
+        for (shift in requirements.sunday) {
+            if (schedule[6].shifts.indexOf(function (s) {
+                return s.shiftCode === requirements.sunday[shift];
+            }) === -1) {
+                missingShifts.sunday.push(requirements.sunday[shift]);
+            }
+        }
+        commit('setMissingShifts', missingShifts);
     }
 };
 
@@ -18986,7 +19063,7 @@ module.exports = (
 
 // check on default Array iterator
 var Iterators = __webpack_require__(36);
-var ITERATOR = __webpack_require__(7)('iterator');
+var ITERATOR = __webpack_require__(9)('iterator');
 var ArrayProto = Array.prototype;
 
 module.exports = function (it) {
@@ -19038,7 +19115,7 @@ var Iterators = __webpack_require__(36);
 var $iterCreate = __webpack_require__(336);
 var setToStringTag = __webpack_require__(64);
 var getPrototypeOf = __webpack_require__(341);
-var ITERATOR = __webpack_require__(7)('iterator');
+var ITERATOR = __webpack_require__(9)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
 var FF_ITERATOR = '@@iterator';
 var KEYS = 'keys';
@@ -19104,7 +19181,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
 /* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ITERATOR = __webpack_require__(7)('iterator');
+var ITERATOR = __webpack_require__(9)('iterator');
 var SAFE_CLOSING = false;
 
 try {
@@ -19182,7 +19259,7 @@ module.exports = Object.keys || function keys(O) {
 var global = __webpack_require__(12);
 var dP = __webpack_require__(37);
 var DESCRIPTORS = __webpack_require__(34);
-var SPECIES = __webpack_require__(7)('species');
+var SPECIES = __webpack_require__(9)('species');
 
 module.exports = function (KEY) {
   var C = global[KEY];
@@ -19300,7 +19377,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 var classof = __webpack_require__(59);
-var ITERATOR = __webpack_require__(7)('iterator');
+var ITERATOR = __webpack_require__(9)('iterator');
 var Iterators = __webpack_require__(36);
 module.exports = __webpack_require__(24).getIteratorMethod = function (it) {
   if (it != undefined) return it[ITERATOR]
@@ -31969,7 +32046,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.store = exports.router = exports.app = undefined;
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -32097,11 +32174,11 @@ Object.defineProperty(exports, "__esModule", {
       value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32181,11 +32258,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _moment = __webpack_require__(0);
 
@@ -32213,7 +32290,7 @@ exports.default = {
     name: 'weekly-calendar',
     components: { Day: _Day2.default, ShiftModal: _ShiftModal2.default, shift: _Shift2.default },
     props: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchWeek', 'fetchManagers', 'fetchShiftCodes', 'submitNewShift', 'submitShiftChange']), {
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchWeek', 'fetchManagers', 'fetchShiftCodes', 'submitNewShift', 'submitShiftChange', 'checkMissingShifts']), {
         nextWeek: function nextWeek() {
             var eowString = (0, _moment2.default)(this.eow).add(7, 'day').format('MM-DD-YYYY');
             return eowString;
@@ -32279,6 +32356,7 @@ exports.default = {
             this.reasonForChange = '';
         },
         submissionCompletion: function submissionCompletion() {
+            this.checkMissingShifts();
             this.$emit('shiftSubmitted');
         },
         closeModal: function closeModal() {
@@ -32346,11 +32424,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _ShiftSelection = __webpack_require__(394);
 
@@ -32401,11 +32479,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _moment = __webpack_require__(0);
 
@@ -32446,11 +32524,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32474,7 +32552,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -32482,7 +32560,7 @@ var _DailyShiftRequirements = __webpack_require__(249);
 
 var _DailyShiftRequirements2 = _interopRequireDefault(_DailyShiftRequirements);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _ShiftRequirementsModal = __webpack_require__(392);
 
@@ -32504,9 +32582,7 @@ exports.default = {
     },
     computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUnSubShiftReq'])),
     methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['submitDailyShiftRequirements']), {
-        addShiftDay: function addShiftDay(event) {
-            console.log(1);
-        },
+        addShiftDay: function addShiftDay(event) {},
         submitShiftsRequirements: function submitShiftsRequirements() {
             this.showModal = true;
         },
@@ -32516,7 +32592,7 @@ exports.default = {
         submit: function submit() {
             this.submitDailyShiftRequirements();
             this.showModal = false;
-            window.location.href = 'http://192.168.0.37:8000/GmPage';
+            window.location.href = 'http://localhost:8000/GmPage';
         }
     })
 };
@@ -32559,15 +32635,28 @@ exports.default = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
+
+var _extends2 = __webpack_require__(8);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(7);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 exports.default = {
-  name: 'approve-modal',
-  data: function data() {
-    return {
-      reason: ''
-    };
-  }
+    name: 'approve-modal',
+    data: function data() {
+        return {
+            reason: ''
+        };
+    },
+
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['checkShiftRequirements'])),
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays', 'getVacationHistory', 'getMissingShifts'])),
+    created: function created() {}
 };
 
 /***/ }),
@@ -32600,11 +32689,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _WeeklyCalendar = __webpack_require__(248);
 
@@ -32635,7 +32724,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
     name: 'gmapproveschedule',
     components: { WeeklyCalendar: _WeeklyCalendar2.default, DisapproveModal: _DisapproveModal2.default, ApproveModal: _ApproveModal2.default, ScheduleConsequences: _ScheduleConsequences2.default },
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['approveSchedule', 'fetchLoggedInUser', 'fetchVacationHistory', 'fetchRequiredShifts', 'fetchManagers', 'fetchWeek', 'fetchShiftCodes']), {
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['approveSchedule', 'fetchLoggedInUser', 'fetchVacationHistory', 'fetchRequiredShifts', 'fetchManagers', 'fetchWeek', 'fetchShiftCodes', 'checkShiftRequirements']), {
         distributeWeek: function distributeWeek(week) {
             for (var day in week) {
                 var dotw = (0, _moment2.default)(week[day].date, 'MM-DD-YYYY').format('ddd');
@@ -32677,7 +32766,7 @@ exports.default = {
         rejectSchedule: function rejectSchedule() {
             this.disapproveModal = true;
         },
-        approveScehudule: function approveScehudule() {
+        modalScheduleApproval: function modalScheduleApproval() {
             this.approvalModal = true;
         },
         shiftSubmitted: function shiftSubmitted() {
@@ -32722,12 +32811,13 @@ exports.default = {
                 locationId: _this2.$store.state.loggedInUser.locationId
             };
             _this2.fetchWeek(param).then(function () {
-                _this2.distributeWeek(_this2.getWeek);
-                _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId);
-                _this2.fetchShiftCodes(_this2.state);
-                _this2.fetchVacationHistory(_this2.$store.state.loggedInUser.locationId);
-                _this2.fetchRequiredShifts(_this2.$store.state.loggedInUser.locationId);
-                _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId);
+                _this2.fetchRequiredShifts(_this2.$store.state.loggedInUser.locationId).then(function () {
+                    _this2.distributeWeek(_this2.getWeek);
+                    _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId);
+                    _this2.fetchShiftCodes(_this2.state);
+                    _this2.fetchVacationHistory(_this2.$store.state.loggedInUser.locationId);
+                    _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId);
+                });
             });
         });
     }
@@ -32744,11 +32834,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32794,11 +32884,11 @@ var _asyncToGenerator2 = __webpack_require__(94);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _WeeklyCalendar = __webpack_require__(248);
 
@@ -32896,7 +32986,7 @@ var _dropdown = __webpack_require__(252);
 
 var _dropdown2 = _interopRequireDefault(_dropdown);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
@@ -32957,7 +33047,7 @@ var _asyncToGenerator2 = __webpack_require__(94);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -32973,7 +33063,7 @@ var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _vueToasted = __webpack_require__(253);
 
@@ -33171,11 +33261,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33219,13 +33309,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(9);
+var _extends2 = __webpack_require__(8);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
 var _routes = __webpack_require__(92);
 
-var _vuex = __webpack_require__(8);
+var _vuex = __webpack_require__(7);
 
 var _dropdown = __webpack_require__(252);
 
@@ -33240,7 +33330,7 @@ exports.default = {
             collapsed: true,
             SupplyHub: [{ title: 'Home (NEW)', link: "" }, { title: 'Products', link: "" }, { title: 'SKUs', link: "" }, { title: 'Contracts', link: "" }, { title: 'Bids', link: "" }, { title: 'Mapper', link: "" }, { title: 'Admin', link: "" }],
             MenuHub: [{ title: 'Products', link: "" }, { title: 'Recipes', link: "" }, { title: 'Menus', link: "" }, { title: 'Menus Items', link: "" }],
-            OpsHub: [{ title: 'My Pillars', link: "" }, { title: 'OOO Grid', link: "" }, { title: 'OOO Pivot Data', link: "" }, { title: 'Mgmt Change', link: "" }, { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/" }, { title: "Gm Page", link: "http://192.168.0.37:8000/GmPage" }],
+            OpsHub: [{ title: 'My Pillars', link: "" }, { title: 'OOO Grid', link: "" }, { title: 'OOO Pivot Data', link: "" }, { title: 'Mgmt Change', link: "" }, { title: 'Mgmt Scheduling', link: "http://localhost:8000/schedule/" }, { title: "Gm Page", link: "http://localhost:8000/GmPage" }],
             FinanceHub: [{ title: 'PurchaseOrders', link: "" }],
             AdminHub: [{ title: 'Mgmt Change', link: "" }, { title: 'Alerts', link: "" }, { title: 'Measure Units', link: "" }, { title: 'Ops Review', link: "" }],
             InventoryHub: [{ title: 'Home', link: "" }]
@@ -34443,7 +34533,7 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 
 var isObject = __webpack_require__(28);
 var isArray = __webpack_require__(115);
-var SPECIES = __webpack_require__(7)('species');
+var SPECIES = __webpack_require__(9)('species');
 
 module.exports = function (original) {
   var C;
@@ -34545,7 +34635,7 @@ var setToStringTag = __webpack_require__(64);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(27)(IteratorPrototype, __webpack_require__(7)('iterator'), function () { return this; });
+__webpack_require__(27)(IteratorPrototype, __webpack_require__(9)('iterator'), function () { return this; });
 
 module.exports = function (Constructor, NAME, next) {
   Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
@@ -34793,7 +34883,7 @@ module.exports = function (target, src, safe) {
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject = __webpack_require__(17);
 var aFunction = __webpack_require__(22);
-var SPECIES = __webpack_require__(7)('species');
+var SPECIES = __webpack_require__(9)('species');
 module.exports = function (O, D) {
   var C = anObject(O).constructor;
   var S;
@@ -35259,7 +35349,7 @@ __webpack_require__(122)('Array');
 // 19.1.3.6 Object.prototype.toString()
 var classof = __webpack_require__(59);
 var test = {};
-test[__webpack_require__(7)('toStringTag')] = 'z';
+test[__webpack_require__(9)('toStringTag')] = 'z';
 if (test + '' != '[object z]') {
   __webpack_require__(38)(Object.prototype, 'toString', function toString() {
     return '[object ' + classof(this) + ']';
@@ -35301,7 +35391,7 @@ var USE_NATIVE = !!function () {
   try {
     // correct subclassing with @@species support
     var promise = $Promise.resolve(1);
-    var FakePromise = (promise.constructor = {})[__webpack_require__(7)('species')] = function (exec) {
+    var FakePromise = (promise.constructor = {})[__webpack_require__(9)('species')] = function (exec) {
       exec(empty, empty);
     };
     // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
@@ -35557,7 +35647,7 @@ var redefine = __webpack_require__(38);
 var global = __webpack_require__(12);
 var hide = __webpack_require__(27);
 var Iterators = __webpack_require__(36);
-var wks = __webpack_require__(7);
+var wks = __webpack_require__(9);
 var ITERATOR = wks('iterator');
 var TO_STRING_TAG = wks('toStringTag');
 var ArrayValues = Iterators.Array;
@@ -40148,7 +40238,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }) : _vm._e(), _vm._v(" "), (_vm.approvalModal) ? _c('ApproveModal', {
     on: {
-      "close": _vm.closeModal
+      "close": _vm.closeModal,
+      "accept": _vm.approveThisSchedule
     }
   }) : _vm._e(), _vm._v(" "), _c('div', {
     staticStyle: {
@@ -40159,7 +40250,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('button', {
     staticClass: "button is-info",
     on: {
-      "click": this.approveScehudule
+      "click": this.modalScheduleApproval
     }
   }, [_vm._v("Approve")]), _vm._v(" "), _c('button', {
     staticClass: "button is-warning",
@@ -40384,7 +40475,21 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "modal-header"
   }, [_vm._v("A quick weekly review\n        ")]), _vm._v(" "), _c('div', {
     staticClass: "modal-body"
-  }, [_c('label', [_vm._v("\n            This Will say things\n          ")])]), _vm._v(" "), _c('div', {
+  }, [_vm._l((_vm.getManagerDays), function(manager) {
+    return _c('div', [(manager.shifts > 5) ? _c('p', [_vm._v(" " + _vm._s(manager.name) + " has more than 5 shifts and will be owed "), _c('strong', {
+      staticStyle: {
+        "color": "red"
+      }
+    }, [_vm._v(_vm._s((manager.shifts - 5)) + " ")]), _vm._v(" days")]) : _vm._e(), _vm._v(" "), (manager.shifts < 5) ? _c('p', [_vm._v(" " + _vm._s(manager.name) + " has less than 5 shifts and will need to use "), _c('strong', {
+      staticStyle: {
+        "color": "red"
+      }
+    }, [_vm._v(_vm._s(5 - manager.shifts))]), _vm._v("  days owed")]) : _vm._e()])
+  }), _vm._v(" "), _c('hr'), _vm._v(" "), _vm._l((_vm.getMissingShifts), function(value, key) {
+    return _c('div', [(value) ? _c('div', [_vm._v("\n                    " + _vm._s(key) + " "), _vm._l((value), function(code) {
+      return (code) ? _c('span', [_vm._v(" " + _vm._s(code) + ", ")]) : _vm._e()
+    })], 2) : _vm._e()])
+  })], 2), _vm._v(" "), _c('div', {
     staticClass: "modal-footer"
   }), _vm._v(" "), _c('button', {
     staticClass: "modal-default-button",
@@ -40589,6 +40694,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._v("Change Daily shift requirements")])], 1) : _vm._e()]), _vm._v(" "), _c('calendar', {
     attrs: {
+      "firstDay": 1,
       "events": _vm.getSchedule,
       "local": "en"
     },
@@ -40805,7 +40911,10 @@ if (true) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "container"
+    staticClass: "container",
+    staticStyle: {
+      "margin-top": "30%"
+    }
   }, [_vm._v("\n    Please select the Management page that you require\n    "), _c('button', {
     staticClass: "btn-default"
   }, [_c('router-link', {

@@ -48,7 +48,6 @@
                 'submitDailyShiftRequirements'
             ]),
             addShiftDay(event) {
-                console.log(1)
             },
             submitShiftsRequirements() {
                 this.showModal = true
@@ -59,7 +58,7 @@
             submit() {
                 this.submitDailyShiftRequirements();
                 this.showModal = false
-                window.location.href='http://192.168.0.37:8000/GmPage'
+                window.location.href='http://localhost:8000/GmPage'
             }
         }
     }
@@ -78,7 +77,7 @@
     .header{
         vertical-align: central;
         text-align: center;
-        width: 0px auto;
+        width: 0 auto;
         margin:0px;
         padding:0px;
     }

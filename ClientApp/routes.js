@@ -20,25 +20,25 @@ export const routes = [
 ]
 
 var instance = axios.create({
-    baseURL: 'http://192.168.0.37:8000/api/',
-    headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
+    baseURL: 'http://localhost:8000/api/',
+    headers: { 'Access-Control-Allow-Origin': 'http://localhost:8001' }
 })
 
 function checkAuth(to, from, next) {
     let retrievedToken = document.cookie
     if (retrievedToken[0] != "AuthToken") {
         var token = retrievedToken.split('=')[1]
-        instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token)
+        instance.get('http://localhost:8001/api/auth/checkToken/?token=' + token)
             .then((res) => {
                 if (res.data == -1) {                   
                     window.sessionStorage.setItem('lastPage', window.location.href)
-                    window.location.href = 'http://192.168.0.37:8001'
+                    window.location.href = 'http://localhost:8001'
                 } else next()
             })
     }
     else {
         window.sessionStorage.setItem('lastPage', window.location.href)
-       // window.location.href = 'http://192.168.0.37:8001'
+       // window.location.href = 'http://localhost:8001'
 
     }
 }
