@@ -16,6 +16,7 @@ namespace Ops.Domain
         string _Id;
         bool _approved;
         List<ManagerDays> _managerDays = new List<ManagerDays>();
+        string _locationId;
         public override Events[] Execute(Commands cmd)
         {
             if (cmd is SetManagerDaySchedule) { return _SetManagerDaySchedule((SetManagerDaySchedule)(cmd)); }
@@ -114,7 +115,7 @@ namespace Ops.Domain
             var managerToIndex = _managerDays.FindIndex(m => m.ManagerId == cmd.ManagerId);
             if(managerToIndex != -1 && cmd.ManagerId != "Cancel Shift")
             {
-                if(_managerDays[managerToIndex].shifts < 5)
+                if(_managerDays[managerToIndex].Shifts < 5)
                 {
                     var code = cmd.ShiftCode.Split('(');
                     string shiftCode = code[0].Trim();
@@ -129,7 +130,7 @@ namespace Ops.Domain
                 _managerDays.Add(new ManagerDays
                 {
                     ManagerId = cmd.ManagerId,
-                    shifts = 1
+                    Shifts = 1
                 });
             }
             if(cmd.RequestingManagerRole == "3")
@@ -232,7 +233,7 @@ namespace Ops.Domain
             var index = _managerDays.FindIndex(m => m.ManagerId == cmd.ManagerId);
             if(index != -1)
             {
-                if(_managerDays[index].shifts > 4)
+                if(_managerDays[index].Shifts > 4)
                 {
                     shiftCode = shiftCode + " (Owed)";
                     shiftStatus = "3";
@@ -265,6 +266,7 @@ namespace Ops.Domain
 
         private Events[] _GMApproveSchedue(GMApproveSchedule cmd)
         {
+            List<Events> events = new List<Events>();
             if (string.IsNullOrEmpty(cmd.EOW)) { throw new Exception("End of Week Date is a required field"); }
             if (string.IsNullOrEmpty(cmd.Id)) { throw new Exception("Location Id is a required field"); }
             if (string.IsNullOrEmpty(cmd.GMId)) { throw new Exception("General Manager id is a required field"); }
@@ -278,7 +280,80 @@ namespace Ops.Domain
                 LocationId = cmd.RestaurantId,
                 EOW = cmd.EOW
             };
-            return new Events[] { schedule };
+            foreach (ManagerDays manager in _managerDays)
+            {
+                if(manager.Shifts < 5)
+                {
+                    for(int i = manager.Shifts; i <= 5; i++)
+                    {
+                        ManagerDayScheduleSet scheduleSet = new ManagerDayScheduleSet
+                        {
+                            ManagerId = manager.ManagerId,
+                            LocationId = cmd.RestaurantId,
+                            ShiftCode = "VAC",
+                            EOW = cmd.EOW,
+                            Day = DateGetter(cmd.EOW, manager.ShiftDates),
+                            ShiftStatus = "2"
+                        };
+                        manager.Shifts++;
+                        manager.ShiftDates.Add(scheduleSet.Day);
+                        events.Add(scheduleSet);
+                    }
+                }
+                if(manager.Shifts == 5)
+                {
+                    ManagerDayScheduleSet scheduleSet1 = new ManagerDayScheduleSet
+                    {
+                        ManagerId = manager.ManagerId,
+                        LocationId = cmd.RestaurantId,
+                        ShiftCode = "OFF",
+                        EOW = cmd.EOW,
+                        Day = DateGetter(cmd.EOW, manager.ShiftDates),
+                        ShiftStatus = "2"
+                    };
+                    events.Add(scheduleSet1);
+                    ManagerDayScheduleSet scheduleSet2 = new ManagerDayScheduleSet
+                    {
+                        ManagerId = manager.ManagerId,
+                        LocationId = cmd.RestaurantId,
+                        ShiftCode = "OFF",
+                        EOW = cmd.EOW,
+                        Day = DateGetter(cmd.EOW, manager.ShiftDates),
+                        ShiftStatus = "2"
+                    };
+                    manager.Shifts++;
+                    manager.ShiftDates.Add(scheduleSet1.Day);
+
+                    manager.Shifts++;
+                    manager.ShiftDates.Add(scheduleSet2.Day);
+                    events.Add(scheduleSet2);
+                }
+            }
+            return events.ToArray();
+        }
+
+        private string DateGetter(string eOW, List<string> shiftDates)
+        {
+            int dayIndex = shiftDates.FindIndex(date => date == eOW);
+            string day = null;
+            if (dayIndex == -1)
+            {
+                return eOW;
+            }
+            DateTime eow;
+            DateTime.TryParse(eOW, out eow);
+            while(day == null)
+            {
+                int i = -1;
+                eow.AddDays(i);
+                string aDay = eow.ToString("MM-dd-YYYY");
+                if (shiftDates.FindIndex(date => date == aDay) == -1)
+                {
+                    day = aDay;
+                }
+                i--;
+            }
+            return day;
         }
 
         public override void Hydrate(EventFromES evt)
@@ -293,19 +368,19 @@ namespace Ops.Domain
             var fromId = evt.Data["ManagerFromId"].ToString();
             var toId = evt.Data["ManagerId"].ToString();
             var managerfrom = _managerDays.Find(m => m.ManagerId == fromId);
-            managerfrom.shifts--;
+            managerfrom.Shifts--;
             int managerToIndex = _managerDays.FindIndex(m => m.ManagerId == toId);
             if(managerToIndex == -1)
             {
                 _managerDays.Add(new ManagerDays
                 {
                     ManagerId = evt.Data["ManagerId"],
-                    shifts = 1
+                    Shifts = 1
                 });
             }
             else
             {
-                _managerDays[managerToIndex].shifts++;
+                _managerDays[managerToIndex].Shifts++;
             }
         }
 
@@ -322,13 +397,25 @@ namespace Ops.Domain
             if (shiftStatus == "1" || shiftStatus == "3")
             {
                 var managerId = evt.Data["ManagerId"].ToString();
+                string shiftDate = evt.Data[""];
                 var index = _managerDays.FindIndex(m => m.ManagerId == managerId);
-                if (index != -1) _managerDays[index].shifts++;
-                else _managerDays.Add(new ManagerDays
+                if (index != -1)
                 {
-                    ManagerId = evt.Data["ManagerId"],
-                    shifts = 1
-                });
+                    _managerDays[index].Shifts++;
+                    _managerDays[index].ShiftDates.Add(shiftDate);
+                }
+                else
+                {
+                    _managerDays.Add(new ManagerDays
+                    {
+                        ManagerId = evt.Data["ManagerId"],
+                        Shifts = 1,
+                        ShiftDates = new List<string>(),
+                        LocationId = evt.Data["LocationId"]
+                    });
+                    index = _managerDays.FindIndex(m => m.ManagerId == managerId);
+                    _managerDays[index].ShiftDates.Add(shiftDate);
+                }
             }
 
         }
@@ -379,6 +466,8 @@ namespace Ops.Domain
     class ManagerDays
     {
         public string ManagerId { get; set; }
-        public int shifts { get; set; }
+        public int Shifts { get; set; }
+        public List<string> ShiftDates { get; set; }
+        public string LocationId { get; set; }
     }
 }

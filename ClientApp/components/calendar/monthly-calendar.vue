@@ -62,6 +62,14 @@
                     :onclick="gotoShift">
                 ><router-link to="/dailyShiftRequirements">Change Daily shift requirements</router-link>
             </button>
+            <button v-if="this.getUser.role === 3"
+                    style="margin-left:80%;
+                    font-size:x-small;
+                    border-radius:5px;
+                    border:1px solid black;"
+                    :onclick="gotoShift">
+                ><router-link :to=this.weeklyUrl>switch to weekly</router-link>
+            </button>
         </div>    
         <calendar :firstDay="1"
                   :events='getSchedule'
@@ -128,6 +136,11 @@
         'submitShiftChange',
         'fetchLoggedInUser'
         ]),
+        getEow() {
+            let daysuntileow = 7 - moment().format('d');
+            let eowstring = moment().add(daysuntileow, 'day').format('MM-DD-YYYY')
+            return eowstring
+        },
       addShift(event) {          
         let dateArray = event.toString().split(' ')
         let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
@@ -206,7 +219,8 @@
                 this.fetchSchedule(this.$store.state.loggedInUser.locationId)
                     .then(() => {
                         this.fetchManagers(this.$store.state.loggedInUser.locationId)
-                        this.fetchShiftCodes(this.state)
+                        this.fetchShiftCodes(this.state),
+                        this.weeklyUrl = "/approveSchedule/?eow=" + this.getEow();
                     })
             })
       
@@ -217,5 +231,9 @@
 <style>
     .full-calendar-body .dates .dates-events .events-week .events-day {
         min-height:100px !important;
+    }
+    .event-box .event-item {
+        background-color: #015351 !important;
+        color:white !important
     }
 </style>
