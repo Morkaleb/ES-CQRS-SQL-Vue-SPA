@@ -1,6 +1,5 @@
 <template>
     <div>
-       <br/><hr /><hr />
         Welcome {{getUser.managerName}}
     </div>
 </template>

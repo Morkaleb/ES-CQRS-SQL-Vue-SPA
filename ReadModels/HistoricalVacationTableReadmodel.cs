@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Ops.Infra.EventStore;
 using Ops.Infra.ReadModels;
@@ -18,10 +19,12 @@ namespace Ops.ReadModels
                     HistoricalVacationTableData historicalVacationData = new HistoricalVacationTableData
                     {
                         Id = data["ManagerId"],
-                        ManagerName = data["Name"],
+                        ManagerFirstName = data["FirstName"],
+                        ManagerLastName = data["LastName"],
                         LastUpdated = anEvent.TimeStamp,
-                        VacationOwed = 0,
-                        locationId = data["LocationId"]
+                        VacationOwed = data["VacationDaysOwed"],
+                        LocationId = data["LocationId"],
+                        VacationRate = data["VacationRate"]
                     };
 
                     readModelCollection["HistoricalVacationTable"].Add(historicalVacationData);
@@ -36,6 +39,29 @@ namespace Ops.ReadModels
                     history.StatHolidaysOwed = history.StatHolidaysOwed + status.DaysToOwe;
                     Book.book = readModelCollection;
                     return history;
+
+                case "ManagerDayScheduleChanged":
+                    {
+                        string managerFromId = data["ManagerFromId"];
+                        string ShiftCode = data["ShiftCode"];
+                        if (ShiftCode.Split("(").Length > 1)
+                        {
+                            if(ShiftCode.Split("(")[1] == "Owed)")
+                            {
+                                var manager = (HistoricalVacationTableData)readModelCollection["HistoricalVacationTable"].Find(m => m.Id == managerFromId);
+                                manager.StatHolidaysOwed--;
+                                string managerToId = data["ManagerId"];
+                                if(managerToId != "Cancel Shift")
+                                {
+                                    HistoricalVacationTableData managerTo =
+                                        (HistoricalVacationTableData)readModelCollection["HistoricalVacationTable"].Find(m => m.Id == managerToId);
+                                    managerTo.StatHolidaysOwed++;                                     
+                                       
+                                }
+                            }
+                        }
+                        return null;
+                    }
 
             }
             return null;
@@ -53,9 +79,11 @@ namespace Ops.ReadModels
     public class HistoricalVacationTableData : ReadModelData
     {
         public string LastUpdated { get; set; }
-        public string ManagerName { get; set; }
+        public string ManagerFirstName { get; set; }
+        public string ManagerLastName { get; set; }
         public double VacationOwed { get; set; }
         public int StatHolidaysOwed { get; set; }
-        public string locationId { get; set; }
+        public string LocationId { get; set; }
+        public double VacationRate { get; set; }
     }
 }

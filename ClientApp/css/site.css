@@ -69,5 +69,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            background-color: #015351;
         }
 }

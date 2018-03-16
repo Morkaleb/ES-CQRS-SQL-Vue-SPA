@@ -20,7 +20,8 @@ namespace Ops.ReadModels
                     {
                         Id = data["ManagerId"],
                         ManagerId = data["ManagerId"],
-                        ManagerName = data["Name"],
+                        FirstName = data["FirstName"],
+                        LastName = data["LastName"],
                         ServiceYears = GetServiceYears(anEvent.TimeStamp),
                         LastUpdated = anEvent.TimeStamp,
                         VacationBalance = data["VacationDaysOwed"],
@@ -96,7 +97,8 @@ namespace Ops.ReadModels
     public class ManagerTableData : ReadModelData
     {
         public string ManagerId { get; set; }
-        public string ManagerName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public double ServiceYears { get; set; }
         public double VacationBalance { get; set; }
         public double StatBalance { get; set; }

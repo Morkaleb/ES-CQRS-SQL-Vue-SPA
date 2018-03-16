@@ -1,5 +1,4 @@
 <template>
-  <div class="container">
       <div class="Daily">
           <span class="header"><h4>{{day}}</h4></span>
           <hr />
@@ -14,7 +13,6 @@
               </li>
           </ul>
       </div>
-  </div>
 </template>
 
 <script>
@@ -68,9 +66,11 @@
     .Daily {
         border: 1px solid black;
         border-radius: 5px;
-        padding: 5px 0px;
-        width: 100%;
+        padding: 5px 10px;
+        margin:1%;
+        width: 12%;
         box-shadow: 10px 10px 5px #999999;
+        float:left;
     }
     .header{
         margin-left:30%;

@@ -19,6 +19,7 @@ namespace Ops.ReadModels
                         {
                             Id = Guid.NewGuid().ToString(),
                             ShiftCode = data["ShiftCode"].Value,
+                            ShiftStatus = data["ShiftStatus"],
                             ManagerId = data["ManagerId"],
                             ShiftDate = data["Day"],
                             LocationId = locationId,
@@ -35,6 +36,7 @@ namespace Ops.ReadModels
     public class ManagerScheduleTableData : ReadModelData
     {        
         public string ShiftCode { get; set; }
+        public string ShiftStatus { get; set; }
         public string ManagerId { get; set; }
         public string LocationId { get; set; }
         public string ShiftDate { get; set; }

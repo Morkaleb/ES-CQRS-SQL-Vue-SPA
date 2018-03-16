@@ -9,9 +9,9 @@
 
           <div class="modal-body">
 
-              <div v-for="manager in getManagerDays">
-                  <p v-if="manager.shifts > 5 "> {{manager.name}} has more than 5 shifts and will be owed <strong style="color: red">{{ ( manager.shifts - 5) }} </strong> days</p>
-                  <p v-if="manager.shifts < 5 "> {{manager.name}} has less than 5 shifts and will need to use <strong style="color: red">{{5 -  manager.shifts }}</strong>  days owed</p>
+              <div v-for="manager in getManagerDays" >
+                  <p v-if="manager.shifts > 5 && manager.name !='Cancel Shift'"> {{manager.name}} has more than 5 shifts and will be owed <strong style="color: red">{{ ( manager.shifts - 5) }} </strong> days</p>
+                  <p v-if="manager.shifts < 5 && manager.name !='Cancel Shift'"> {{manager.name}} has less than 5 shifts and will need to use <strong style="color: red">{{5 -  manager.shifts }}</strong>  days owed</p>
               </div>
 
               <hr>

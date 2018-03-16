@@ -22,7 +22,14 @@ namespace Ops.Infra.CommandToPublishEvent
             {
                 foreach (var evt in eventStream)
                 {
-                    aggregate.Hydrate(evt);
+                    try
+                    {
+                        aggregate.Hydrate(evt);
+                    }
+                    catch(Exception e)
+                    {
+                        Console.Write(e);
+                    }
                 }
 
             }

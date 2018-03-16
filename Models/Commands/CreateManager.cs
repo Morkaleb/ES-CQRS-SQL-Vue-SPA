@@ -4,7 +4,8 @@ namespace Ops.Models.commands
 {
     public class CreateManager : Commands
     {
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public int Role { get; set; }
         public double VacationRate { get; set; }
         public double VacationDaysOwed { get; set; }

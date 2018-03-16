@@ -200,13 +200,14 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style lang="scss" scoped>
-.navbar {
-  color: #015351;
-  height: 80px;
-  padding: 8px 10px;
-},
-.navbar-menu {
-   color: #015351;
-}
+    .navbar {
+      color: #015351;
+      height: 80px;
+      padding:0;
+    }
+
+    .navbar-menu {
+       color: #015351;
+    }
 </style>
 

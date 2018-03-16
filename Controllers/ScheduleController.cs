@@ -6,6 +6,12 @@ using Ops.Infra.CommandToPublishEvent;
 using Ops.Infra.ReadModels;
 using Ops.Models.commands;
 using Ops.ReadModels;
+using System.Net.Http;
+using System.Reflection;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
 
 namespace Ops.Controllers
 {
@@ -143,6 +149,63 @@ namespace Ops.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/[controller]/download")]
+        public FileResult GetDownload()
+        {
+            var scheduledata = Book.book["ManagerScheduleTable"];
+            var managerData = Book.book["ManagerTable"];
+            var queryString = Request.QueryString.ToString();
+            var startDate = queryString.Split('&')[0].Trim('?').Trim('=').Split("=")[1];
+            var endDate = queryString.Split('&')[1].Trim('?').Trim('=').Split("=")[1];
+            DateTime t1 = Convert.ToDateTime(startDate);
+            DateTime t2 = Convert.ToDateTime(endDate);
+            List<CSVImportRow> collection = new List<CSVImportRow>();
+            foreach(ManagerTableData manager in managerData)
+            {
+                CSVImportRow row = new CSVImportRow
+                {
+                    EmployeeId = Int32.Parse(manager.Id),
+                    FirstName = manager.FirstName,
+                    LastName = manager.LastName,
+                    StatDays = 0,
+                    Vacation = manager.VacationBalance    
+                };
+                collection.Add(row);
+            }
+            foreach (ManagerScheduleTableData data in scheduledata)
+            {
+                var shiftDate = Convert.ToDateTime(data.ShiftDate);
+                int datecompare = DateTime.Compare(shiftDate, t1);
+                int dateCompare2 = DateTime.Compare(t2, shiftDate);
+                if (DateTime.Compare(shiftDate, t1) >= 0 && DateTime.Compare(t2, shiftDate) >= 0)
+                {
+                    if (data.ShiftStatus == "3")
+                    {
+                        var row = collection.Find(r => r.EmployeeId.ToString() == data.ManagerId);
+                        row.StatDays++;
+                    }
+                    if (data.ShiftStatus == "2")
+                    {
+                        var row = collection.Find(r => r.EmployeeId.ToString() == data.ManagerId);
+                        row.StatDays--;
+                    }
+                    if (data.ShiftStatus == "1")
+                    {
+                        var row = collection.Find(r => r.EmployeeId.ToString() == data.ManagerId);
+                        ManagerTableData manager = (ManagerTableData)managerData.Find(m => m.Id == data.ManagerId);
+                        row.Vacation += manager.VacationRate/5;
+                    };
+                }
+            }
+            string FileName = startDate + "_" + endDate;
+            WriteCSV(collection, FileName);
+            var result = System.IO.File.ReadAllBytes(@"C:\Working\Ops\" + FileName + ".csv");
+            return File(result, "application/x-msdownload", FileName + ".csv");
+
+        }
+
+
         private string GetEOW(string date)
         {
             string EOW;
@@ -158,5 +221,45 @@ namespace Ops.Controllers
             }
             return EOW;
         }
+
+        public void WriteCSV<T>(IEnumerable<T> items, string fileName)
+        {
+            Type itemType = typeof(T);
+            var props = itemType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .OrderBy(p => p.Name);
+            if (!System.IO.File.Exists(@"C:\Working\Ops\" + fileName + ".csv"))
+            {
+                using (var writer = new StreamWriter(@"C:\Working\Ops\" + fileName + ".csv"))
+                {
+                    writer.WriteLine(string.Join(", ", props.Select(p => p.Name)));
+
+                    foreach (var item in items)
+                    {
+                        writer.WriteLine(string.Join(", ", props.Select(p => p.GetValue(item, null))));
+                    }
+                }
+            }
+            else {
+                System.IO.File.Delete(@"C:\Working\Ops\" + fileName + ".csv");
+                using (var writer = new StreamWriter(@"C:\Working\Ops\" + fileName + ".csv"))
+                {
+                    writer.WriteLine(string.Join(", ", props.Select(p => p.Name)));
+
+                    foreach (var item in items)
+                    {
+                        writer.WriteLine(string.Join(", ", props.Select(p => p.GetValue(item, null))));
+                    }
+                }
+            }
+        }
+    }
+
+    public class CSVImportRow
+    {
+        public int EmployeeId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public double Vacation { get; set; }
+        public int StatDays { get; set; }
     }
 }

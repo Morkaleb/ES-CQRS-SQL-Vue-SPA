@@ -50,7 +50,7 @@ namespace Ops.Domain
 
         public override void Hydrate(EventFromES evt)
         {
-            _Id = evt.Id;
+            _Id = evt.Id.Split(".")[1];
         }
     }
 }

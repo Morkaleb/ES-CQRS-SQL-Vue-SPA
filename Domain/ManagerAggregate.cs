@@ -38,7 +38,8 @@ namespace Ops.Domain
         {
             if (!string.IsNullOrEmpty(_Id)) { throw new Exception("Manager already created"); }
             if (string.IsNullOrEmpty(cmd.Id)) { throw new Exception("Id is a required field"); }
-            if (string.IsNullOrEmpty(cmd.Name)) { throw new Exception("Name is a required field"); }
+            if (string.IsNullOrEmpty(cmd.FirstName)) { throw new Exception("FirstName is a required field"); }
+            if (string.IsNullOrEmpty(cmd.LastName)) { throw new Exception("LastName is a required field"); }
             if (string.IsNullOrEmpty(cmd.EmailAddress)) { throw new Exception("Email is a required field"); }
             if (cmd.Role == -1 || cmd.Role == 0) { throw new Exception("Role is a required field"); }
             if (cmd.VacationDaysOwed == -1) cmd.VacationDaysOwed = 0;
@@ -47,7 +48,8 @@ namespace Ops.Domain
             {
                 ManagerId = cmd.Id,
                 LocationId = cmd.LocationId,
-                Name = cmd.Name,
+                FirstName = cmd.FirstName,
+                LastName = cmd.LastName,
                 Role = cmd.Role,
                 VacationRate = cmd.VacationRate,
                 VacationDaysOwed = cmd.VacationDaysOwed,

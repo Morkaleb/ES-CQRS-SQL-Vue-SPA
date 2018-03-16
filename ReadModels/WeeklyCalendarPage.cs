@@ -102,11 +102,13 @@ namespace Ops.ReadModels
                                 Shift shift = new Shift
                                 {
                                     ShiftType = shiftType,
-                                    ManagerName = managerName
+                                    ManagerName = managerName,
+                                    ManagerId = managerId,
+                                    ShiftCode = shiftcode
                                 };
                                 var managershiftIndex = calendarDay.Shifts.FindIndex(s => s.ManagerName == managerName);
                                 var shiftCodeShiftIndex = calendarDay.Shifts.FindIndex(s => s.ShiftType == shiftType);
-                                if (managershiftIndex == -1 && shiftCodeShiftIndex == -1)
+                                if (shiftCodeShiftIndex == -1)
                                 {
                                     calendarDay.Shifts.Add(shift);
                                 }
@@ -277,7 +279,7 @@ namespace Ops.ReadModels
         private string getName(string managerId)
         {
             ManagerTableData manager =  (ManagerTableData)Book.book["ManagerTable"].Find(m => m.Id == managerId);
-            return manager.ManagerName;
+            return manager.FirstName + " " + manager.LastName;
         }
 
         private int findWeekByLocation(List<ReadModelData> list, string eOW, int locationId)

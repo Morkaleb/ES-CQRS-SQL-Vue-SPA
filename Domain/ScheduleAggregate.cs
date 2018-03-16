@@ -62,10 +62,10 @@ namespace Ops.Domain
             if (string.IsNullOrEmpty(cmd.GMId)) { throw new Exception("General Manager Id is a required field"); }
             if (string.IsNullOrEmpty(cmd.RequestId)) { throw new Exception("RequestId is a required field"); }
             // to origional shift manager
-            SendSchedulingEmail.RejectedEmailBuilder(cmd.ManagerTo.ManagerName, cmd.ManagerFrom.ManagerName,
+            SendSchedulingEmail.RejectedEmailBuilder(cmd.ManagerTo.FirstName, cmd.ManagerFrom.FirstName,
                 "", cmd.GM.EmailAddress, cmd.ManagerFrom.EmailAddress, cmd.Reason);
             // to pending shift manager
-            SendSchedulingEmail.RejectedEmailBuilder(cmd.ManagerFrom.ManagerName, cmd.GM.ManagerName,
+            SendSchedulingEmail.RejectedEmailBuilder(cmd.ManagerFrom.FirstName, cmd.GM.FirstName,
                 "", cmd.GM.EmailAddress, cmd.ManagerTo.EmailAddress, cmd.Reason);
             return new Events[] { new GMRejectedScheduleChange
                 {

@@ -1,5 +1,5 @@
 <template>
-    <div class="container" style="width:100%">
+    <div  style="width:100%">
         <h1 class="title" style="margin: 0 auto; font-size: x-large; text-align: center">
             Please confirm the week's schedule
         </h1>
@@ -15,7 +15,7 @@
                          @shiftSubmitted="this.shiftSubmitted">
             </weekly-calendar> <hr />
         <div>
-            <ScheduleConsequences :consequences="this.getManagers" class="consequences"></ScheduleConsequences>
+            <ScheduleConsequences class="container"></ScheduleConsequences>
         </div>
         <DisapproveModal v-if="disapproveModal" @close="closeModal"></DisapproveModal>
         <ApproveModal v-if="approvalModal" @close="closeModal" @accept="approveThisSchedule">
@@ -33,7 +33,7 @@
     import WeeklyCalendar from '../Calendar/WeeklyCalendar'
     import DisapproveModal from './DisapproveModal'
     import ApproveModal from './ApproveModal'
-    import shift from '../Calendar/Shift'
+    import shift from '../Calendar/TheShift'
     import ScheduleConsequences from '../Calendar/ScheduleConsequences'
     import moment from 'moment'
 
@@ -139,15 +139,17 @@
                     eow: this.eow,
                     locationId: this.$store.state.loggedInUser.locationId
                 }
-                this.fetchWeek(param)
+                this.fetchManagers(this.$store.state.loggedInUser.locationId)
                     .then(() => {
-                        this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)
+                        this.fetchWeek(param)
                             .then(() => {
-                                this.distributeWeek(this.getWeek)
-                                this.fetchManagers(this.$store.state.loggedInUser.locationId)
-                                this.fetchShiftCodes(this.state)
-                                this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
-                                this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                                this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)
+                                    .then(() => {
+                                        this.distributeWeek(this.getWeek)
+                                        this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                                        this.fetchShiftCodes(this.state)
+                                        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
+                                    })
                             })
                     })
             })

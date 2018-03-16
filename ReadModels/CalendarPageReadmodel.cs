@@ -201,7 +201,7 @@ namespace Ops.ReadModels
             string name = "";
             foreach (ManagerTableData manager in list)
             {
-                if (manager.ManagerId == id) name = manager.ManagerName;
+                if (manager.ManagerId == id) name = manager.FirstName;
             }
             return name;
         }

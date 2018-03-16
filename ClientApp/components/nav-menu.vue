@@ -1,5 +1,5 @@
 <template>
-    <div class="navbar navbar-inverse navbar-fixed-top gi-sm">
+    <!--<nav class="navbar" role="navigation" aria-label="main navigation" >
         <div class="container">
             <div class="navbar-header ">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -31,9 +31,7 @@
                 </ul>
 
             </div>
-        </div>
-    </div>
-
+        </nav>-->    
 </template>
 
 <script>
@@ -66,8 +64,8 @@
                     { title: 'OOO Grid', link: "" },
                     { title: 'OOO Pivot Data', link: "" },
                     { title: 'Mgmt Change', link: "" },
-                    { title: 'Mgmt Scheduling', link: "http://localhost:8000/schedule/"},
-                    {title: "Gm Page", link: "http://localhost:8000/GmPage"}
+                    { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/"},
+                    {title: "Gm Page", link: "http://192.168.0.37:8000/GmPage"}
 
                 ],
                 FinanceHub: [
@@ -123,6 +121,9 @@
 </script>
 
 <style>
+    nav .navbar {
+        background-color: #015351;
+    }
     .slide-enter-active, .slide-leave-active {
         transition: max-height .35s
     }

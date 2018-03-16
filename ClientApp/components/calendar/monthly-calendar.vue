@@ -62,20 +62,27 @@
                     :onclick="gotoShift">
                 ><router-link to="/dailyShiftRequirements">Change Daily shift requirements</router-link>
             </button>
-            <button v-if="this.getUser.role === 3"
-                    style="margin-left:80%;
+            <button style="margin-left:80%;
                     font-size:x-small;
                     border-radius:5px;
                     border:1px solid black;"
                     :onclick="gotoShift">
                 ><router-link :to=this.weeklyUrl>switch to weekly</router-link>
             </button>
+            <button style="margin-left:80%;
+                    font-size:x-small;
+                    border-radius:5px;
+                    border:1px solid black;"
+                    v-on:click="downloadSchedule">
+                Download the monthly schedule
+            </button>
         </div>    
         <calendar :firstDay="1"
                   :events='getSchedule'
                   local="en"
                   @dayClick="addShift($event)"
-                  @eventClick="changeShift($event)">
+                  @eventClick="changeShift($event)"
+                  @changeMonth="changedmonth($event)">
             >
         </calendar>
     </div>
@@ -109,7 +116,8 @@
         managerChangeFrom: '',
         concerns: [{}],
         params: '',
-        events: [{}]       
+        events: [{}],
+        weeklyUrl:""
       }
     },
     components: {
@@ -129,12 +137,13 @@
     },
     methods: {
       ...mapActions([
-        'fetchSchedule',
-        'fetchManagers',
-        'fetchShiftCodes',
-        'submitNewShift',
-        'submitShiftChange',
-        'fetchLoggedInUser'
+            'fetchSchedule',
+            'fetchManagers',
+            'fetchShiftCodes',
+            'submitNewShift',
+            'submitShiftChange',
+            'fetchLoggedInUser',
+            'exportMonth'
         ]),
         getEow() {
             let daysuntileow = 7 - moment().format('d');
@@ -144,7 +153,7 @@
       addShift(event) {          
         let dateArray = event.toString().split(' ')
         let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
-        this.shiftDate = moment(date).format("MM-DD-YYYY")
+        this.shiftDate = moment(date).format("MM-DDYYYY")
         this.showModal = true
       },
       changeShift(event) {
@@ -157,6 +166,10 @@
       closeModal () {
         this.showModal = false
         this.showChangeModal = false
+      },
+      downloadSchedule() {
+          console.log(this)
+          this.exportMonth()
       },
       submit () {
         let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')
@@ -206,13 +219,17 @@
       },
       submissionCompletion() {
           setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)
-          Toasted.show('Shift change saved')
+          this.$toast.open({duration:1000, type:'is-success', message: 'Shift change saved'})
       },
       gotoShift() {
           
+      },
+      changedmonth(event) {
+          console.log('---------------------------------')
+          console.log(event)
+          console.log('---------------------------------')
       }
-    },
-    
+    },    
     async created() {
         this.fetchLoggedInUser()
             .then(() => {

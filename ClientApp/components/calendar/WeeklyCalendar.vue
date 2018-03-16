@@ -56,7 +56,7 @@
             <button><a :href=this.lastWeekString><</a></button>
             <button><a :href=this.nextweekString>></a></button>
         </div>
-        <div class="container weekly">
+        <div class="container-fluid weekly">
             <day class="dayBox" :Day="this.monday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
             <day class="dayBox" :Day="this.tuesday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
             <day class="dayBox" :Day="this.wednesday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
@@ -71,9 +71,9 @@
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import moment from 'moment'
-  import Day from './Day'
+  import Day from './OneDay'
   import ShiftModal from './ShiftModal.vue'
-  import shift from './Shift'
+  import shift from './TheShift'
   import Toasted from 'vue-toasted';
 
   export default {
@@ -94,21 +94,20 @@
             'fetchManagers',
             'fetchShiftCodes',
             'submitNewShift',
-            'submitShiftChange',
-            'checkMissingShifts'
+            'submitShiftChange'
         ]),
         nextWeek() {
-            let eowString = moment(this.eow).add(7, 'day').format('MM-DD-YYYY')
+            let eowString = moment(this.eow, "MM-DD-YYYY").add(7, 'day').format('MM-DD-YYYY')
            return eowString
         },
         lastWeek() {
-            let eowString = moment(this.eow).subtract(7, 'day').format('MM-DD-YYYY')
+            let eowString = moment(this.eow, "MM-DD-YYYY").subtract(7, 'day').format('MM-DD-YYYY')
             return eowString;
         },
         addShift(event) {
             let dateArray = event.toString().split(' ')
             let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
-            this.shiftDate = moment(date).format("MM-DDYYYY")
+            this.shiftDate = moment(date, "MM-DD-YYYY").format("MM-DD-YYYY")
             this.showModal = true
         },
         dayClicked(event) {
@@ -154,7 +153,7 @@
             this.reasonForChange = ''
         },
         submissionCompletion() {
-            this.checkMissingShifts()
+           // this.checkMissingShifts()
             this.$emit('shiftSubmitted')
         },
         closeModal() {
@@ -225,7 +224,7 @@
         border-radius:5px;
     }
     .weekly{
-        width:100%;
+        width:90%;
         margin:0 0 0 10px 0;
         padding:0px;
     }
@@ -241,5 +240,6 @@
         border: 1px solid black !important;
         border-radius: 5px;
         box-shadow: 10px 10px 5px #999999;
+        width:80%;
     }
 </style>

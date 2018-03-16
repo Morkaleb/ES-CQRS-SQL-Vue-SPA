@@ -44,7 +44,7 @@ _Looking for aspnetcore & Angular 2.x+ Universal starter? [click here](https://g
  or
  
  * Run the application in VSCode or Visual Studio 2017 (Hit `F5`)
- * Browse to [http://localhost:5000](http://localhost:5000)
+ * Browse to [http://192.168.0.37:5000](http://192.168.0.37:5000)
 
 # Extras
 
