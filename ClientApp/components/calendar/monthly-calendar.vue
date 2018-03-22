@@ -12,6 +12,8 @@
                         <option v-for="manager in getManagers">{{ manager.Name }}</option>
                     </select>
                 </div>
+                <span>If Manager in Charge</span>
+                <input v-model="managerInCharge" placeholder="Manager in Charge name"/>
                 <div>
                     <span>Shift</span>
                     <select id='ShiftCode'
@@ -37,6 +39,7 @@
                             v-model="selectedManager">
                         <option v-for="manager in getManagers">{{ manager.Name }}</option>
                     </select>
+
                 </div>
                 <div>
                     <div>
@@ -49,6 +52,34 @@
             </div>
             <div slot="footer">
                 <button @click="submitChange()"> Submit </button>
+                <button @click="closeModal()">Close</button>
+            </div>
+        </shift-modal>
+        <shift-modal v-if="printModal">
+            <h3 slot="header" class="=modal-card-title">Which period would you like to print?</h3>
+            <div slot="body">
+                <p>Select a start and end date</p>
+                <div style="width:15%; float:left;" >
+                    <b-field label="">
+                        <b-datepicker placeholder="Type or select a date..."
+                                      icon="calendar-today"
+                                      :readonly="false"
+                                      v-model="PrintStartDate"
+                                      :first-day-of-week=1>
+                        </b-datepicker>
+                    </b-field>
+                    <b-field label="">
+                        <b-datepicker placeholder="Type or select a date..."
+                                      icon="calendar-today"
+                                      :readonly="false"
+                                      v-model="PrintEndDate"
+                                      :first-day-of-week=1>
+                        </b-datepicker>
+                    </b-field>
+                </div>
+            </div>
+            <div slot="footer">
+                <button @click="printSchedule()"> Submit </button>
                 <button @click="closeModal()">Close</button>
             </div>
         </shift-modal>
@@ -73,7 +104,7 @@
                     font-size:x-small;
                     border-radius:5px;
                     border:1px solid black;"
-                    v-on:click="downloadSchedule">
+                    v-on:click="showPrintModal">
                 Download the monthly schedule
             </button>
         </div>    
@@ -81,8 +112,7 @@
                   :events='getSchedule'
                   local="en"
                   @dayClick="addShift($event)"
-                  @eventClick="changeShift($event)"
-                  @changeMonth="changedmonth($event)">
+                  @eventClick="changeShift($event)">
             >
         </calendar>
     </div>
@@ -99,26 +129,30 @@
     export default {
     name: 'monthly-calendar',
     data () {
-      return {
-        showModal: false,
-        manager: '',
-        shiftCode: '',
-        shiftDate: '',
-        shiftEOW: '',
-        Date: this.shiftDate,
-        newName: '',
-        newShiftCode: '',
-        reasonForChange: '',
-        selectedManager: '',
-        dayToChange: '',
-        shiftCodeToChangeFrom: '',
-        showChangeModal: false,
-        managerChangeFrom: '',
-        concerns: [{}],
-        params: '',
-        events: [{}],
-        weeklyUrl:""
-      }
+         return {
+            showModal: false,
+            printModal:false,
+            manager: '',
+            shiftCode: '',
+            shiftDate: '',
+            shiftEOW: '',
+            Date: this.shiftDate,
+            newName: '',
+            newShiftCode: '',
+            reasonForChange: '',
+            selectedManager: '',
+            dayToChange: '',
+            shiftCodeToChangeFrom: '',
+            showChangeModal: false,
+            managerChangeFrom: '',
+            concerns: [{}],
+            params: '',
+            events: [{}],
+            weeklyUrl: "",
+            PrintEndDate: new Date(),
+            PrintStartDate: new Date(),
+            managerInCharge:""
+         }
     },
     components: {
         shiftModal: ShiftModel,
@@ -145,90 +179,96 @@
             'fetchLoggedInUser',
             'exportMonth'
         ]),
-        getEow() {
+      getEow() {
             let daysuntileow = 7 - moment().format('d');
             let eowstring = moment().add(daysuntileow, 'day').format('MM-DD-YYYY')
             return eowstring
         },
-      addShift(event) {          
-        let dateArray = event.toString().split(' ')
-        let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]
-        this.shiftDate = moment(date).format("MM-DDYYYY")
-        this.showModal = true
+      addShift(event) {
+          this.shiftDate = moment(event.toString()).format("MM-DD-YYYY")
+          this.showModal = true
       },
       changeShift(event) {
-        this.shiftCode = event.YOUR_DATA.class
-        this.dayToChange = event.start
-        this.showChangeModal = true
-        this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]
-        this.managerFromId = event.YOUR_DATA.ManagerId
+            this.shiftCode = event.YOUR_DATA.class
+            this.dayToChange = event.start
+            this.showChangeModal = true
+            this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]
+            this.managerFromId = event.YOUR_DATA.ManagerId
+      },
+      showPrintModal() {
+          this.printModal = true;
       },
       closeModal () {
-        this.showModal = false
-        this.showChangeModal = false
+          this.showModal = false
+          this.showChangeModal = false
+          this.printModal = false
       },
-      downloadSchedule() {
-          console.log(this)
-          this.exportMonth()
+      printSchedule() {
+          let payload = {
+              start: this.PrintStartDate.toString(),
+              end: this.PrintEndDate.toString(),
+              locationId:this.$store.state.loggedInUser.locationId
+          }
+          this.exportMonth(payload)
+          this.closeModal();
       },
-      submit () {
-        let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')
-        let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
-        let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)
-        let aNewShift = {
-          LocationId: this.$store.state.loggedInUser.locationId,
-          ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,
-          ManagerId: this.getManagers[managerIndex].Id,
-          Day: this.shiftDate,
-          ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus
-        }
-        this.submitNewShift(aNewShift)
-        this.emptyFields()
-        this.closeModal()
-        this.submissionCompletion()
+      submit() {
+            console.log(this.selectedManager)
+            let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')
+            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
+            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)
+            let aNewShift = {
+              LocationId: this.$store.state.loggedInUser.locationId,
+              ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,
+              ManagerId: this.getManagers[managerIndex].Id,
+              Day: this.shiftDate,
+              ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus
+            }
+            if (this.selectedManager === "Manager In Charge") {
+                aNewShift.ManagerId = this.managerInCharge + " IC"
+            }
+            this.submitNewShift(aNewShift)
+            this.emptyFields()
+            this.closeModal()
+            this.submissionCompletion()
       },
       submitChange () {
-        let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
-        let GMIndex = this.getManagers.findIndex(m => m.Role === 3)
-        let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)
-        let shiftChange = {
-          RequestId: '',
-          Id: this.getManagers[managerIndex].Id,
-          ManagerId: this.getManagers[managerIndex].Id,
-          ManagerToName: this.getManagers[managerIndex].Name,
-          ManagerFromName: this.managerChangeFrom,
-          EOW: this.getSchedule[shiftDayIndex].EOW,
-          ShiftCode: this.shiftCode,
-          Reason: this.reasonForChange,
-          shiftDate: this.dayToChange,
-          ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,
-          GMEmailAddress: this.getManagers[GMIndex].EmailAddress,
-          LocationId: this.$store.state.loggedInUser.locationId,
-          RequestingManagerRole: this.$store.state.loggedInUser.role,
-          managerFromId:this.managerFromId
-        }
-        this.submitShiftChange(shiftChange)
-        this.closeModal()
-        this.emptyFields()
-        this.submissionCompletion()
+            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
+            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)
+            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)
+            let shiftChange = {
+              RequestId: '',
+              Id: this.getManagers[managerIndex].Id,
+              ManagerId: this.getManagers[managerIndex].Id,
+              ManagerToName: this.getManagers[managerIndex].Name,
+              ManagerFromName: this.managerChangeFrom,
+              EOW: this.getSchedule[shiftDayIndex].EOW,
+              ShiftCode: this.shiftCode,
+              Reason: this.reasonForChange,
+              shiftDate: this.dayToChange,
+              ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,
+              GMEmailAddress: this.getManagers[GMIndex].EmailAddress,
+              LocationId: this.$store.state.loggedInUser.locationId,
+              RequestingManagerRole: this.$store.state.loggedInUser.role,
+              managerFromId:this.managerFromId
+            }
+            this.submitShiftChange(shiftChange)
+            this.closeModal()
+            this.emptyFields()
+            this.submissionCompletion()
       },
       emptyFields () {
-        this.selectedManager = ''
-        this.newShiftCode = ''
-        this.reasonForChange = ''
+            this.selectedManager = ''
+            this.newShiftCode = ''
+            this.reasonForChange = ''
       },
       submissionCompletion() {
-          setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)
-          this.$toast.open({duration:1000, type:'is-success', message: 'Shift change saved'})
+            setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)
+            this.$toast.open({duration:1000, type:'is-success', message: 'Shift change saved'})
       },
       gotoShift() {
           
-      },
-      changedmonth(event) {
-          console.log('---------------------------------')
-          console.log(event)
-          console.log('---------------------------------')
-      }
+      }      
     },    
     async created() {
         this.fetchLoggedInUser()

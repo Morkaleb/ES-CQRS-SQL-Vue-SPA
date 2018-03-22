@@ -33,12 +33,16 @@ namespace Ops.ReadModels
 
                 case "ManagerDayScheduleSet":
                     string Id = data["ManagerId"];
-                    string shiftCode = data["ShiftCode"];
-                    HistoricalVacationTableData history = (HistoricalVacationTableData)readModelCollection["HistoricalVacationTable"].Find(m => m.Id == Id);
-                    ShiftStatusTableData status = getShift(readModelCollection["ShiftStatusTable"], shiftCode);
-                    history.StatHolidaysOwed = history.StatHolidaysOwed + status.DaysToOwe;
-                    Book.book = readModelCollection;
-                    return history;
+                    var IdArray = Id.Split(" ").Length -1;
+                    if (Id.Split(" ")[IdArray] != "IC")
+                    {
+                        string shiftCode = data["ShiftCode"];
+                        HistoricalVacationTableData history = (HistoricalVacationTableData)readModelCollection["HistoricalVacationTable"].Find(m => m.Id == Id);
+                        ShiftStatusTableData status = getShift(readModelCollection["ShiftStatusTable"], shiftCode);
+                        history.StatHolidaysOwed = history.StatHolidaysOwed + status.DaysToOwe;
+                        Book.book = readModelCollection;
+                        return history;
+                    } return null;
 
                 case "ManagerDayScheduleChanged":
                     {

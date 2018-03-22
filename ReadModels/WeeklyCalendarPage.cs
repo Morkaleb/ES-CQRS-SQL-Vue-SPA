@@ -278,8 +278,17 @@ namespace Ops.ReadModels
 
         private string getName(string managerId)
         {
-            ManagerTableData manager =  (ManagerTableData)Book.book["ManagerTable"].Find(m => m.Id == managerId);
-            return manager.FirstName + " " + manager.LastName;
+            var IdArray = managerId.Split(" ");
+            int ic = IdArray.Length -1;
+            if (IdArray[ic] == "IC")
+            {
+                return managerId;
+            }
+            else
+            {
+                ManagerTableData manager = (ManagerTableData)Book.book["ManagerTable"].Find(m => m.Id == managerId);
+                return manager.FirstName + " " + manager.LastName;
+            }
         }
 
         private int findWeekByLocation(List<ReadModelData> list, string eOW, int locationId)

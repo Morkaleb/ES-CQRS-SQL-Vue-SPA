@@ -218,7 +218,12 @@ const actions = ({
                     Name: 'Cancel Shift',
                     Id: 'Cancel Shift'
                 }
+                var inCharge = {
+                    Name: "Manager In Charge",
+                    Id: "MC"
+                }
                 managerList.push(Cancellar)
+                managerList.push(inCharge)
                 commit('setManagers', managerList)
             })
     },
@@ -499,12 +504,16 @@ const actions = ({
             }
         }
         commit('setMissingShifts', missingShifts)
-    },
-    download: ({ commit }, payload) => {
-        window.location.href = 'http://192.168.0.37:8000/api/Schedule/download/' + request
-    },
+    },   
     exportMonth: ({ commit }, payload) => {
-        window.location.href = 'http://192.168.0.37:8000/api/Excel/scedule'
+        let startArray = payload.start.split(" ");
+        let startstring = startArray[1] + "-" + startArray[2] + "-" + startArray[3]
+        let endArray = payload.end.split(" ");
+        let endstring = endArray[1] + "-" + endArray[2] + "-" + endArray[3]
+        startstring = moment(startstring, "MMM-DD-YYYY").format("MM-DD-YYYY")
+        endstring = moment(endstring, "MMM-DD-YYYY").format("MM-DD-YYYY")
+        let quesryString = "?LocationId=" + payload.locationId + "&StartDate=" + startstring + "&EndDate=" + endstring;
+        window.location.href ='http://192.168.0.37:8000/api/Schedule/download' + quesryString
     }
 })
 

@@ -12,11 +12,22 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Hosting;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Threading.Tasks;
 
 namespace Ops.Controllers
 {
     public class ScheduleController : Controller
     {
+        private IHostingEnvironment _hostingEnvironment;
+
+        public ScheduleController(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+
         [HttpPost]
         [Route("api/[controller]/set")]
         public ActionResult SetManagerDaySchedule([FromBody] SetManagerDaySchedule setManagerDaySchedule)
@@ -148,9 +159,42 @@ namespace Ops.Controllers
                 return BadRequest(e.Message.ToString());
             }
         }
-
         [HttpGet]
         [Route("api/[controller]/download")]
+        public ActionResult GetMonth()
+        {
+            var scheduledata = Book.book["WeeklyCalendarPage"];
+            string queryString = Request.QueryString.ToString();
+            string locationId = queryString.Split('&')[0].Trim('?').Trim('=').Split("=")[1];
+            string startDate = queryString.Split('&')[1].Trim('?').Trim('=').Split("=")[1];
+            string endDate = queryString.Split('&')[2].Trim('?').Trim('=').Split("=")[1];
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string sFileName = locationId + "_" + startDate + "_" + endDate + ".xlsx";
+            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            List<WeeklyCalendarData> filtered = new List<WeeklyCalendarData>();
+            DateTime startTime = Convert.ToDateTime(startDate);
+            DateTime endtime = Convert.ToDateTime(endDate);
+            DateTime aTime = startTime.AddDays(7);
+            string month = aTime.ToString("MMMMM");
+            foreach (WeeklyCalendarData week in scheduledata)
+            {
+                var shiftDate = Convert.ToDateTime(week.EOW);
+                int datecompare = DateTime.Compare(shiftDate, startTime);
+                int dateCompare2 = DateTime.Compare(endtime, shiftDate);
+                if (DateTime.Compare(shiftDate, startTime) >= 0 && DateTime.Compare(endtime, shiftDate) >= 0)
+                {
+                    filtered.Add(week);
+                }
+            }
+            filtered = filtered.OrderBy(d => d.EOW).ToList();
+            string result = WritepdfTable(sFileName, filtered, month);
+            string fileName = startDate + "_" + endDate + "_" + locationId + "_Schedule.pdf";
+            return Content(result,"text/html");
+        }
+
+
+        [HttpGet]
+        [Route("api/[controller]/downloadPGI")]
         public FileResult GetDownload()
         {
             var scheduledata = Book.book["ManagerScheduleTable"];
@@ -161,7 +205,7 @@ namespace Ops.Controllers
             DateTime t1 = Convert.ToDateTime(startDate);
             DateTime t2 = Convert.ToDateTime(endDate);
             List<CSVImportRow> collection = new List<CSVImportRow>();
-            foreach(ManagerTableData manager in managerData)
+            foreach (ManagerTableData manager in managerData)
             {
                 CSVImportRow row = new CSVImportRow
                 {
@@ -169,7 +213,7 @@ namespace Ops.Controllers
                     FirstName = manager.FirstName,
                     LastName = manager.LastName,
                     StatDays = 0,
-                    Vacation = manager.VacationBalance    
+                    Vacation = manager.VacationBalance
                 };
                 collection.Add(row);
             }
@@ -194,7 +238,7 @@ namespace Ops.Controllers
                     {
                         var row = collection.Find(r => r.EmployeeId.ToString() == data.ManagerId);
                         ManagerTableData manager = (ManagerTableData)managerData.Find(m => m.Id == data.ManagerId);
-                        row.Vacation += manager.VacationRate/5;
+                        row.Vacation += manager.VacationRate / 5;
                     };
                 }
             }
@@ -239,7 +283,8 @@ namespace Ops.Controllers
                     }
                 }
             }
-            else {
+            else
+            {
                 System.IO.File.Delete(@"C:\Working\Ops\" + fileName + ".csv");
                 using (var writer = new StreamWriter(@"C:\Working\Ops\" + fileName + ".csv"))
                 {
@@ -251,6 +296,34 @@ namespace Ops.Controllers
                     }
                 }
             }
+        }
+
+        public string WritepdfTable(string fileName, List<WeeklyCalendarData> data, string month)
+        {
+            string table = "<!DOCTYPE html><html><body><table><caption>" + month + " Schedule</caption>";
+            table += "<tr><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th><th>Sunday</th>";
+            foreach (WeeklyCalendarData week in data)
+            {
+                string weekRow = "<tr>";
+                foreach(WeeklyCalendarDay day in week.Days)
+                {
+                    DateTime date;
+                    DateTime.TryParse(day.Date,out date);
+                    string dOFTheM = date.Day.ToString();
+                    string dayCell = "<p>" + dOFTheM + "</p>";
+                    foreach(Shift shift in day.Shifts)
+                    {
+                        dayCell += "" + shift.ManagerName + " " + shift.ShiftCode.Split(" ")[0]  + "<br/>";
+                    }
+                    dayCell = "<td>" + dayCell + "</td>";
+                    weekRow += dayCell;
+                }
+                weekRow += "</tr>";
+                table += weekRow;
+            }
+            table += "</table></body></html>";
+            table += "<style>table, th, td {border:1px solid black;} td {padding:5px; margin:5px;} p{margin-left:45%;}</style>";
+            return table;
         }
     }
 

@@ -198,6 +198,12 @@ namespace Ops.ReadModels
 
         private string findManager(List<ReadModelData> list, string id)
         {
+            var IdArray = id.Split(" ");
+            int ic = IdArray.Length - 1;
+            if (IdArray[ic] == "IC")
+            {
+                return id;
+            }
             string name = "";
             foreach (ManagerTableData manager in list)
             {
