@@ -75,7 +75,8 @@
                     </div>
 
                     <div class="navbar-end">
-                        <span style="color:white; font-size:xx-small;" v-on:click="logout"> Sign Out {{getUser.managerName}} </span>
+                        <span style="color:white; margin-top:33%;"> hello,  {{ getUser.firstName }} {{getUser.lastName}} </span>
+                        <button class="btn btn-default" style="color:white; border-color:#015351; background-color: #015351; font-size:xx-small;" v-on:click="logout"> Sign Out</button>
                         <img src="../Assets/SmallLogo.png" style="width: 100px; height: 60px; padding: .6em 1em .6em 1em" alt="hub_logo" />
                     </div>
                 </div>
@@ -190,7 +191,12 @@
     .navbar{
         margin:0;
         border-radius:0;
-        font-size:15px
+        font-size:13px;
+        padding:0;
+    }
+    .navbar-dropdown{
+        padding:0;
+        margin:0;
     }
    
 </style>

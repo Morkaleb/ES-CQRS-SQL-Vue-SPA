@@ -213,33 +213,88 @@
 </script>
 
 <style scoped>
-    .dayBox {
-        width: 13%;
-        background: white;
-        float: left;
-        margin:0px 8px;
-        height: 55vh;
-        box-shadow: 10px 10px 5px #999999;
-        border: 1px solid black;
-        border-radius:5px;
+    @media(min-width:1400px) {
+        .dayBox {
+            width: 13%;
+            background: white;
+            float: left;
+            margin: 0px 8px;
+            height: 55vh;
+            box-shadow: 10px 10px 5px #999999;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+        .consequences {
+            background: white;
+            vertical-align: central;
+            text-align: center;
+            margin: auto;
+            padding: auto;
+            float: none;
+            clear: both;
+            overflow: auto;
+            border: 1px solid black !important;
+            border-radius: 5px;
+            box-shadow: 10px 10px 5px #999999;
+            width: 80%;
+        }
+    }
+    @media(m-width:801px) {
+        .dayBox {
+            width: 40%;
+            background: white;
+            float: left;
+            margin: 0px 8px 8px;
+            box-shadow: 10px 10px 5px #999999;
+            border: 1px solid black;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .consequences {
+            background: white;
+            vertical-align: central;
+            text-align: center;
+            margin: auto;
+            padding: auto;
+            float: none;
+            clear: both;
+            overflow: auto;
+            border: 1px solid black !important;
+            border-radius: 5px;
+            box-shadow: 10px 10px 5px #999999;
+            width: 80%;
+        }
+    }
+    @media(max-width:800px) {
+        .dayBox {
+            width: 80%;
+            background: white;
+            float: left;
+            margin: 0px 8px 8px;            
+            box-shadow: 10px 10px 5px #999999;
+            border: 1px solid black;
+            border-radius: 5px;
+            overflow:auto;
+        }
+        .consequences {
+            background: white;
+            vertical-align: central;
+            text-align: center;
+            margin: auto;
+            padding: auto;
+            float: none;
+            clear: both;
+            overflow: auto;
+            border: 1px solid black !important;
+            border-radius: 5px;
+            box-shadow: 10px 10px 5px #999999;
+            width: 80%;
+        }
     }
     .weekly{
         width:90%;
         margin:0 0 0 10px 0;
         padding:0px;
     }
-    .consequences {
-        background: white;
-        vertical-align: central;
-        text-align:center;
-        margin: auto;
-        padding: auto;
-        float: none;
-        clear: both;
-        height: 50vh !important;
-        border: 1px solid black !important;
-        border-radius: 5px;
-        box-shadow: 10px 10px 5px #999999;
-        width:80%;
-    }
+   
 </style>

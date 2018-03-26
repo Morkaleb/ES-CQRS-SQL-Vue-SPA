@@ -108,10 +108,11 @@ namespace Ops.ReadModels
                                 };
                                 var managershiftIndex = calendarDay.Shifts.FindIndex(s => s.ManagerName == managerName);
                                 var shiftCodeShiftIndex = calendarDay.Shifts.FindIndex(s => s.ShiftType == shiftType);
-                                if (shiftCodeShiftIndex == -1)
-                                {
-                                    calendarDay.Shifts.Add(shift);
-                                }
+                                calendarDay.Shifts.Add(shift);
+                                //if (shiftCodeShiftIndex == -1)
+                                //{
+                                //    calendarDay.Shifts.Add(shift);
+                                //}
                                 weeklyCalendar = removeShiftFromRequirements(weeklyCalendar, stringDayOfWeek, shiftcode);
                             }
                             else if(shiftIndex != -1 && calendarDay.Shifts[shiftIndex].ManagerName == "Cancel Shift")

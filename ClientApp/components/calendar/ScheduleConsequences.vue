@@ -93,19 +93,37 @@
   .card {
     border-radius: 5px;
     border: 1px solid darkgray;
-    height: 500px;
+    height: auto;
+    overflow:auto;
   }
   strong {
     text-align: right;
   }
-    .ConsiderationCard {
-        border-radius: 5px;
-        padding: 2px;
-        margin-left: 1vw;
-        float: left;
-        text-align: left;
-        border: 1px solid black;
-        height:35vh;
-        width:16vw;
+    @media(min-width:801px) {
+        .ConsiderationCard {
+            border-radius: 5px;
+            padding: 2px;
+            margin-left: 1vw;
+            float: left;
+            text-align: left;
+            border: 1px solid black;
+            height: 35vh;
+            width: 16vw;
+        }
     }
+    @media(max-width:800px) {
+        .ConsiderationCard {
+            border-radius: 5px;
+            padding: 2px;
+            margin-left: 1vw;
+            float: left;
+            text-align: left;
+            border: 1px solid black;
+            height: auto;
+            width: 80%;
+            overflow:auto;
+        }
+    }
+
+
 </style>

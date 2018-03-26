@@ -24,22 +24,28 @@ namespace Ops.ReadModels
                     if (locationIndex != -1)
                     {
                         CalendarPageData page = (CalendarPageData)readModelCollection["CalendarPage"][locationIndex];
-                        int shiftIndex = page.Schedule.FindIndex(shift => shift.ShiftCode == shiftCode);
-                        if (shiftIndex == -1)
+                        //int shiftIndex = page.Schedule.FindIndex(shift => shift.ShiftCode == shiftCode);
+                        //if (shiftIndex == -1)
+                        //{
+                        //    page.Schedule.Add(new CalendarSchedule
+                        //    {
+                        //        ShiftCode = data["ShiftCode"],
+                        //        ManagerId = data["ManagerId"],
+                        //        ManagerName = name
+                        //    });
+                        //}
+                        //else if(shiftIndex != -1)
+                        //{
+                        //    page.Schedule[shiftIndex].ManagerName = name;
+                        //    page.Schedule[shiftIndex].ManagerId = data["ManagerId"];
+                        //    page.Schedule[shiftIndex].ShiftCode = data["ShiftCode"];
+                        //};
+                        page.Schedule.Add(new CalendarSchedule
                         {
-                            page.Schedule.Add(new CalendarSchedule
-                            {
-                                ShiftCode = data["ShiftCode"],
-                                ManagerId = data["ManagerId"],
-                                ManagerName = name
-                            });
-                        }
-                        else if(shiftIndex != -1)
-                        {
-                            page.Schedule[shiftIndex].ManagerName = name;
-                            page.Schedule[shiftIndex].ManagerId = data["ManagerId"];
-                            page.Schedule[shiftIndex].ShiftCode = data["ShiftCode"];
-                        };
+                            ShiftCode = data["ShiftCode"],
+                            ManagerId = data["ManagerId"],
+                            ManagerName = name
+                        });
                     }
                     else
                     {

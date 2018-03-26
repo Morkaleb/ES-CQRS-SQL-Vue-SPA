@@ -195,6 +195,10 @@
             this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]
             this.managerFromId = event.YOUR_DATA.ManagerId
       },
+      checkWindowSize() {
+          let size = window.innerWidth;
+          if(size < 800) window.location.href = this.weeklyUrl
+      },
       showPrintModal() {
           this.printModal = true;
       },
@@ -270,17 +274,17 @@
           
       }      
     },    
-    async created() {
-        this.fetchLoggedInUser()
-            .then(() => {
-                this.fetchSchedule(this.$store.state.loggedInUser.locationId)
-                    .then(() => {
-                        this.fetchManagers(this.$store.state.loggedInUser.locationId)
-                        this.fetchShiftCodes(this.state),
-                        this.weeklyUrl = "/approveSchedule/?eow=" + this.getEow();
-                    })
-            })
-      
+    created() {
+    this.weeklyUrl = "/approveSchedule/?eow=" + this.getEow();
+    this.checkWindowSize()
+    this.fetchLoggedInUser()
+        .then(() => {
+            this.fetchSchedule(this.$store.state.loggedInUser.locationId)
+                .then(() => {
+                    this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                    this.fetchShiftCodes(this.state)
+                })
+        })      
     }
   }
 </script>
