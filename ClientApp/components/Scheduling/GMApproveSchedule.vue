@@ -30,16 +30,10 @@
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
-    import WeeklyCalendar from '../Calendar/WeeklyCalendar'
-    import DisapproveModal from './DisapproveModal'
-    import ApproveModal from './ApproveModal'
-    import shift from '../Calendar/TheShift'
-    import ScheduleConsequences from '../Calendar/ScheduleConsequences'
     import moment from 'moment'
 
     export default {
     name: 'gmapproveschedule',
-    components: { WeeklyCalendar, DisapproveModal, ApproveModal, ScheduleConsequences },
     methods: {
         ...mapActions([
             'approveSchedule',

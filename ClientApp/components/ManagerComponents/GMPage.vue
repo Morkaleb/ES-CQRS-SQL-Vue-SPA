@@ -10,6 +10,7 @@
     import moment from 'moment'
 
     export default {
+        name:"GmPage",
         data() {
             return {
                 loggedInUser: {},

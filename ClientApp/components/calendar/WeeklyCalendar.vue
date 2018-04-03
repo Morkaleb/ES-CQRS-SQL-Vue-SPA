@@ -70,15 +70,11 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import moment from 'moment'
-  import Day from './OneDay'
-  import ShiftModal from './ShiftModal.vue'
-  import shift from './TheShift'
+  import moment from 'moment' 
   import Toasted from 'vue-toasted';
 
   export default {
         name: 'weekly-calendar',
-        components: { Day, ShiftModal, shift },
         props: [
             'monday',
             'tuesday',

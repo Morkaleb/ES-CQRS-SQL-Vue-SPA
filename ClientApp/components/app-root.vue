@@ -91,13 +91,28 @@
 <script>
     import { routes } from '../routes'
     import Vue from 'vue'
+    import Vuex from 'vuex'
+
     import HomePage from './home-page'
     import NavMenu from './nav-menu'
-    import MonthlyCalendar from './calendar/monthly-calendar'
+    import MonthlyCalendar from './Calendar/MonthlyCalendar'
     import calendar from 'vue2-simple-calendar'
     import dropdown from './layout/dropdown'
-    import Vuex from 'vuex'
-    import shift from './calendar/TheShift'
+    import shift from './Calendar/TheShift'
+    import oneday from './Calendar/OneDay'
+    import scheduleConsequences from './Calendar/ScheduleConsequences'
+    import shiftModal from './Calendar/ShiftModal'
+    import weeklyCalendar from './Calendar/WeeklyCalendar'
+    import dailyShiftRequirements from './ManagerComponents/DailyShiftRequirements'
+    import gmPage from './ManagerComponents/GmPage'
+    import shiftRequirementsModal from './ManagerComponents/ShiftRequirementsModal'
+    import shiftRequirementsWeek from './ManagerComponents/ShiftRequirementsWeek'
+    import shiftSelection from './ManagerComponents/ShiftSelection'
+    import approveModal from './Scheduling/ApproveModal'
+    import dsapproveModal from './Scheduling/DisapproveModal'
+    import gMApproveSchedule from './Scheduling/GMApproveSchedule'
+    import PayRollApproval from './Scheduling/PayrollApproval'
+    import ReviewScheduleChange from './Scheduling/ReviewScheduleChange'
 
     import { mapGetters, mapActions } from 'vuex'
     
@@ -105,8 +120,23 @@
     Vue.component('home-page', HomePage);
     Vue.component('nav-menu', NavMenu);
     Vue.component('monthly-calendar', MonthlyCalendar);
-    Vue.component('dropdown', dropdown)
-    Vue.component('shift', shift)
+    Vue.component('dropdown', dropdown);
+    Vue.component('shift', shift);
+    Vue.component('oneday', oneday);
+    Vue.component('scheduleConsequences', scheduleConsequences);
+    Vue.component('shiftModal', shiftModal);
+    Vue.component('dailyShiftRequirements', dailyShiftRequirements);
+    Vue.component('gmPage', gmPage);
+    Vue.component('shiftRequirementsModal', shiftRequirementsModal);
+    Vue.component('shiftRequirementsWeek', shiftRequirementsWeek);
+    Vue.component('shiftSelection', shiftSelection);
+    Vue.component('approveModal', approveModal);
+    Vue.component('dsapproveModal', dsapproveModal);
+    Vue.component('gMApproveSchedule', gMApproveSchedule);
+    Vue.component('PayRollApproval', PayRollApproval);
+    Vue.component('ReviewScheduleChange', ReviewScheduleChange);
+    Vue.component('calendar', calendar);
+    
     Vue.use(Vuex)
 
     export default {

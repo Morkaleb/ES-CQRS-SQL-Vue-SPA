@@ -1,5 +1,5 @@
 import HomePage from 'components/home-page'
-import MonthlyCalendar from 'components/calendar/monthly-calendar'
+import MonthlyCalendar from 'components/Calendar/MonthlyCalendar'
 import GMApproveSchedule from 'components/Scheduling/GMApproveSchedule'
 import PayrollApproval from 'components/Scheduling/PayrollApproval'
 import ReviewScheduleChange from './components/Scheduling/ReviewScheduleChange'
@@ -12,13 +12,13 @@ import axios from 'axios'
 
 export const routes = [
     { path: '/', component: HomePage, display: 'Home', style: 'glyphicon glyphicon-home' },
-    { path: '/schedule', component: MonthlyCalendar, display: 'Monthly Schedule', beforeEnter: checkAuth},
-    { path: '/approveSchedule', component: GMApproveSchedule, display: 'GM Approval', beforeEnter: checkAuth },
-    { path: '/payroll', component: payRoll, display: "Payroll", beforeEnder: checkAuth },
-    { path: '/payrollApproval', component: PayrollApproval, display: 'Payroll Approval', beforeEnter: checkAuth},
-    { path: '/reviewScheduleChange', component: ReviewScheduleChange, display: 'Review Schedule Change Requeast', beforeEnter: checkAuth},
-    { path: '/dailyShiftRequirements', component: ShiftRequirementsWeek, display: 'Set restaurant requirements', beforeEnter: checkAuth },
-    {path: '/GmPage', component: GmPage, display: 'Restaurant Management', beforeEnter: checkAuth }
+    { path: '/schedule', component: MonthlyCalendar, display: 'Monthly Schedule'},
+    { path: '/approveSchedule', component: GMApproveSchedule, display: 'GM Approval'},
+    { path: '/payroll', component: payRoll, display: "Payroll"},
+    { path: '/payrollApproval', component: PayrollApproval, display: 'Payroll Approval'},
+    { path: '/reviewScheduleChange', component: ReviewScheduleChange, display: 'Review Schedule Change Requeast'},
+    { path: '/dailyShiftRequirements', component: ShiftRequirementsWeek, display: 'Set restaurant requirements'},
+    {path: '/GmPage', component: GmPage, display: 'Restaurant Management'}
 ]
 
 var instance = axios.create({

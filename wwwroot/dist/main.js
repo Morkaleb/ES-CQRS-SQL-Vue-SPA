@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "ba2d190b6f3f8ea8fbab"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "b6fe5a7ba2df0ba3a773"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -706,7 +706,7 @@
 /******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return hotCreateRequire(468)(__webpack_require__.s = 468);
+/******/ 	return hotCreateRequire(457)(__webpack_require__.s = 457);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -2557,7 +2557,7 @@ function loadLocale(name) {
         try {
             oldLocale = globalLocale._abbr;
             var aliasedRequire = require;
-            __webpack_require__(381)("./" + name);
+            __webpack_require__(384)("./" + name);
             getSetGlobalLocale(oldLocale);
         } catch (e) {}
     }
@@ -5249,7 +5249,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(256)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(261)(module)))
 
 /***/ }),
 /* 1 */
@@ -16288,7 +16288,7 @@ return Vue$3;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(466), __webpack_require__(94).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(455), __webpack_require__(92).setImmediate))
 
 /***/ }),
 /* 3 */
@@ -16403,6 +16403,55 @@ module.exports = function normalizeComponent (
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var global = __webpack_require__(12);
+var core = __webpack_require__(24);
+var hide = __webpack_require__(27);
+var redefine = __webpack_require__(38);
+var ctx = __webpack_require__(25);
+var PROTOTYPE = 'prototype';
+
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE];
+  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
+  var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
+  var key, own, out, exp;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    // export native or passed
+    out = (own ? target : source)[key];
+    // bind timers to global for call from export context
+    exp = IS_BIND && own ? ctx(out, global) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // extend global
+    if (target) redefine(target, key, out, type & $export.U);
+    // export
+    if (exports[key] != out) hide(exports, key, exp);
+    if (IS_PROTO && expProto[key] != out) expProto[key] = out;
+  }
+};
+global.core = core;
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library`
+module.exports = $export;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
 /*
   MIT License http://www.opensource.org/licenses/mit-license.php
   Author Tobias Koppers @sokra
@@ -16419,7 +16468,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(460)
+var listToStyles = __webpack_require__(449)
 
 /*
 type StyleObject = {
@@ -16621,55 +16670,6 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(12);
-var core = __webpack_require__(24);
-var hide = __webpack_require__(27);
-var redefine = __webpack_require__(38);
-var ctx = __webpack_require__(25);
-var PROTOTYPE = 'prototype';
-
-var $export = function (type, name, source) {
-  var IS_FORCED = type & $export.F;
-  var IS_GLOBAL = type & $export.G;
-  var IS_STATIC = type & $export.S;
-  var IS_PROTO = type & $export.P;
-  var IS_BIND = type & $export.B;
-  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE];
-  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
-  var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
-  var key, own, out, exp;
-  if (IS_GLOBAL) source = name;
-  for (key in source) {
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    // export native or passed
-    out = (own ? target : source)[key];
-    // bind timers to global for call from export context
-    exp = IS_BIND && own ? ctx(out, global) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // extend global
-    if (target) redefine(target, key, out, type & $export.U);
-    // export
-    if (exports[key] != out) hide(exports, key, exp);
-    if (IS_PROTO && expProto[key] != out) expProto[key] = out;
-  }
-};
-global.core = core;
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library`
-module.exports = $export;
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -16678,7 +16678,7 @@ module.exports = $export;
 
 exports.__esModule = true;
 
-var _assign = __webpack_require__(288);
+var _assign = __webpack_require__(291);
 
 var _assign2 = _interopRequireDefault(_assign);
 
@@ -16708,7 +16708,7 @@ module.exports = (__webpack_require__(29))(16);
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var store = __webpack_require__(124)('wks');
+var store = __webpack_require__(122)('wks');
 var uid = __webpack_require__(66);
 var Symbol = __webpack_require__(12).Symbol;
 var USE_SYMBOL = typeof Symbol == 'function';
@@ -16737,8 +16737,8 @@ if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var store = __webpack_require__(106)('wks');
-var uid = __webpack_require__(110);
+var store = __webpack_require__(104)('wks');
+var uid = __webpack_require__(108);
 var Symbol = __webpack_require__(10).Symbol;
 var USE_SYMBOL = typeof Symbol == 'function';
 
@@ -16835,7 +16835,7 @@ var ctx = __webpack_require__(25);
 var IObject = __webpack_require__(46);
 var toObject = __webpack_require__(19);
 var toLength = __webpack_require__(15);
-var asc = __webpack_require__(338);
+var asc = __webpack_require__(341);
 module.exports = function (TYPE, $create) {
   var IS_MAP = TYPE == 1;
   var IS_FILTER = TYPE == 2;
@@ -16953,7 +16953,7 @@ module.exports = $export;
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(45);
-var createDesc = __webpack_require__(105);
+var createDesc = __webpack_require__(103);
 module.exports = __webpack_require__(30) ? function (object, key, value) {
   return dP.f(object, key, createDesc(1, value));
 } : function (object, key, value) {
@@ -17130,8 +17130,8 @@ module.exports = {};
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(17);
-var IE8_DOM_DEFINE = __webpack_require__(340);
-var toPrimitive = __webpack_require__(354);
+var IE8_DOM_DEFINE = __webpack_require__(343);
+var toPrimitive = __webpack_require__(357);
 var dP = Object.defineProperty;
 
 exports.f = __webpack_require__(34) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
@@ -17271,8 +17271,8 @@ module.exports = function (it, key) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(16);
-var IE8_DOM_DEFINE = __webpack_require__(302);
-var toPrimitive = __webpack_require__(323);
+var IE8_DOM_DEFINE = __webpack_require__(305);
+var toPrimitive = __webpack_require__(326);
 var dP = Object.defineProperty;
 
 exports.f = __webpack_require__(30) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
@@ -17337,51 +17337,51 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.routes = undefined;
 
-var _homePage = __webpack_require__(253);
+var _homePage = __webpack_require__(258);
 
 var _homePage2 = _interopRequireDefault(_homePage);
 
-var _monthlyCalendar = __webpack_require__(252);
+var _MonthlyCalendar = __webpack_require__(248);
 
-var _monthlyCalendar2 = _interopRequireDefault(_monthlyCalendar);
+var _MonthlyCalendar2 = _interopRequireDefault(_MonthlyCalendar);
 
-var _GMApproveSchedule = __webpack_require__(403);
+var _GMApproveSchedule = __webpack_require__(255);
 
 var _GMApproveSchedule2 = _interopRequireDefault(_GMApproveSchedule);
 
-var _PayrollApproval = __webpack_require__(404);
+var _PayrollApproval = __webpack_require__(256);
 
 var _PayrollApproval2 = _interopRequireDefault(_PayrollApproval);
 
-var _ReviewScheduleChange = __webpack_require__(405);
+var _ReviewScheduleChange = __webpack_require__(257);
 
 var _ReviewScheduleChange2 = _interopRequireDefault(_ReviewScheduleChange);
 
-var _DailyShiftRequirements = __webpack_require__(251);
+var _DailyShiftRequirements = __webpack_require__(90);
 
 var _DailyShiftRequirements2 = _interopRequireDefault(_DailyShiftRequirements);
 
-var _ShiftRequirementsWeek = __webpack_require__(399);
+var _ShiftRequirementsWeek = __webpack_require__(253);
 
 var _ShiftRequirementsWeek2 = _interopRequireDefault(_ShiftRequirementsWeek);
 
-var _GmPage = __webpack_require__(397);
+var _GmPage = __webpack_require__(251);
 
 var _GmPage2 = _interopRequireDefault(_GmPage);
 
-var _payRoll = __webpack_require__(406);
+var _payRoll = __webpack_require__(401);
 
 var _payRoll2 = _interopRequireDefault(_payRoll);
 
-var _index = __webpack_require__(95);
+var _index = __webpack_require__(93);
 
-var _axios = __webpack_require__(93);
+var _axios = __webpack_require__(91);
 
 var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var routes = exports.routes = [{ path: '/', component: _homePage2.default, display: 'Home', style: 'glyphicon glyphicon-home' }, { path: '/schedule', component: _monthlyCalendar2.default, display: 'Monthly Schedule', beforeEnter: checkAuth }, { path: '/approveSchedule', component: _GMApproveSchedule2.default, display: 'GM Approval', beforeEnter: checkAuth }, { path: '/payroll', component: _payRoll2.default, display: "Payroll", beforeEnder: checkAuth }, { path: '/payrollApproval', component: _PayrollApproval2.default, display: 'Payroll Approval', beforeEnter: checkAuth }, { path: '/reviewScheduleChange', component: _ReviewScheduleChange2.default, display: 'Review Schedule Change Requeast', beforeEnter: checkAuth }, { path: '/dailyShiftRequirements', component: _ShiftRequirementsWeek2.default, display: 'Set restaurant requirements', beforeEnter: checkAuth }, { path: '/GmPage', component: _GmPage2.default, display: 'Restaurant Management', beforeEnter: checkAuth }];
+var routes = exports.routes = [{ path: '/', component: _homePage2.default, display: 'Home', style: 'glyphicon glyphicon-home' }, { path: '/schedule', component: _MonthlyCalendar2.default, display: 'Monthly Schedule' }, { path: '/approveSchedule', component: _GMApproveSchedule2.default, display: 'GM Approval' }, { path: '/payroll', component: _payRoll2.default, display: "Payroll" }, { path: '/payrollApproval', component: _PayrollApproval2.default, display: 'Payroll Approval' }, { path: '/reviewScheduleChange', component: _ReviewScheduleChange2.default, display: 'Review Schedule Change Requeast' }, { path: '/dailyShiftRequirements', component: _ShiftRequirementsWeek2.default, display: 'Set restaurant requirements' }, { path: '/GmPage', component: _GmPage2.default, display: 'Restaurant Management' }];
 
 var instance = _axios2.default.create({
     baseURL: 'http://192.168.0.37:8000/api/',
@@ -17458,8 +17458,8 @@ module.exports.f = function (C) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys = __webpack_require__(315);
-var enumBugKeys = __webpack_require__(98);
+var $keys = __webpack_require__(318);
+var enumBugKeys = __webpack_require__(96);
 
 module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
@@ -17483,8 +17483,8 @@ module.exports = function (it, tag, stat) {
 /* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shared = __webpack_require__(106)('keys');
-var uid = __webpack_require__(110);
+var shared = __webpack_require__(104)('keys');
+var uid = __webpack_require__(108);
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
@@ -17507,7 +17507,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(100);
+var IObject = __webpack_require__(98);
 var defined = __webpack_require__(50);
 module.exports = function (it) {
   return IObject(defined(it));
@@ -17617,7 +17617,7 @@ module.exports = function (it, tag, stat) {
 /* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shared = __webpack_require__(124)('keys');
+var shared = __webpack_require__(122)('keys');
 var uid = __webpack_require__(66);
 module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
@@ -17672,7 +17672,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.day{\n    position:relative;\n    float:left;\n    width:14%;\n}\n.week{\n    display:inline-block;\n    width:100%;\n}\n.header{\n    vertical-align: central;\n    text-align: center;\n    width: 0 auto;\n    margin:0px;\n    padding:0px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/ShiftRequirementsWeek.vue?5aab9974"],"names":[],"mappings":";AAmEA;IACA,kBAAA;IACA,WAAA;IACA,UAAA;CACA;AACA;IACA,qBAAA;IACA,WAAA;CACA;AACA;IACA,wBAAA;IACA,mBAAA;IACA,cAAA;IACA,WAAA;IACA,YAAA;CACA","file":"ShiftRequirementsWeek.vue","sourcesContent":["<template>\n    <div class=\"week\">\n\n        <ShiftRequirementsModal v-if=\"showModal\" @close=\"closeModal()\" @submit=\"submit()\"></ShiftRequirementsModal>\n        <h2 class=\"header\">Set Daily Shift Requirements</h2>\n        <DailyShiftRequirements class=\"day\" day=\"Monday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Tuesday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Wednesday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Thursday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Friday\"></DailyShiftRequirements>\n        <DailyShiftRequirements class=\"day\" day=\"Saturday\"></DailyShiftRequirements>\n        <DailyShiftRequirements v-on:AddShiftDayCode=\"addshiftDay($event)\"class=\"day\" day=\"Sunday\"></DailyShiftRequirements>\n        <button\n                v-on:click=\"submitShiftsRequirements\"\n                class=\"btn btn-default\"\n                style=\"vertical-align:central;\n                background-color:#015351;\n                color: white;\n                margin-top:10px;\n                margin-left:45%\">\n        Submit</button>\n    </div>\n</template>\n\n<script>\n    import DailyShiftRequirements from './DailyShiftRequirements'\n    import { mapActions, mapGetters } from 'vuex'\n    import ShiftRequirementsModal from './ShiftRequirementsModal'\n\n    export default {\n        name: 'GmPage',\n        data() {\n            return {\n                showModal: false\n            }\n        },\n        components: {\n            DailyShiftRequirements,\n            ShiftRequirementsModal\n        },\n        computed: {\n            ...mapGetters([\n                'getUnSubShiftReq'\n            ])\n        },\n        methods: {\n            ...mapActions([\n                'submitDailyShiftRequirements'\n            ]),\n            addShiftDay(event) {\n            },\n            submitShiftsRequirements() {\n                this.showModal = true\n            },\n            closeModal() {\n                this.showModal = false\n            },\n            submit() {\n                this.submitDailyShiftRequirements();\n                this.showModal = false\n                window.location.href='http://192.168.0.37:8000/GmPage'\n            }\n        }\n    }\n</script>\n\n<style>\n    .day{\n        position:relative;\n        float:left;\n        width:14%;\n    }\n    .week{\n        display:inline-block;\n        width:100%;\n    }\n    .header{\n        vertical-align: central;\n        text-align: center;\n        width: 0 auto;\n        margin:0px;\n        padding:0px;\n    }\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.full-calendar-body .dates .dates-events .events-week .events-day {\n    min-height:100px !important;\n}\n.event-box .event-item {\n    background-color: #015351 !important;\n    color:white !important\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/MonthlyCalendar.vue?17c0dd5e"],"names":[],"mappings":";AA6RA;IACA,4BAAA;CACA;AACA;IACA,qCAAA;IACA,sBAAA;CACA","file":"MonthlyCalendar.vue","sourcesContent":["<template>\r\n    <div id=\"wrapper\" class=\"flex-container\">\r\n        <shift-modal v-if=\"showModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.shiftDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <span>If Manager in Charge</span>\r\n                <input v-model=\"managerInCharge\" placeholder=\"Manager in Charge name\"/>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"printModal\">\r\n            <h3 slot=\"header\" class=\"=modal-card-title\">Which period would you like to print?</h3>\r\n            <div slot=\"body\">\r\n                <p>Select a start and end date</p>\r\n                <div style=\"width:15%; float:left;\" >\r\n                    <b-field label=\"\">\r\n                        <b-datepicker placeholder=\"Type or select a date...\"\r\n                                      icon=\"calendar-today\"\r\n                                      :readonly=\"false\"\r\n                                      v-model=\"PrintStartDate\"\r\n                                      :first-day-of-week=1>\r\n                        </b-datepicker>\r\n                    </b-field>\r\n                    <b-field label=\"\">\r\n                        <b-datepicker placeholder=\"Type or select a date...\"\r\n                                      icon=\"calendar-today\"\r\n                                      :readonly=\"false\"\r\n                                      v-model=\"PrintEndDate\"\r\n                                      :first-day-of-week=1>\r\n                        </b-datepicker>\r\n                    </b-field>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"printSchedule()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div class=\"title\">\r\n            <h1 style=\"text-align:center\">Schedule for Store {{getUser.locationId}} Manager shifts</h1>\r\n            <button v-if=\"this.getUser.role === 3\"\r\n                    style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    :onclick=\"gotoShift\">\r\n                ><router-link to=\"/dailyShiftRequirements\">Change Daily shift requirements</router-link>\r\n            </button>\r\n            <button style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    :onclick=\"gotoShift\">\r\n                ><router-link :to=this.weeklyUrl>switch to weekly</router-link>\r\n            </button>\r\n            <button style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    v-on:click=\"showPrintModal\">\r\n                Download the monthly schedule\r\n            </button>\r\n        </div>    \r\n        <calendar :firstDay=\"1\"\r\n                  :events='getSchedule'\r\n                  local=\"en\"\r\n                  @dayClick=\"addShift($event)\"\r\n                  @eventClick=\"changeShift($event)\">\r\n            >\r\n        </calendar>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    import moment from 'moment'\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import Toasted from 'vue-toasted';\r\n    \r\n    export default {\r\n        name: 'monthly-calendar',\r\n    data () {\r\n         return {\r\n            showModal: false,\r\n            printModal:false,\r\n            manager: '',\r\n            shiftCode: '',\r\n            shiftDate: '',\r\n            shiftEOW: '',\r\n            Date: this.shiftDate,\r\n            newName: '',\r\n            newShiftCode: '',\r\n            reasonForChange: '',\r\n            selectedManager: '',\r\n            dayToChange: '',\r\n            shiftCodeToChangeFrom: '',\r\n            showChangeModal: false,\r\n            managerChangeFrom: '',\r\n            concerns: [{}],\r\n            params: '',\r\n            events: [{}],\r\n            weeklyUrl: \"\",\r\n            PrintEndDate: new Date(),\r\n            PrintStartDate: new Date(),\r\n            managerInCharge:\"\"\r\n         }\r\n    },\r\n    computed: {\r\n        ...mapGetters([\r\n            'getSchedule',\r\n            'getManagers',\r\n            'getShiftCodes',\r\n            'getUser'\r\n        ]),\r\n        regetSchedule() {\r\n            return this.fetchSchedule(this.state)\r\n        }\r\n    },\r\n    methods: {\r\n      ...mapActions([\r\n            'fetchSchedule',\r\n            'fetchManagers',\r\n            'fetchShiftCodes',\r\n            'submitNewShift',\r\n            'submitShiftChange',\r\n            'fetchLoggedInUser',\r\n            'exportMonth'\r\n        ]),\r\n      getEow() {\r\n            let daysuntileow = 7 - moment().format('d');\r\n            let eowstring = moment().add(daysuntileow, 'day').format('MM-DD-YYYY')\r\n            return eowstring\r\n        },\r\n      addShift(event) {\r\n          this.shiftDate = moment(event.toString()).format(\"MM-DD-YYYY\")\r\n          this.showModal = true\r\n      },\r\n      changeShift(event) {\r\n            this.shiftCode = event.YOUR_DATA.class\r\n            this.dayToChange = event.start\r\n            this.showChangeModal = true\r\n            this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]\r\n            this.managerFromId = event.YOUR_DATA.ManagerId\r\n      },\r\n      checkWindowSize() {\r\n          let size = window.innerWidth;\r\n          if(size < 800) window.location.href = this.weeklyUrl\r\n      },\r\n      showPrintModal() {\r\n          this.printModal = true;\r\n      },\r\n      closeModal () {\r\n          this.showModal = false\r\n          this.showChangeModal = false\r\n          this.printModal = false\r\n      },\r\n      printSchedule() {\r\n          let payload = {\r\n              start: this.PrintStartDate.toString(),\r\n              end: this.PrintEndDate.toString(),\r\n              locationId:this.$store.state.loggedInUser.locationId\r\n          }\r\n          this.exportMonth(payload)\r\n          this.closeModal();\r\n      },\r\n      submit() {\r\n            console.log(this.selectedManager)\r\n            let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n            let aNewShift = {\r\n              LocationId: this.$store.state.loggedInUser.locationId,\r\n              ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n              ManagerId: this.getManagers[managerIndex].Id,\r\n              Day: this.shiftDate,\r\n              ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n            }\r\n            if (this.selectedManager === \"Manager In Charge\") {\r\n                aNewShift.ManagerId = this.managerInCharge + \" IC\"\r\n            }\r\n            this.submitNewShift(aNewShift)\r\n            this.emptyFields()\r\n            this.closeModal()\r\n            this.submissionCompletion()\r\n      },\r\n      submitChange () {\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n            let shiftChange = {\r\n              RequestId: '',\r\n              Id: this.getManagers[managerIndex].Id,\r\n              ManagerId: this.getManagers[managerIndex].Id,\r\n              ManagerToName: this.getManagers[managerIndex].Name,\r\n              ManagerFromName: this.managerChangeFrom,\r\n              EOW: this.getSchedule[shiftDayIndex].EOW,\r\n              ShiftCode: this.shiftCode,\r\n              Reason: this.reasonForChange,\r\n              shiftDate: this.dayToChange,\r\n              ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n              GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n              LocationId: this.$store.state.loggedInUser.locationId,\r\n              RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n              managerFromId:this.managerFromId\r\n            }\r\n            this.submitShiftChange(shiftChange)\r\n            this.closeModal()\r\n            this.emptyFields()\r\n            this.submissionCompletion()\r\n      },\r\n      emptyFields () {\r\n            this.selectedManager = ''\r\n            this.newShiftCode = ''\r\n            this.reasonForChange = ''\r\n      },\r\n      submissionCompletion() {\r\n            setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)\r\n            this.$toast.open({duration:1000, type:'is-success', message: 'Shift change saved'})\r\n      },\r\n      gotoShift() {\r\n          \r\n      }      \r\n    },    \r\n    created() {\r\n    this.weeklyUrl = \"/approveSchedule/?eow=\" + this.getEow();\r\n    this.checkWindowSize()\r\n    this.fetchLoggedInUser()\r\n        .then(() => {\r\n            this.fetchSchedule(this.$store.state.loggedInUser.locationId)\r\n                .then(() => {\r\n                    this.fetchManagers(this.$store.state.loggedInUser.locationId)\r\n                    this.fetchShiftCodes(this.state)\r\n                })\r\n        })      \r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n    .full-calendar-body .dates .dates-events .events-week .events-day {\r\n        min-height:100px !important;\r\n    }\r\n    .event-box .event-item {\r\n        background-color: #015351 !important;\r\n        color:white !important\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17686,7 +17686,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.main {\n    margin: 0 0 0 0;\n    padding:0;\n    position:relative;\n    background-color: #e9eaed;\n    height:100%;\n}\n.app {\n    background-color: #e9eaed !important;\n}\n.navbar-link  {\n    color:white !important;\n}\n.navbar-link :hover {\n    color:black !important;\n}\n.navbar{\n    margin:0;\n    border-radius:0;\n    font-size:13px;\n    padding:0;\n}\n.navbar-dropdown{\n    padding:0;\n    margin:0;\n}\n\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/app-root.vue?2d859ca8"],"names":[],"mappings":";AA8KA;IACA,gBAAA;IACA,UAAA;IACA,kBAAA;IACA,0BAAA;IACA,YAAA;CACA;AACA;IACA,qCAAA;CACA;AACA;IACA,uBAAA;CACA;AACA;IACA,uBAAA;CACA;AACA;IACA,SAAA;IACA,gBAAA;IACA,eAAA;IACA,UAAA;CACA;AACA;IACA,UAAA;IACA,SAAA;CACA","file":"app-root.vue","sourcesContent":["<template>\r\n    <div id=\"app\" style=\"width:100%\">\r\n        <div style=\"width:100%\">\r\n            <nav class=\"navbar\" style=\"background-color:#015351;\">\r\n                <div class=\"navbar-brand\">\r\n                    <a class=\"navbar-item\">\r\n                        <img src=\"../Assets/Logo_Green_lq.jpg\" style=\"width:100px; height:140px;\">\r\n                        <img src=\"../Assets/logo2_lq.png\" style=\"width:100px; height:140px;\"/>\r\n                    </a>\r\n                </div>\r\n                <div class=\"navbar-menu\">\r\n                    <div class=\"navbar-start\">\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Supply Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in SupplyHub\" :href=link.link>\r\n                                  {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Menu Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in MenuHub\":href=link.link>\r\n                                   {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Ops Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in OpsHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\" >\r\n                                Finance Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in FinanceHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Admin Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in AdminHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\" >\r\n                                Inventory Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in InventoryHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-dropdown is-boxed\">\r\n                        </div>\r\n                    </div>\r\n\r\n                    <div class=\"navbar-end\">\r\n                        <span style=\"color:white; margin-top:33%;\"> hello,  {{ getUser.firstName }} {{getUser.lastName}} </span>\r\n                        <button class=\"btn btn-default\" style=\"color:white; border-color:#015351; background-color: #015351; font-size:xx-small;\" v-on:click=\"logout\"> Sign Out</button>\r\n                        <img src=\"../Assets/SmallLogo.png\" style=\"width: 100px; height: 60px; padding: .6em 1em .6em 1em\" alt=\"hub_logo\" />\r\n                    </div>\r\n                </div>\r\n            </nav>            \r\n        <div class=\"main\">\r\n            <router-view></router-view>\r\n        </div>\r\n    </div>\r\n </div>\r\n</template>\r\n\r\n<script>\r\n    import { routes } from '../routes'\r\n    import Vue from 'vue'\r\n    import HomePage from './home-page'\r\n    import NavMenu from './nav-menu'\r\n    import MonthlyCalendar from './calendar/monthly-calendar'\r\n    import calendar from 'vue2-simple-calendar'\r\n    import dropdown from './layout/dropdown'\r\n    import Vuex from 'vuex'\r\n    import shift from './calendar/TheShift'\n\r\n    import { mapGetters, mapActions } from 'vuex'\r\n    \r\n\r\n    Vue.component('home-page', HomePage);\r\n    Vue.component('nav-menu', NavMenu);\r\n    Vue.component('monthly-calendar', MonthlyCalendar);\r\n    Vue.component('dropdown', dropdown)\r\n    Vue.component('shift', shift)\r\n    Vue.use(Vuex)\n\n    export default {\r\n        data() {\r\n            return {\n                routes,\r\n                collapsed: true,\r\n                SupplyHub: [\r\n                    { title: 'Home (NEW)', link: \"\" },\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'SKUs', link: \"\" },\r\n                    { title: 'Contracts', link: \"\" },\r\n                    { title: 'Bids', link: \"\" },\r\n                    { title: 'Mapper', link: \"\" },\r\n                    { title: 'Admin', link: \"\" },\r\n                ],\r\n                MenuHub: [\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'Recipes', link: \"\" },\r\n                    { title: 'Menus', link: \"\" },\r\n                    { title: 'Menus Items', link: \"\" }\r\n                ],\r\n                OpsHub: [\r\n                    { title: 'My Pillars', link: \"\" },\r\n                    { title: 'OOO Grid', link: \"\" },\r\n                    { title: 'OOO Pivot Data', link: \"\" },\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Mgmt Scheduling', link: \"http://192.168.0.37:8000/schedule/\" },\r\n                    { title: \"Gm Page\", link: \"http://192.168.0.37:8000/GmPage\" }\r\n\r\n                ],\r\n                FinanceHub: [\r\n                    { title: 'PurchaseOrders', link: \"\" },\r\n                ],\r\n                AdminHub: [\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Alerts', link: \"\" },\r\n                    { title: 'Measure Units', link: \"\" },\r\n                    { title: 'Ops Review', link: \"\" },\r\n                ],\r\n                InventoryHub: [\r\n                    { title: 'Home', link: \"\" }\r\n                ]\r\n        }\r\n        },\n        computed: {\n            ...mapGetters([\n                'getUser'])\r\n        },\n        methods: {\n            ...mapActions([\n                'fetchLoggedInUser'\n            ]),\n            logout() {\n                document.cookie = \"\"\n                window.location.href = 'http://192.168.0.37:8001'\r\n            }\r\n        },\n        created() {\n            this.fetchLoggedInUser()\r\n        }\r\n}\r\n</script>\r\n\r\n<style>\r\n    .main {\r\n        margin: 0 0 0 0;\r\n        padding:0;\n        position:relative;\r\n        background-color: #e9eaed;\n        height:100%;\r\n    }\r\n    .app {\r\n        background-color: #e9eaed !important;\r\n    }\n    .navbar-link  {\n        color:white !important;\r\n    }\n    .navbar-link :hover {\n        color:black !important;\r\n    }\n    .navbar{\n        margin:0;\n        border-radius:0;\n        font-size:13px;\n        padding:0;\r\n    }\r\n    .navbar-dropdown{\n        padding:0;\n        margin:0;\r\n    }\n   \r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.day{\n    position:relative;\n    float:left;\n    width:14%;\n}\n.week{\n    display:inline-block;\n    width:100%;\n}\n.header{\n    vertical-align: central;\n    text-align: center;\n    width: 0 auto;\n    margin:0px;\n    padding:0px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/ShiftRequirementsWeek.vue?386a3224"],"names":[],"mappings":";AAmEA;IACA,kBAAA;IACA,WAAA;IACA,UAAA;CACA;AACA;IACA,qBAAA;IACA,WAAA;CACA;AACA;IACA,wBAAA;IACA,mBAAA;IACA,cAAA;IACA,WAAA;IACA,YAAA;CACA","file":"ShiftRequirementsWeek.vue","sourcesContent":["<template>\r\n    <div class=\"week\">\r\n\r\n        <ShiftRequirementsModal v-if=\"showModal\" @close=\"closeModal()\" @submit=\"submit()\"></ShiftRequirementsModal>\r\n        <h2 class=\"header\">Set Daily Shift Requirements</h2>\r\n        <DailyShiftRequirements class=\"day\" day=\"Monday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Tuesday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Wednesday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Thursday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Friday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements class=\"day\" day=\"Saturday\"></DailyShiftRequirements>\r\n        <DailyShiftRequirements v-on:AddShiftDayCode=\"addshiftDay($event)\"class=\"day\" day=\"Sunday\"></DailyShiftRequirements>\r\n        <button\r\n                v-on:click=\"submitShiftsRequirements\"\r\n                class=\"btn btn-default\"\r\n                style=\"vertical-align:central;\r\n                background-color:#015351;\r\n                color: white;\r\n                margin-top:10px;\r\n                margin-left:45%\">\r\n        Submit</button>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    import DailyShiftRequirements from './DailyShiftRequirements'\r\n    import { mapActions, mapGetters } from 'vuex'\r\n    import ShiftRequirementsModal from './ShiftRequirementsModal'\r\n\r\n    export default {\r\n        name: 'GmPage',\r\n        data() {\r\n            return {\r\n                showModal: false\r\n            }\r\n        },\r\n        components: {\r\n            DailyShiftRequirements,\r\n            ShiftRequirementsModal\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n                'getUnSubShiftReq'\r\n            ])\r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'submitDailyShiftRequirements'\r\n            ]),\r\n            addShiftDay(event) {\r\n            },\r\n            submitShiftsRequirements() {\r\n                this.showModal = true\r\n            },\r\n            closeModal() {\r\n                this.showModal = false\r\n            },\r\n            submit() {\r\n                this.submitDailyShiftRequirements();\r\n                this.showModal = false\r\n                window.location.href='http://192.168.0.37:8000/GmPage'\r\n            }\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .day{\r\n        position:relative;\r\n        float:left;\r\n        width:14%;\r\n    }\r\n    .week{\r\n        display:inline-block;\r\n        width:100%;\r\n    }\r\n    .header{\r\n        vertical-align: central;\r\n        text-align: center;\r\n        width: 0 auto;\r\n        margin:0px;\r\n        padding:0px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17700,7 +17700,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.Daily[data-v-13975d2c] {\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 5px 10px;\n    margin:1%;\n    width: 12%;\n    box-shadow: 10px 10px 5px #999999;\n    float:left;\n}\n.header[data-v-13975d2c]{\n    margin-left:30%;\n    width:0 auto;\n}\n#sumbit[data-v-13975d2c]{\n    margin-left:30%;\n    width: 0px auto;\n}\n.shiftList[data-v-13975d2c]{\n    list-style:none;\n    text-align:left;\n    padding-left:2px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/DailyShiftRequirements.vue?6fc7b6b5"],"names":[],"mappings":";AAiEA;IACA,wBAAA;IACA,mBAAA;IACA,kBAAA;IACA,UAAA;IACA,WAAA;IACA,kCAAA;IACA,WAAA;CACA;AACA;IACA,gBAAA;IACA,aAAA;CACA;AACA;IACA,gBAAA;IACA,gBAAA;CACA;AACA;IACA,gBAAA;IACA,gBAAA;IACA,iBAAA;CACA","file":"DailyShiftRequirements.vue","sourcesContent":["<template>\r\n      <div class=\"Daily\">\r\n          <span class=\"header\"><h4>{{day}}</h4></span>\r\n          <hr />\r\n          <ul class=\"shiftList\">\r\n              <li v-for=\"shiftCode in getShiftCodes\" style=\"text-align:left\">\r\n                  <label>\r\n                      <shift :ShiftCode=\"shiftCode.statusId\"\r\n                             :shiftDescription=\"shiftCode.description\"\r\n                             v-on:AddShiftCode=\"addShift($event)\"\r\n                             @RemoveShiftCode=\"removeShift($event)\"></shift>\r\n                  </label>\r\n              </li>\r\n          </ul>\r\n      </div>\r\n</template>\r\n\r\n<script>\r\n  import {mapActions, mapGetters} from 'vuex'\r\n  import shift from './ShiftSelection'\r\n\r\n  export default {\r\n        name: 'daily-shift-requirements',\r\n    components: {\r\n      shift\r\n    },\r\n    methods: {\r\n      ...mapActions([\r\n            'fetchShiftCodes',\r\n            'addShiftToDay',\r\n            'removeShiftFromDay'\r\n      ]),\r\n      addShift(event) {\r\n          let shifttoAdd = { day: this.day, shift: event }\r\n          this.addShiftToDay(shifttoAdd)\r\n      },\r\n      removeShift (event) {\r\n          let shiftToRemove = { day: this.day, shiftCode: event }\r\n          this.removeShiftFromDay(shiftToRemove)\r\n      },\r\n      clicked () {\r\n        this.submitDailyShiftRequirements(this.shiftCodes)\r\n      }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n            'getShiftCodes',\r\n            //'getUnSubShiftReq'\r\n      ])\r\n    },\r\n    data () {\r\n      return {\r\n        shiftCodes: [],\r\n        selected: false\r\n      }\r\n    },\r\n    props:['day'],\r\n    created () {\r\n      this.fetchShiftCodes(this.state)\r\n    }\r\n\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n    .Daily {\r\n        border: 1px solid black;\r\n        border-radius: 5px;\r\n        padding: 5px 10px;\n        margin:1%;\r\n        width: 12%;\r\n        box-shadow: 10px 10px 5px #999999;\n        float:left;\r\n    }\r\n    .header{\r\n        margin-left:30%;\r\n        width:0 auto;\r\n    }\r\n    #sumbit{\r\n        margin-left:30%;\r\n        width: 0px auto;\r\n    }\r\n    .shiftList{\r\n        list-style:none;\r\n        text-align:left;\r\n        padding-left:2px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.main {\n    margin: 0 0 0 0;\n    padding:0;\n    position:relative;\n    background-color: #e9eaed;\n    height:100%;\n}\n.app {\n    background-color: #e9eaed !important;\n}\n.navbar-link  {\n    color:white !important;\n}\n.navbar-link :hover {\n    color:black !important;\n}\n.navbar{\n    margin:0;\n    border-radius:0;\n    font-size:13px;\n    padding:0;\n}\n.navbar-dropdown{\n    padding:0;\n    margin:0;\n}\n\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/app-root.vue?0210c2f2"],"names":[],"mappings":";AA4MA;IACA,gBAAA;IACA,UAAA;IACA,kBAAA;IACA,0BAAA;IACA,YAAA;CACA;AACA;IACA,qCAAA;CACA;AACA;IACA,uBAAA;CACA;AACA;IACA,uBAAA;CACA;AACA;IACA,SAAA;IACA,gBAAA;IACA,eAAA;IACA,UAAA;CACA;AACA;IACA,UAAA;IACA,SAAA;CACA","file":"app-root.vue","sourcesContent":["<template>\r\n    <div id=\"app\" style=\"width:100%\">\r\n        <div style=\"width:100%\">\r\n            <nav class=\"navbar\" style=\"background-color:#015351;\">\r\n                <div class=\"navbar-brand\">\r\n                    <a class=\"navbar-item\">\r\n                        <img src=\"../Assets/Logo_Green_lq.jpg\" style=\"width:100px; height:140px;\">\r\n                        <img src=\"../Assets/logo2_lq.png\" style=\"width:100px; height:140px;\"/>\r\n                    </a>\r\n                </div>\r\n                <div class=\"navbar-menu\">\r\n                    <div class=\"navbar-start\">\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Supply Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in SupplyHub\" :href=link.link>\r\n                                  {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Menu Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in MenuHub\":href=link.link>\r\n                                   {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Ops Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in OpsHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\" >\r\n                                Finance Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in FinanceHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\">\r\n                                Admin Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in AdminHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-item has-dropdown is-hoverable\">\r\n                            <a class=\"navbar-link\" >\r\n                                Inventory Hub\r\n                            </a>\r\n                            <div class=\"navbar-dropdown\">\r\n                                <a class=\"navbar-item\" v-for=\"link in InventoryHub\" :href=link.link>\r\n                                    {{link.title}}\r\n                                </a>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navbar-dropdown is-boxed\">\r\n                        </div>\r\n                    </div>\r\n\r\n                    <div class=\"navbar-end\">\r\n                        <span style=\"color:white; margin-top:33%;\"> hello,  {{ getUser.firstName }} {{getUser.lastName}} </span>\r\n                        <button class=\"btn btn-default\" style=\"color:white; border-color:#015351; background-color: #015351; font-size:xx-small;\" v-on:click=\"logout\"> Sign Out</button>\r\n                        <img src=\"../Assets/SmallLogo.png\" style=\"width: 100px; height: 60px; padding: .6em 1em .6em 1em\" alt=\"hub_logo\" />\r\n                    </div>\r\n                </div>\r\n            </nav>            \r\n        <div class=\"main\">\r\n            <router-view></router-view>\r\n        </div>\r\n    </div>\r\n </div>\r\n</template>\r\n\r\n<script>\r\n    import { routes } from '../routes'\r\n    import Vue from 'vue'\r\n    import Vuex from 'vuex'\n\r\n    import HomePage from './home-page'\r\n    import NavMenu from './nav-menu'\r\n    import MonthlyCalendar from './Calendar/MonthlyCalendar'\r\n    import calendar from 'vue2-simple-calendar'\r\n    import dropdown from './layout/dropdown'\r\n    import shift from './Calendar/TheShift'\n    import oneday from './Calendar/OneDay'\n    import scheduleConsequences from './Calendar/ScheduleConsequences'\n    import shiftModal from './Calendar/ShiftModal'\n    import weeklyCalendar from './Calendar/WeeklyCalendar'\n    import dailyShiftRequirements from './ManagerComponents/DailyShiftRequirements'\n    import gmPage from './ManagerComponents/GmPage'\n    import shiftRequirementsModal from './ManagerComponents/ShiftRequirementsModal'\n    import shiftRequirementsWeek from './ManagerComponents/ShiftRequirementsWeek'\n    import shiftSelection from './ManagerComponents/ShiftSelection'\n    import approveModal from './Scheduling/ApproveModal'\n    import dsapproveModal from './Scheduling/DisapproveModal'\n    import gMApproveSchedule from './Scheduling/GMApproveSchedule'\n    import PayRollApproval from './Scheduling/PayrollApproval'\n    import ReviewScheduleChange from './Scheduling/ReviewScheduleChange'\r\n\r\n    import { mapGetters, mapActions } from 'vuex'\r\n    \r\n\r\n    Vue.component('home-page', HomePage);\r\n    Vue.component('nav-menu', NavMenu);\r\n    Vue.component('monthly-calendar', MonthlyCalendar);\r\n    Vue.component('dropdown', dropdown);\r\n    Vue.component('shift', shift);\n    Vue.component('oneday', oneday);\n    Vue.component('scheduleConsequences', scheduleConsequences);\n    Vue.component('shiftModal', shiftModal);\n    Vue.component('dailyShiftRequirements', dailyShiftRequirements);\n    Vue.component('gmPage', gmPage);\n    Vue.component('shiftRequirementsModal', shiftRequirementsModal);\n    Vue.component('shiftRequirementsWeek', shiftRequirementsWeek);\n    Vue.component('shiftSelection', shiftSelection);\n    Vue.component('approveModal', approveModal);\n    Vue.component('dsapproveModal', dsapproveModal);\n    Vue.component('gMApproveSchedule', gMApproveSchedule);\n    Vue.component('PayRollApproval', PayRollApproval);\n    Vue.component('ReviewScheduleChange', ReviewScheduleChange);\n    Vue.component('calendar', calendar);\n    \r\n    Vue.use(Vuex)\r\n\r\n    export default {\r\n        data() {\r\n            return {\r\n                routes,\r\n                collapsed: true,\r\n                SupplyHub: [\r\n                    { title: 'Home (NEW)', link: \"\" },\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'SKUs', link: \"\" },\r\n                    { title: 'Contracts', link: \"\" },\r\n                    { title: 'Bids', link: \"\" },\r\n                    { title: 'Mapper', link: \"\" },\r\n                    { title: 'Admin', link: \"\" },\r\n                ],\r\n                MenuHub: [\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'Recipes', link: \"\" },\r\n                    { title: 'Menus', link: \"\" },\r\n                    { title: 'Menus Items', link: \"\" }\r\n                ],\r\n                OpsHub: [\r\n                    { title: 'My Pillars', link: \"\" },\r\n                    { title: 'OOO Grid', link: \"\" },\r\n                    { title: 'OOO Pivot Data', link: \"\" },\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Mgmt Scheduling', link: \"http://192.168.0.37:8000/schedule/\" },\r\n                    { title: \"Gm Page\", link: \"http://192.168.0.37:8000/GmPage\" }\r\n\r\n                ],\r\n                FinanceHub: [\r\n                    { title: 'PurchaseOrders', link: \"\" },\r\n                ],\r\n                AdminHub: [\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Alerts', link: \"\" },\r\n                    { title: 'Measure Units', link: \"\" },\r\n                    { title: 'Ops Review', link: \"\" },\r\n                ],\r\n                InventoryHub: [\r\n                    { title: 'Home', link: \"\" }\r\n                ]\r\n        }\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n                'getUser'])\r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'fetchLoggedInUser'\r\n            ]),\r\n            logout() {\r\n                document.cookie = \"\"\r\n                window.location.href = 'http://192.168.0.37:8001'\r\n            }\r\n        },\r\n        created() {\r\n            this.fetchLoggedInUser()\r\n        }\r\n}\r\n</script>\r\n\r\n<style>\r\n    .main {\r\n        margin: 0 0 0 0;\r\n        padding:0;\r\n        position:relative;\r\n        background-color: #e9eaed;\r\n        height:100%;\r\n    }\r\n    .app {\r\n        background-color: #e9eaed !important;\r\n    }\r\n    .navbar-link  {\r\n        color:white !important;\r\n    }\r\n    .navbar-link :hover {\r\n        color:black !important;\r\n    }\r\n    .navbar{\r\n        margin:0;\r\n        border-radius:0;\r\n        font-size:13px;\r\n        padding:0;\r\n    }\r\n    .navbar-dropdown{\r\n        padding:0;\r\n        margin:0;\r\n    }\r\n   \r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17714,7 +17714,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n@media(min-width:1400px) {\n.dayBox[data-v-13e0a9bb] {\n        width: 13%;\n        background: white;\n        float: left;\n        margin: 0px 8px;\n        height: 55vh;\n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius: 5px;\n}\n.consequences[data-v-13e0a9bb] {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        overflow: auto;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n        width: 80%;\n}\n}\n@media(m-width:801px) {\n.dayBox[data-v-13e0a9bb] {\n        width: 40%;\n        background: white;\n        float: left;\n        margin: 0px 8px 8px;\n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius: 5px;\n        overflow: auto;\n}\n.consequences[data-v-13e0a9bb] {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        overflow: auto;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n        width: 80%;\n}\n}\n@media(max-width:800px) {\n.dayBox[data-v-13e0a9bb] {\n        width: 80%;\n        background: white;\n        float: left;\n        margin: 0px 8px 8px;            \n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius: 5px;\n        overflow:auto;\n}\n.consequences[data-v-13e0a9bb] {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        overflow: auto;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n        width: 80%;\n}\n}\n.weekly[data-v-13e0a9bb]{\n    width:90%;\n    margin:0 0 0 10px 0;\n    padding:0px;\n}\n\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/WeeklyCalendar.vue?68fc1c0a"],"names":[],"mappings":";AAuNA;AACA;QACA,WAAA;QACA,kBAAA;QACA,YAAA;QACA,gBAAA;QACA,aAAA;QACA,kCAAA;QACA,wBAAA;QACA,mBAAA;CACA;AACA;QACA,kBAAA;QACA,wBAAA;QACA,mBAAA;QACA,aAAA;QACA,cAAA;QACA,YAAA;QACA,YAAA;QACA,eAAA;QACA,mCAAA;QACA,mBAAA;QACA,kCAAA;QACA,WAAA;CACA;CACA;AACA;AACA;QACA,WAAA;QACA,kBAAA;QACA,YAAA;QACA,oBAAA;QACA,kCAAA;QACA,wBAAA;QACA,mBAAA;QACA,eAAA;CACA;AACA;QACA,kBAAA;QACA,wBAAA;QACA,mBAAA;QACA,aAAA;QACA,cAAA;QACA,YAAA;QACA,YAAA;QACA,eAAA;QACA,mCAAA;QACA,mBAAA;QACA,kCAAA;QACA,WAAA;CACA;CACA;AACA;AACA;QACA,WAAA;QACA,kBAAA;QACA,YAAA;QACA,oBAAA;QACA,kCAAA;QACA,wBAAA;QACA,mBAAA;QACA,cAAA;CACA;AACA;QACA,kBAAA;QACA,wBAAA;QACA,mBAAA;QACA,aAAA;QACA,cAAA;QACA,YAAA;QACA,YAAA;QACA,eAAA;QACA,mCAAA;QACA,mBAAA;QACA,kCAAA;QACA,WAAA;CACA;CACA;AACA;IACA,UAAA;IACA,oBAAA;IACA,YAAA;CACA","file":"WeeklyCalendar.vue","sourcesContent":["<template>\n    <div>\n        <shift-modal v-if=\"showDayClickedModal\">\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\n            <div slot=\"body\">\n                <div>Shift Date {{ this.workingDate }}</div>\n                <div>\n                    <span>Manager Name</span>\n                    <select id='managerName'\n                            class=\"form-control\"\n                            v-model=\"selectedManager\">\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\n                    </select>\n                </div>\n                <div>\n                    <span>Shift</span>\n                    <select id='ShiftCode'\n                            class=\"form-control\"\n                            v-model=\"newShiftCode\">\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\n                    </select>\n                </div>\n            </div>\n            <div slot=\"footer\">\n                <button @click=\"submit()\"> Submit </button>\n                <button @click=\"closeModal()\">Close</button>\n            </div>\n        </shift-modal>\n        <shift-modal v-if=\"showChangeModal\">\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\n            <div slot=\"body\">\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\n                <div>\n                    <span>Manager Name</span>\n                    <select id='managerName1'\n                            class=\"form-control\"\n                            v-model=\"selectedManager\">\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\n                    </select>\n                </div>\n                <div>\n                    <div>\n                        Reason For Change\n                    </div>\n                    <div>\n                        <input type=\"text\" v-model=\"reasonForChange\">\n                    </div>\n                </div>\n            </div>\n            <div slot=\"footer\">\n                <button @click=\"submitChange()\"> Submit </button>\n                <button @click=\"closeModal()\">Close</button>\n            </div>\n        </shift-modal>\n        <div style=\"vertical-align:middle; margin-bottom:5px;\">\n            <button><a :href=this.lastWeekString><</a></button>\n            <button><a :href=this.nextweekString>></a></button>\n        </div>\n        <div class=\"container-fluid weekly\">\n            <day class=\"dayBox\" :Day=\"this.monday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.tuesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.wednesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.thursday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.friday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.saturday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n            <day class=\"dayBox\" :Day=\"this.sunday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\n        </div>\n    </div>\n</template>\n\n<script>\n  import { mapActions, mapGetters } from 'vuex'\n  import moment from 'moment'\n  import Day from './OneDay'\n  import ShiftModal from './ShiftModal.vue'\n  import shift from './TheShift'\n  import Toasted from 'vue-toasted';\n\n  export default {\n        name: 'weekly-calendar',\n        components: { Day, ShiftModal, shift },\n        props: [\n            'monday',\n            'tuesday',\n            'wednesday',\n            'thursday',\n            'friday',\n            'saturday',\n            'sunday',\n            ],\n    methods: {\n      ...mapActions([\n            'fetchWeek',\n            'fetchManagers',\n            'fetchShiftCodes',\n            'submitNewShift',\n            'submitShiftChange'\n        ]),\n        nextWeek() {\n            let eowString = moment(this.eow, \"MM-DD-YYYY\").add(7, 'day').format('MM-DD-YYYY')\n           return eowString\n        },\n        lastWeek() {\n            let eowString = moment(this.eow, \"MM-DD-YYYY\").subtract(7, 'day').format('MM-DD-YYYY')\n            return eowString;\n        },\n        addShift(event) {\n            let dateArray = event.toString().split(' ')\n            let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\n            this.shiftDate = moment(date, \"MM-DD-YYYY\").format(\"MM-DD-YYYY\")\n            this.showModal = true\n        },\n        dayClicked(event) {\n              this.showDayClickedModal = true\n              this.workingDate = event\n        },\n        eventClicked(event, date) {\n            this.showDayClickedModal = false\n            this.showChangeModal = true\n            this.managerFromId = event.managerFromId\n            this.managerChangeFrom = event.name\n            this.shiftCode = event.shiftCode\n            this.dayToChange = event.shiftDate\n        },\n        submitChange() {\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\n            let shiftChange = {\n                RequestId: '',\n                Id: this.getManagers[managerIndex].Id,\n                ManagerId: this.getManagers[managerIndex].Id,\n                ManagerToName: this.getManagers[managerIndex].Name,\n                ManagerFromName: this.managerChangeFrom,\n                EOW: this.eow,\n                ShiftCode: this.shiftCode,\n                Reason: this.reasonForChange,\n                shiftDate: this.dayToChange,\n                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\n                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\n                LocationId: this.$store.state.loggedInUser.locationId,\n                RequestingManagerRole: this.$store.state.loggedInUser.role,\n                managerFromId: this.managerFromId\n            }\n            this.submitShiftChange(shiftChange)\n            this.closeModal()\n            this.emptyFields()\n            this.submissionCompletion()\n        },\n        emptyFields() {\n            this.selectedManager = ''\n            this.newShiftCode = ''\n            this.reasonForChange = ''\n        },\n        submissionCompletion() {\n           // this.checkMissingShifts()\n            this.$emit('shiftSubmitted')\n        },\n        closeModal() {\n            this.showDayClickedModal = false\n            this.showChangeModal = false\n        },\n        submit() {\n            let shiftDay = moment(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY')\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\n            let aNewShift = {\n                LocationId: this.$store.state.loggedInUser.locationId,\n                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\n                ManagerId: this.getManagers[managerIndex].Id,\n                Day: shiftDay,\n                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\n            }\n            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {\n                this.submitNewShift(aNewShift)\n                this.emptyFields()\n                this.closeModal()\n                this.submissionCompletion()\n            }\n            else alert('unable to submit new shift')\n        }\n    },\n    data () {\n        return {\n            showDayClickedModal: false,\n            selectedManager: '',\n            newShiftCode: '',\n            eow: this.$route.query.eow,\n            locationId: this.$store.state.loggedInUser.locationId,\n            workingDate: \"\",\n            nextweekString: \"\",\n            lastWeekString: \"\",\n            showChangeModal: false,\n            dayToChange: \"\",\n            shiftCode: \"\",\n            reasonForChange: \"\",\n            managerFromId:\"\"\n        }\n    },\n    computed: {\n      ...mapGetters([\n        'getWeek',\n        'getManagers',\n        'getShiftCodes',\n        'getSchedule'\n      ])\n    },\n    created() {\n        this.nextweekString = \"/approveSchedule/?eow=\" + this.nextWeek()\n        this.lastWeekString = \"/approveSchedule/?eow=\" + this.lastWeek()\n    }\n  }\n</script>\n\n<style scoped>\r\n    @media(min-width:1400px) {\r\n        .dayBox {\r\n            width: 13%;\r\n            background: white;\r\n            float: left;\r\n            margin: 0px 8px;\r\n            height: 55vh;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            border: 1px solid black;\r\n            border-radius: 5px;\r\n        }\r\n        .consequences {\r\n            background: white;\r\n            vertical-align: central;\r\n            text-align: center;\r\n            margin: auto;\r\n            padding: auto;\r\n            float: none;\r\n            clear: both;\r\n            overflow: auto;\r\n            border: 1px solid black !important;\r\n            border-radius: 5px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            width: 80%;\r\n        }\r\n    }\r\n    @media(m-width:801px) {\r\n        .dayBox {\r\n            width: 40%;\r\n            background: white;\r\n            float: left;\r\n            margin: 0px 8px 8px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            border: 1px solid black;\r\n            border-radius: 5px;\r\n            overflow: auto;\r\n        }\r\n        .consequences {\r\n            background: white;\r\n            vertical-align: central;\r\n            text-align: center;\r\n            margin: auto;\r\n            padding: auto;\r\n            float: none;\r\n            clear: both;\r\n            overflow: auto;\r\n            border: 1px solid black !important;\r\n            border-radius: 5px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            width: 80%;\r\n        }\r\n    }\r\n    @media(max-width:800px) {\r\n        .dayBox {\r\n            width: 80%;\r\n            background: white;\r\n            float: left;\r\n            margin: 0px 8px 8px;            \r\n            box-shadow: 10px 10px 5px #999999;\r\n            border: 1px solid black;\r\n            border-radius: 5px;\n            overflow:auto;\r\n        }\r\n        .consequences {\r\n            background: white;\r\n            vertical-align: central;\r\n            text-align: center;\r\n            margin: auto;\r\n            padding: auto;\r\n            float: none;\r\n            clear: both;\r\n            overflow: auto;\r\n            border: 1px solid black !important;\r\n            border-radius: 5px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            width: 80%;\r\n        }\r\n    }\n    .weekly{\n        width:90%;\n        margin:0 0 0 10px 0;\n        padding:0px;\n    }\n   \n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.Daily[data-v-13975d2c] {\n    border: 1px solid black;\n    border-radius: 5px;\n    padding: 5px 10px;\n    margin:1%;\n    width: 12%;\n    box-shadow: 10px 10px 5px #999999;\n    float:left;\n}\n.header[data-v-13975d2c]{\n    margin-left:30%;\n    width:0 auto;\n}\n#sumbit[data-v-13975d2c]{\n    margin-left:30%;\n    width: 0px auto;\n}\n.shiftList[data-v-13975d2c]{\n    list-style:none;\n    text-align:left;\n    padding-left:2px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/DailyShiftRequirements.vue?6fc7b6b5"],"names":[],"mappings":";AAiEA;IACA,wBAAA;IACA,mBAAA;IACA,kBAAA;IACA,UAAA;IACA,WAAA;IACA,kCAAA;IACA,WAAA;CACA;AACA;IACA,gBAAA;IACA,aAAA;CACA;AACA;IACA,gBAAA;IACA,gBAAA;CACA;AACA;IACA,gBAAA;IACA,gBAAA;IACA,iBAAA;CACA","file":"DailyShiftRequirements.vue","sourcesContent":["<template>\r\n      <div class=\"Daily\">\r\n          <span class=\"header\"><h4>{{day}}</h4></span>\r\n          <hr />\r\n          <ul class=\"shiftList\">\r\n              <li v-for=\"shiftCode in getShiftCodes\" style=\"text-align:left\">\r\n                  <label>\r\n                      <shift :ShiftCode=\"shiftCode.statusId\"\r\n                             :shiftDescription=\"shiftCode.description\"\r\n                             v-on:AddShiftCode=\"addShift($event)\"\r\n                             @RemoveShiftCode=\"removeShift($event)\"></shift>\r\n                  </label>\r\n              </li>\r\n          </ul>\r\n      </div>\r\n</template>\r\n\r\n<script>\r\n  import {mapActions, mapGetters} from 'vuex'\r\n  import shift from './ShiftSelection'\r\n\r\n  export default {\r\n        name: 'daily-shift-requirements',\r\n    components: {\r\n      shift\r\n    },\r\n    methods: {\r\n      ...mapActions([\r\n            'fetchShiftCodes',\r\n            'addShiftToDay',\r\n            'removeShiftFromDay'\r\n      ]),\r\n      addShift(event) {\r\n          let shifttoAdd = { day: this.day, shift: event }\r\n          this.addShiftToDay(shifttoAdd)\r\n      },\r\n      removeShift (event) {\r\n          let shiftToRemove = { day: this.day, shiftCode: event }\r\n          this.removeShiftFromDay(shiftToRemove)\r\n      },\r\n      clicked () {\r\n        this.submitDailyShiftRequirements(this.shiftCodes)\r\n      }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n            'getShiftCodes',\r\n            //'getUnSubShiftReq'\r\n      ])\r\n    },\r\n    data () {\r\n      return {\r\n        shiftCodes: [],\r\n        selected: false\r\n      }\r\n    },\r\n    props:['day'],\r\n    created () {\r\n      this.fetchShiftCodes(this.state)\r\n    }\r\n\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n    .Daily {\r\n        border: 1px solid black;\r\n        border-radius: 5px;\r\n        padding: 5px 10px;\n        margin:1%;\r\n        width: 12%;\r\n        box-shadow: 10px 10px 5px #999999;\n        float:left;\r\n    }\r\n    .header{\r\n        margin-left:30%;\r\n        width:0 auto;\r\n    }\r\n    #sumbit{\r\n        margin-left:30%;\r\n        width: 0px auto;\r\n    }\r\n    .shiftList{\r\n        list-style:none;\r\n        text-align:left;\r\n        padding-left:2px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17728,7 +17728,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.type[data-v-18d24ffb]{\n    font-size:xx-small !important;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/ShiftSelection.vue?155ae7a1"],"names":[],"mappings":";AA6BA;IACA,8BAAA;CACA","file":"ShiftSelection.vue","sourcesContent":["<template>\r\n  <div class=\"type\">\r\n    <input type=\"checkbox\" @click=\"clicked()\"> {{this.shiftDescription}}\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n    name: 'shift',\r\n    props: ['ShiftCode', 'shiftDescription'],\r\n    methods: {\r\n    clicked () {\r\n    this.selected = !this.selected\r\n    if (this.selected) {\r\n    this.$emit('AddShiftCode', { shiftCode:this.ShiftCode, ShiftDescription:this.shiftDescription })\r\n    } else {\r\n    this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription })\r\n    }\r\n    }\r\n    },\r\n    data () {\r\n    return {\r\n    selected: false\r\n    }\r\n    }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n    .type{\r\n        font-size:xx-small !important;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n@media(min-width:1400px) {\n.dayBox[data-v-13e0a9bb] {\n        width: 13%;\n        background: white;\n        float: left;\n        margin: 0px 8px;\n        height: 55vh;\n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius: 5px;\n}\n.consequences[data-v-13e0a9bb] {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        overflow: auto;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n        width: 80%;\n}\n}\n@media(m-width:801px) {\n.dayBox[data-v-13e0a9bb] {\n        width: 40%;\n        background: white;\n        float: left;\n        margin: 0px 8px 8px;\n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius: 5px;\n        overflow: auto;\n}\n.consequences[data-v-13e0a9bb] {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        overflow: auto;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n        width: 80%;\n}\n}\n@media(max-width:800px) {\n.dayBox[data-v-13e0a9bb] {\n        width: 80%;\n        background: white;\n        float: left;\n        margin: 0px 8px 8px;            \n        box-shadow: 10px 10px 5px #999999;\n        border: 1px solid black;\n        border-radius: 5px;\n        overflow:auto;\n}\n.consequences[data-v-13e0a9bb] {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        overflow: auto;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n        width: 80%;\n}\n}\n.weekly[data-v-13e0a9bb]{\n    width:90%;\n    margin:0 0 0 10px 0;\n    padding:0px;\n}\n\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/WeeklyCalendar.vue?b1b35b40"],"names":[],"mappings":";AAmNA;AACA;QACA,WAAA;QACA,kBAAA;QACA,YAAA;QACA,gBAAA;QACA,aAAA;QACA,kCAAA;QACA,wBAAA;QACA,mBAAA;CACA;AACA;QACA,kBAAA;QACA,wBAAA;QACA,mBAAA;QACA,aAAA;QACA,cAAA;QACA,YAAA;QACA,YAAA;QACA,eAAA;QACA,mCAAA;QACA,mBAAA;QACA,kCAAA;QACA,WAAA;CACA;CACA;AACA;AACA;QACA,WAAA;QACA,kBAAA;QACA,YAAA;QACA,oBAAA;QACA,kCAAA;QACA,wBAAA;QACA,mBAAA;QACA,eAAA;CACA;AACA;QACA,kBAAA;QACA,wBAAA;QACA,mBAAA;QACA,aAAA;QACA,cAAA;QACA,YAAA;QACA,YAAA;QACA,eAAA;QACA,mCAAA;QACA,mBAAA;QACA,kCAAA;QACA,WAAA;CACA;CACA;AACA;AACA;QACA,WAAA;QACA,kBAAA;QACA,YAAA;QACA,oBAAA;QACA,kCAAA;QACA,wBAAA;QACA,mBAAA;QACA,cAAA;CACA;AACA;QACA,kBAAA;QACA,wBAAA;QACA,mBAAA;QACA,aAAA;QACA,cAAA;QACA,YAAA;QACA,YAAA;QACA,eAAA;QACA,mCAAA;QACA,mBAAA;QACA,kCAAA;QACA,WAAA;CACA;CACA;AACA;IACA,UAAA;IACA,oBAAA;IACA,YAAA;CACA","file":"WeeklyCalendar.vue","sourcesContent":["<template>\r\n    <div>\r\n        <shift-modal v-if=\"showDayClickedModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.workingDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div style=\"vertical-align:middle; margin-bottom:5px;\">\r\n            <button><a :href=this.lastWeekString><</a></button>\r\n            <button><a :href=this.nextweekString>></a></button>\r\n        </div>\r\n        <div class=\"container-fluid weekly\">\r\n            <day class=\"dayBox\" :Day=\"this.monday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.tuesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.wednesday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.thursday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.friday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.saturday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n            <day class=\"dayBox\" :Day=\"this.sunday\" v-on:dayClicked=\"dayClicked($event)\" v-on:eventClicked=\"eventClicked($event)\"></day>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import moment from 'moment' \r\n  import Toasted from 'vue-toasted';\r\n\r\n  export default {\r\n        name: 'weekly-calendar',\r\n        props: [\r\n            'monday',\r\n            'tuesday',\r\n            'wednesday',\r\n            'thursday',\r\n            'friday',\r\n            'saturday',\r\n            'sunday',\r\n            ],\r\n    methods: {\r\n      ...mapActions([\r\n            'fetchWeek',\r\n            'fetchManagers',\r\n            'fetchShiftCodes',\r\n            'submitNewShift',\r\n            'submitShiftChange'\r\n        ]),\r\n        nextWeek() {\r\n            let eowString = moment(this.eow, \"MM-DD-YYYY\").add(7, 'day').format('MM-DD-YYYY')\r\n           return eowString\r\n        },\r\n        lastWeek() {\r\n            let eowString = moment(this.eow, \"MM-DD-YYYY\").subtract(7, 'day').format('MM-DD-YYYY')\r\n            return eowString;\r\n        },\r\n        addShift(event) {\r\n            let dateArray = event.toString().split(' ')\r\n            let date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3]\r\n            this.shiftDate = moment(date, \"MM-DD-YYYY\").format(\"MM-DD-YYYY\")\r\n            this.showModal = true\r\n        },\r\n        dayClicked(event) {\r\n              this.showDayClickedModal = true\r\n              this.workingDate = event\r\n        },\r\n        eventClicked(event, date) {\r\n            this.showDayClickedModal = false\r\n            this.showChangeModal = true\r\n            this.managerFromId = event.managerFromId\r\n            this.managerChangeFrom = event.name\r\n            this.shiftCode = event.shiftCode\r\n            this.dayToChange = event.shiftDate\r\n        },\r\n        submitChange() {\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n            let shiftChange = {\r\n                RequestId: '',\r\n                Id: this.getManagers[managerIndex].Id,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                ManagerToName: this.getManagers[managerIndex].Name,\r\n                ManagerFromName: this.managerChangeFrom,\r\n                EOW: this.eow,\r\n                ShiftCode: this.shiftCode,\r\n                Reason: this.reasonForChange,\r\n                shiftDate: this.dayToChange,\r\n                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n                managerFromId: this.managerFromId\r\n            }\r\n            this.submitShiftChange(shiftChange)\r\n            this.closeModal()\r\n            this.emptyFields()\r\n            this.submissionCompletion()\r\n        },\r\n        emptyFields() {\r\n            this.selectedManager = ''\r\n            this.newShiftCode = ''\r\n            this.reasonForChange = ''\r\n        },\r\n        submissionCompletion() {\r\n           // this.checkMissingShifts()\r\n            this.$emit('shiftSubmitted')\r\n        },\r\n        closeModal() {\r\n            this.showDayClickedModal = false\r\n            this.showChangeModal = false\r\n        },\r\n        submit() {\r\n            let shiftDay = moment(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY')\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n            let aNewShift = {\r\n                LocationId: this.$store.state.loggedInUser.locationId,\r\n                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n                ManagerId: this.getManagers[managerIndex].Id,\r\n                Day: shiftDay,\r\n                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n            }\r\n            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {\r\n                this.submitNewShift(aNewShift)\r\n                this.emptyFields()\r\n                this.closeModal()\r\n                this.submissionCompletion()\r\n            }\r\n            else alert('unable to submit new shift')\r\n        }\r\n    },\r\n    data () {\r\n        return {\r\n            showDayClickedModal: false,\r\n            selectedManager: '',\r\n            newShiftCode: '',\r\n            eow: this.$route.query.eow,\r\n            locationId: this.$store.state.loggedInUser.locationId,\r\n            workingDate: \"\",\r\n            nextweekString: \"\",\r\n            lastWeekString: \"\",\r\n            showChangeModal: false,\r\n            dayToChange: \"\",\r\n            shiftCode: \"\",\r\n            reasonForChange: \"\",\r\n            managerFromId:\"\"\r\n        }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n        'getWeek',\r\n        'getManagers',\r\n        'getShiftCodes',\r\n        'getSchedule'\r\n      ])\r\n    },\r\n    created() {\r\n        this.nextweekString = \"/approveSchedule/?eow=\" + this.nextWeek()\r\n        this.lastWeekString = \"/approveSchedule/?eow=\" + this.lastWeek()\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n    @media(min-width:1400px) {\r\n        .dayBox {\r\n            width: 13%;\r\n            background: white;\r\n            float: left;\r\n            margin: 0px 8px;\r\n            height: 55vh;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            border: 1px solid black;\r\n            border-radius: 5px;\r\n        }\r\n        .consequences {\r\n            background: white;\r\n            vertical-align: central;\r\n            text-align: center;\r\n            margin: auto;\r\n            padding: auto;\r\n            float: none;\r\n            clear: both;\r\n            overflow: auto;\r\n            border: 1px solid black !important;\r\n            border-radius: 5px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            width: 80%;\r\n        }\r\n    }\r\n    @media(m-width:801px) {\r\n        .dayBox {\r\n            width: 40%;\r\n            background: white;\r\n            float: left;\r\n            margin: 0px 8px 8px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            border: 1px solid black;\r\n            border-radius: 5px;\r\n            overflow: auto;\r\n        }\r\n        .consequences {\r\n            background: white;\r\n            vertical-align: central;\r\n            text-align: center;\r\n            margin: auto;\r\n            padding: auto;\r\n            float: none;\r\n            clear: both;\r\n            overflow: auto;\r\n            border: 1px solid black !important;\r\n            border-radius: 5px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            width: 80%;\r\n        }\r\n    }\r\n    @media(max-width:800px) {\r\n        .dayBox {\r\n            width: 80%;\r\n            background: white;\r\n            float: left;\r\n            margin: 0px 8px 8px;            \r\n            box-shadow: 10px 10px 5px #999999;\r\n            border: 1px solid black;\r\n            border-radius: 5px;\r\n            overflow:auto;\r\n        }\r\n        .consequences {\r\n            background: white;\r\n            vertical-align: central;\r\n            text-align: center;\r\n            margin: auto;\r\n            padding: auto;\r\n            float: none;\r\n            clear: both;\r\n            overflow: auto;\r\n            border: 1px solid black !important;\r\n            border-radius: 5px;\r\n            box-shadow: 10px 10px 5px #999999;\r\n            width: 80%;\r\n        }\r\n    }\r\n    .weekly{\r\n        width:90%;\r\n        margin:0 0 0 10px 0;\r\n        padding:0px;\r\n    }\r\n   \r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17742,7 +17742,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.card {\n    margin: 6px 2px;\n    border: 1px solid black;\n    border-radius: 5px;\n    font-size: small;\n    padding: 2px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/TheShift.vue?084ea324"],"names":[],"mappings":";AAqCA;IACA,gBAAA;IACA,wBAAA;IACA,mBAAA;IACA,iBAAA;IACA,aAAA;CACA","file":"TheShift.vue","sourcesContent":["<template>\r\n    <div class=\"card\" v-if=\"this.shiftType != 'Cancelled' && this.managerName !='Cancel Shift'\" v-on:click=\"eventClicked()\">\r\n        <div style=\"padding:2px 2px;\">Shift: {{shiftType}}</div>\r\n        <div style=\"padding:2px 2px;\">Manager: {{managerName}}</div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n        name: \"shift\",\r\n        data() {\r\n            return {}\r\n        },\r\n        props: [\r\n            'shiftType',\r\n            'managerName',\r\n            'managerFromId',\r\n            'date',\r\n            'shiftCode'\r\n        ],\r\n        methods: {\r\n            eventClicked() {\r\n                let Event = {\r\n                    name: this.managerName,\r\n                    managerFromId: this.managerFromId,\r\n                    Date: this.date,\r\n                    shiftCode: this.shiftCode,\r\n                    shiftDate:\"\"\r\n                }\r\n                this.$emit('eventClicked', Event)\r\n            }\r\n        }\r\n\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .card {\r\n        margin: 6px 2px;\r\n        border: 1px solid black;\r\n        border-radius: 5px;\r\n        font-size: small;\r\n        padding: 2px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.type[data-v-18d24ffb]{\n    font-size:xx-small !important;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/ManagerComponents/ShiftSelection.vue?155ae7a1"],"names":[],"mappings":";AA6BA;IACA,8BAAA;CACA","file":"ShiftSelection.vue","sourcesContent":["<template>\r\n  <div class=\"type\">\r\n    <input type=\"checkbox\" @click=\"clicked()\"> {{this.shiftDescription}}\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n    name: 'shift',\r\n    props: ['ShiftCode', 'shiftDescription'],\r\n    methods: {\r\n    clicked () {\r\n    this.selected = !this.selected\r\n    if (this.selected) {\r\n    this.$emit('AddShiftCode', { shiftCode:this.ShiftCode, ShiftDescription:this.shiftDescription })\r\n    } else {\r\n    this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription })\r\n    }\r\n    }\r\n    },\r\n    data () {\r\n    return {\r\n    selected: false\r\n    }\r\n    }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n    .type{\r\n        font-size:xx-small !important;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17756,7 +17756,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.modal-mask {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container {\n  width: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3 {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body {\n  margin: 20px 0;\n}\n.modal-default-button {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter {\n  opacity: 0;\n}\n.modal-leave-active {\n  opacity: 0;\n}\n.modal-enter .modal-container,\n.modal-leave-active .modal-container {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/ShiftModal.vue?446187c2"],"names":[],"mappings":";AA0CA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA","file":"ShiftModal.vue","sourcesContent":["<template>\r\n  <transition name=\"modal\">\r\n    <div class=\"modal-mask\">\r\n      <div class=\"modal-wrapper\">\r\n        <div class=\"modal-container\">\r\n\r\n          <div class=\"modal-header\">\r\n            <slot name=\"header\">\r\n              default header\r\n            </slot>\r\n          </div>\r\n\r\n          <div class=\"modal-body\">\r\n            <slot name=\"body\">\r\n              default body\r\n            </slot>\r\n          </div>\r\n\r\n          <div class=\"modal-footer\">\r\n            <slot name=\"footer\">\r\n              default footer\r\n              <button class=\"modal-default-button\" @click=\"$emit('close')\">\r\n                OK\r\n              </button>\r\n            </slot>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </transition>\r\n</template>\r\n<script>\r\n  export default {\r\n    name: 'ShiftModal',\r\n    props: ['manager', 'shiftcode', 'shiftdate'],\r\n    data () {\r\n      return {\r\n      }\r\n    }\r\n  }\r\n</script>\r\n<style>\r\n  .modal-mask {\r\n    position: fixed;\r\n    z-index: 9998;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, .5);\r\n    display: table;\r\n    transition: opacity .3s ease;\r\n  }\r\n\r\n  .modal-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n  }\r\n\r\n  .modal-container {\r\n    width: 300px;\r\n    margin: 0px auto;\r\n    padding: 20px 30px;\r\n    background-color: #fff;\r\n    border-radius: 2px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\r\n    transition: all .3s ease;\r\n    font-family: Helvetica, Arial, sans-serif;\r\n  }\r\n\r\n  .modal-header h3 {\r\n    margin-top: 0;\r\n    color: #42b983;\r\n  }\r\n\r\n  .modal-body {\r\n    margin: 20px 0;\r\n  }\r\n\r\n  .modal-default-button {\r\n    float: right;\r\n  }\r\n\r\n  /*\r\n   * The following styles are auto-applied to elements with\r\n   * transition=\"modal\" when their visibility is toggled\r\n   * by Vue.js.\r\n   *\r\n   * You can easily play with the modal transition by editing\r\n   * these styles.\r\n   */\r\n\r\n  .modal-enter {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-leave-active {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-enter .modal-container,\r\n  .modal-leave-active .modal-container {\r\n    -webkit-transform: scale(1.1);\r\n    transform: scale(1.1);\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.card {\n    margin: 6px 2px;\n    border: 1px solid black;\n    border-radius: 5px;\n    font-size: small;\n    padding: 2px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/TheShift.vue?084ea324"],"names":[],"mappings":";AAqCA;IACA,gBAAA;IACA,wBAAA;IACA,mBAAA;IACA,iBAAA;IACA,aAAA;CACA","file":"TheShift.vue","sourcesContent":["<template>\r\n    <div class=\"card\" v-if=\"this.shiftType != 'Cancelled' && this.managerName !='Cancel Shift'\" v-on:click=\"eventClicked()\">\r\n        <div style=\"padding:2px 2px;\">Shift: {{shiftType}}</div>\r\n        <div style=\"padding:2px 2px;\">Manager: {{managerName}}</div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n        name: \"shift\",\r\n        data() {\r\n            return {}\r\n        },\r\n        props: [\r\n            'shiftType',\r\n            'managerName',\r\n            'managerFromId',\r\n            'date',\r\n            'shiftCode'\r\n        ],\r\n        methods: {\r\n            eventClicked() {\r\n                let Event = {\r\n                    name: this.managerName,\r\n                    managerFromId: this.managerFromId,\r\n                    Date: this.date,\r\n                    shiftCode: this.shiftCode,\r\n                    shiftDate:\"\"\r\n                }\r\n                this.$emit('eventClicked', Event)\r\n            }\r\n        }\r\n\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .card {\r\n        margin: 6px 2px;\r\n        border: 1px solid black;\r\n        border-radius: 5px;\r\n        font-size: small;\r\n        padding: 2px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17770,7 +17770,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n#changeRequest[data-v-297e35f2] {\n  margin-top: 10%;\n  border-style: solid;\n  border-radius: 5px;\n  border-color: gray;\n}\n#request[data-v-297e35f2] {\n  width:auto;\n  margin: 0 auto;\n  padding: 20px;\n}\np[data-v-297e35f2] {\n  font-size: px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/PayrollApproval.vue?14762f95"],"names":[],"mappings":";AA0FA;EACA,gBAAA;EACA,oBAAA;EACA,mBAAA;EACA,mBAAA;CACA;AACA;EACA,WAAA;EACA,eAAA;EACA,cAAA;CACA;AACA;EACA,cAAA;CACA","file":"PayrollApproval.vue","sourcesContent":["<template>\n    <div>\n        <nav-left>\n            <div slot=\"body\">\n                <div style=\"margin-top:10%\">\r\n                    <b-datepicker placeholder=\"Click to select...\"\r\n                                  icon=\"calendar-today\">\r\n                    </b-datepicker>\r\n                </div>\r\n            </div>\n        </nav-left>\r\n          <div class=\"container\">\n              <p> hello {{getUser.managerName}}</p>\r\n            <div v-for=\"request in getChangeRequest\" id=\"request\">\n                blargh\r\n              <section class=\"hero is-light\" id=\"changeRequest\">\r\n                <div class=\"hero-body\">\r\n                  <h1 class=\"title\"> {{ request.fromName }} would like to trade change their shift </h1>\r\n                  <h2 class=\"subtitle\"> Shift Date is {{ request.shiftDate}}</h2>\r\n                  <p> This request would change the manager for that shift from  {{ request.fromName }} to {{ request.toName }}</p>\r\n                  <p> the shiftCode for this shift is: {{ request.shiftCode }}</p>\r\n                  <p> the reason for the request is: {{ request.reason }}</p>\r\n                  <div style=\"width: 50%; margin: 0 auto;\">\r\n                    <button\r\n                      @click=\"approveChange(request)\"\r\n                      class=\"button is-info\" >\r\n                      Approve\r\n                    </button>\r\n                    <button\r\n                      style=\"margin-left: 20px\"\r\n                      @click=\"rejectChange(request)\"\r\n                      class=\"button is-warning\">\r\n                      Reject\r\n                    </button>\r\n                  </div>\r\n                </div>\r\n              </section>\r\n            </div>\r\n          </div>\n        </div>\r\n</template>\r\n\r\n<script>\r\n    import { mapActions, mapGetters } from 'vuex'\n    import navLeft from '../layout/nav-left.vue'\n\n    export default {\n        components: { navLeft },\r\n    methods: {\r\n        ...mapActions([\n            'fetchManagers',\r\n            'fetchChangeRequest',\r\n            'payrollAcceptShiftChange',\r\n            'gmRejectShiftChange',\n\r\n      ]),\r\n      approveChange (request) {\r\n        let approval = {GMId: 1, Request: request}\r\n        this.payrollAcceptShiftChange(approval)\r\n      },\r\n      rejectChange (request) {\r\n        let approval = {GMId: 1, Request: request}\r\n        this.gmRejectShiftChange(approval)\r\n      }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n            'getChangeRequest',\n            'getUser'\r\n        ]),\n      format() {\r\n          return this.formatAmPm ? '12' : '24'\r\n      }\r\n    },\r\n    data () {\r\n      return {\r\n          Id: this.$route.params,\n          date: new Date(),\n          formatAmPm: false\r\n      }\r\n    },\r\n    created () {\r\n        let params = this.$route.query\n        this.fetchManagers(this.$store.state.loggedInUser.locationID)\r\n        this.fetchChangeRequest(params)\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>    \r\n  #changeRequest {\r\n    margin-top: 10%;\r\n    border-style: solid;\r\n    border-radius: 5px;\r\n    border-color: gray;\r\n  }\r\n  #request {\r\n    width:auto;\r\n    margin: 0 auto;\r\n    padding: 20px;\r\n  }\r\n  p {\r\n    font-size: px;\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.modal-mask {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container {\n  width: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3 {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body {\n  margin: 20px 0;\n}\n.modal-default-button {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter {\n  opacity: 0;\n}\n.modal-leave-active {\n  opacity: 0;\n}\n.modal-enter .modal-container,\n.modal-leave-active .modal-container {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/ShiftModal.vue?446187c2"],"names":[],"mappings":";AA0CA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA","file":"ShiftModal.vue","sourcesContent":["<template>\r\n  <transition name=\"modal\">\r\n    <div class=\"modal-mask\">\r\n      <div class=\"modal-wrapper\">\r\n        <div class=\"modal-container\">\r\n\r\n          <div class=\"modal-header\">\r\n            <slot name=\"header\">\r\n              default header\r\n            </slot>\r\n          </div>\r\n\r\n          <div class=\"modal-body\">\r\n            <slot name=\"body\">\r\n              default body\r\n            </slot>\r\n          </div>\r\n\r\n          <div class=\"modal-footer\">\r\n            <slot name=\"footer\">\r\n              default footer\r\n              <button class=\"modal-default-button\" @click=\"$emit('close')\">\r\n                OK\r\n              </button>\r\n            </slot>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </transition>\r\n</template>\r\n<script>\r\n  export default {\r\n    name: 'ShiftModal',\r\n    props: ['manager', 'shiftcode', 'shiftdate'],\r\n    data () {\r\n      return {\r\n      }\r\n    }\r\n  }\r\n</script>\r\n<style>\r\n  .modal-mask {\r\n    position: fixed;\r\n    z-index: 9998;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, .5);\r\n    display: table;\r\n    transition: opacity .3s ease;\r\n  }\r\n\r\n  .modal-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n  }\r\n\r\n  .modal-container {\r\n    width: 300px;\r\n    margin: 0px auto;\r\n    padding: 20px 30px;\r\n    background-color: #fff;\r\n    border-radius: 2px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\r\n    transition: all .3s ease;\r\n    font-family: Helvetica, Arial, sans-serif;\r\n  }\r\n\r\n  .modal-header h3 {\r\n    margin-top: 0;\r\n    color: #42b983;\r\n  }\r\n\r\n  .modal-body {\r\n    margin: 20px 0;\r\n  }\r\n\r\n  .modal-default-button {\r\n    float: right;\r\n  }\r\n\r\n  /*\r\n   * The following styles are auto-applied to elements with\r\n   * transition=\"modal\" when their visibility is toggled\r\n   * by Vue.js.\r\n   *\r\n   * You can easily play with the modal transition by editing\r\n   * these styles.\r\n   */\r\n\r\n  .modal-enter {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-leave-active {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-enter .modal-container,\r\n  .modal-leave-active .modal-container {\r\n    -webkit-transform: scale(1.1);\r\n    transform: scale(1.1);\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17784,7 +17784,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.consequences[data-v-3aaf9f48] {\n    background: white;\n    vertical-align: central;\n    text-align: center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/GMApproveSchedule.vue?ce7da2b8"],"names":[],"mappings":";AAmKA;IACA,kBAAA;IACA,wBAAA;IACA,mBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"GMApproveSchedule.vue","sourcesContent":["<template>\n    <div  style=\"width:100%\">\n        <h1 class=\"title\" style=\"margin: 0 auto; font-size: x-large; text-align: center\">\n            Please confirm the week's schedule\n        </h1>\n        <hr />\n        <weekly-calendar\n                         :monday=\"this.monday\"\n                         :tuesday=\"this.tuesday\"\n                         :wednesday=\"this.wednesday\"\n                         :thursday=\"this.thursday\"\n                         :friday=\"this.friday\"\n                         :saturday=\"this.saturday\"\n                         :sunday=\"this.sunday\"\n                         @shiftSubmitted=\"this.shiftSubmitted\">\n            </weekly-calendar> <hr />\n        <div>\n            <ScheduleConsequences class=\"container\"></ScheduleConsequences>\n        </div>\n        <DisapproveModal v-if=\"disapproveModal\" @close=\"closeModal\"></DisapproveModal>\n        <ApproveModal v-if=\"approvalModal\" @close=\"closeModal\" @accept=\"approveThisSchedule\">\n\n        </ApproveModal>\n        <div style=\"width:50%; margin: 5px auto; vertical-align:central\">\n            <button class=\"button is-info\" @click=\"this.modalScheduleApproval\">Approve</button>\n            <button class=\"button is-warning\" @click=\"this.rejectSchedule\">Reject</button>\n        </div>\n    </div>\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n    import WeeklyCalendar from '../Calendar/WeeklyCalendar'\n    import DisapproveModal from './DisapproveModal'\n    import ApproveModal from './ApproveModal'\n    import shift from '../Calendar/TheShift'\n    import ScheduleConsequences from '../Calendar/ScheduleConsequences'\n    import moment from 'moment'\n\n    export default {\n    name: 'gmapproveschedule',\n    components: { WeeklyCalendar, DisapproveModal, ApproveModal, ScheduleConsequences },\n    methods: {\n        ...mapActions([\n            'approveSchedule',\n            'fetchLoggedInUser',\n            'fetchVacationHistory',\n            'fetchRequiredShifts',\n            'fetchManagers',\n            'fetchWeek',\n            'fetchShiftCodes',\n            'checkShiftRequirements'\n        ]),\n        distributeWeek(week) {\n            for (var day in week) {\n                var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')\n                if (dotw === 'Mon') {\n                    this.monday = week[day]\n                }\n                if (dotw === 'Tue') {\n                    this.tuesday = week[day]\n                }\n                if (dotw === 'Wed') {\n                    this.wednesday = week[day]\n                }\n                if (dotw === 'Thu') {\n                    this.thursday = week[day]\n                }\n                if (dotw === 'Fri') {\n                    this.friday = week[day]\n                }\n                if (dotw === 'Sat') {\n                    this.saturday = week[day]\n                }\n                if (dotw === 'Sun') {\n                    this.sunday = week[day]\n                }\n            }\n        },\n        closeModal() {\n            this.disapproveModal = false\n            this.approvalModal = false\n        },\n        approveThisSchedule() {\n            let approval = {\n                eow: this.eow,\n                GmId: this.$store.state.loggedInUser.id,\n                RestaurantId: this.$store.state.loggedInUser.locationId\n            }\n            this.approveSchedule(approval)\n        },\n        rejectSchedule() {\n            this.disapproveModal = true\n        },\n        modalScheduleApproval() {\n            this.approvalModal = true\n        },\n        shiftSubmitted() {\n            var param = {\n                eow: this.eow,\n                locationId: this.$store.state.loggedInUser.locationId\n            }\n            setTimeout(() => {\n                this.fetchWeek(param)\n                    .then(() => {\n                        this.distributeWeek(this.getWeek)\n                    })\n            }, 200)\n        },\n        rejected (event) {\n            this.disapproveModal = false\n        }\n    },\n    computed: {\n        ...mapGetters([\n            'getWeek',\n            'getManagers'\n        ])\n    },\n    data () {\n        return {\n            eow: this.$route.query.eow,\n            reason: '',\n            disapproveModal: false,\n            approvalModal: false,\n            monday: {},\n            tuesday: {},\n            wednesday: {},\n            thursday: {},\n            friday: {},\n            saturday: {},\n            sunday: {},\n        }\n    },\n    created () {\n        this.fetchLoggedInUser()\n            .then(() => {\n                var param = {\n                    eow: this.eow,\n                    locationId: this.$store.state.loggedInUser.locationId\n                }\n                this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                    .then(() => {\n                        this.fetchWeek(param)\n                            .then(() => {\n                                this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)\n                                    .then(() => {\n                                        this.distributeWeek(this.getWeek)\n                                        this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                                        this.fetchShiftCodes(this.state)\n                                        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\n                                    })\n                            })\n                    })\n            })\n\n\n        }\n    }\n</script>\n\n<style scoped>\n\n    .consequences {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        height: 50vh !important;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n    }\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n#changeRequest[data-v-297e35f2] {\n  margin-top: 10%;\n  border-style: solid;\n  border-radius: 5px;\n  border-color: gray;\n}\n#request[data-v-297e35f2] {\n  width:auto;\n  margin: 0 auto;\n  padding: 20px;\n}\np[data-v-297e35f2] {\n  font-size: px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/PayrollApproval.vue?14762f95"],"names":[],"mappings":";AA0FA;EACA,gBAAA;EACA,oBAAA;EACA,mBAAA;EACA,mBAAA;CACA;AACA;EACA,WAAA;EACA,eAAA;EACA,cAAA;CACA;AACA;EACA,cAAA;CACA","file":"PayrollApproval.vue","sourcesContent":["<template>\n    <div>\n        <nav-left>\n            <div slot=\"body\">\n                <div style=\"margin-top:10%\">\r\n                    <b-datepicker placeholder=\"Click to select...\"\r\n                                  icon=\"calendar-today\">\r\n                    </b-datepicker>\r\n                </div>\r\n            </div>\n        </nav-left>\r\n          <div class=\"container\">\n              <p> hello {{getUser.managerName}}</p>\r\n            <div v-for=\"request in getChangeRequest\" id=\"request\">\n                blargh\r\n              <section class=\"hero is-light\" id=\"changeRequest\">\r\n                <div class=\"hero-body\">\r\n                  <h1 class=\"title\"> {{ request.fromName }} would like to trade change their shift </h1>\r\n                  <h2 class=\"subtitle\"> Shift Date is {{ request.shiftDate}}</h2>\r\n                  <p> This request would change the manager for that shift from  {{ request.fromName }} to {{ request.toName }}</p>\r\n                  <p> the shiftCode for this shift is: {{ request.shiftCode }}</p>\r\n                  <p> the reason for the request is: {{ request.reason }}</p>\r\n                  <div style=\"width: 50%; margin: 0 auto;\">\r\n                    <button\r\n                      @click=\"approveChange(request)\"\r\n                      class=\"button is-info\" >\r\n                      Approve\r\n                    </button>\r\n                    <button\r\n                      style=\"margin-left: 20px\"\r\n                      @click=\"rejectChange(request)\"\r\n                      class=\"button is-warning\">\r\n                      Reject\r\n                    </button>\r\n                  </div>\r\n                </div>\r\n              </section>\r\n            </div>\r\n          </div>\n        </div>\r\n</template>\r\n\r\n<script>\r\n    import { mapActions, mapGetters } from 'vuex'\n    import navLeft from '../layout/nav-left.vue'\n\n    export default {\n        components: { navLeft },\r\n    methods: {\r\n        ...mapActions([\n            'fetchManagers',\r\n            'fetchChangeRequest',\r\n            'payrollAcceptShiftChange',\r\n            'gmRejectShiftChange',\n\r\n      ]),\r\n      approveChange (request) {\r\n        let approval = {GMId: 1, Request: request}\r\n        this.payrollAcceptShiftChange(approval)\r\n      },\r\n      rejectChange (request) {\r\n        let approval = {GMId: 1, Request: request}\r\n        this.gmRejectShiftChange(approval)\r\n      }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n            'getChangeRequest',\n            'getUser'\r\n        ]),\n      format() {\r\n          return this.formatAmPm ? '12' : '24'\r\n      }\r\n    },\r\n    data () {\r\n      return {\r\n          Id: this.$route.params,\n          date: new Date(),\n          formatAmPm: false\r\n      }\r\n    },\r\n    created () {\r\n        let params = this.$route.query\n        this.fetchManagers(this.$store.state.loggedInUser.locationID)\r\n        this.fetchChangeRequest(params)\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>    \r\n  #changeRequest {\r\n    margin-top: 10%;\r\n    border-style: solid;\r\n    border-radius: 5px;\r\n    border-color: gray;\r\n  }\r\n  #request {\r\n    width:auto;\r\n    margin: 0 auto;\r\n    padding: 20px;\r\n  }\r\n  p {\r\n    font-size: px;\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17798,7 +17798,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* Dropdown Button */\n.dropbtn {\n    background-color: #015351;\n    color: white;\n    padding: 16px;\n    font-size: small;\n    border: none;\n    cursor: pointer;\n    height:100%;\n}\n\n    /* Dropdown button on hover & focus */\n.dropbtn:hover, .dropbtn:focus {\n        background-color: #2980B9;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n    position: relative;\n    display: inline-block;\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n    display: none;\n    position: absolute;\n    background-color: #f1f1f1;\n    min-width: 130px;\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);\n    z-index: 1;\n}\n\n    /* Links inside the dropdown */\n.dropdown-content a {\n        color: black;\n        text-decoration: none;\n        display: block;\n}\n\n        /* Change color of dropdown links on hover */\n.dropdown-content a:hover {\n            background-color: #ddd\n}\n\n/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */\n.show {\n    display: block;\n} \n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/layout/dropdown.vue?66e8c357"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;AAwBA,qBAAA;AACA;IACA,0BAAA;IACA,aAAA;IACA,cAAA;IACA,iBAAA;IACA,aAAA;IACA,gBAAA;IACA,YAAA;CACA;;IAEA,sCAAA;AACA;QACA,0BAAA;CACA;;AAEA,mEAAA;AACA;IACA,mBAAA;IACA,sBAAA;CACA;;AAEA,0CAAA;AACA;IACA,cAAA;IACA,mBAAA;IACA,0BAAA;IACA,iBAAA;IACA,6CAAA;IACA,WAAA;CACA;;IAEA,+BAAA;AACA;QACA,aAAA;QACA,sBAAA;QACA,eAAA;CACA;;QAEA,6CAAA;AACA;YACA,sBAAA;CACA;;AAEA,sIAAA;AACA;IACA,eAAA;CACA","file":"dropdown.vue","sourcesContent":["<template>\r\n    <div class=\"dropdown\">\r\n        <button class=\"dropbtn\">{{title}}</button>\r\n        <div id=\"myDropdown\" class=\"dropdown-content\">\r\n          <ul>\r\n              <br />\r\n              <li v-for=\"item in items\" style=\"list-style:none; padding: 2px 0px; margin:0;\"><a :href=item.link>{{item.title}}</a></li>\r\n          </ul>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n        name:'dropdown',\r\n        props: [\r\n            'title', 'items'\r\n        ],\r\n        methods: {\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    /* Dropdown Button */\r\n    .dropbtn {\r\n        background-color: #015351;\r\n        color: white;\r\n        padding: 16px;\r\n        font-size: small;\r\n        border: none;\r\n        cursor: pointer;\r\n        height:100%;\r\n    }\r\n\r\n        /* Dropdown button on hover & focus */\r\n        .dropbtn:hover, .dropbtn:focus {\r\n            background-color: #2980B9;\r\n        }\r\n\r\n    /* The container <div> - needed to position the dropdown content */\r\n    .dropdown {\r\n        position: relative;\r\n        display: inline-block;\r\n    }\r\n\r\n    /* Dropdown Content (Hidden by Default) */\r\n    .dropdown-content {\r\n        display: none;\r\n        position: absolute;\r\n        background-color: #f1f1f1;\r\n        min-width: 130px;\r\n        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);\r\n        z-index: 1;\r\n    }\r\n\r\n        /* Links inside the dropdown */\r\n        .dropdown-content a {\r\n            color: black;\r\n            text-decoration: none;\r\n            display: block;\r\n        }\r\n\r\n            /* Change color of dropdown links on hover */\r\n            .dropdown-content a:hover {\r\n                background-color: #ddd\r\n            }\r\n\r\n    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */\r\n    .show {\r\n        display: block;\r\n    } \r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.consequences[data-v-3aaf9f48] {\n    background: white;\n    vertical-align: central;\n    text-align: center;\n    margin: auto;\n    padding: auto;\n    float: none;\n    clear: both;\n    height: 50vh !important;\n    border: 1px solid black !important;\n    border-radius: 5px;\n    box-shadow: 10px 10px 5px #999999;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/GMApproveSchedule.vue?fb464918"],"names":[],"mappings":";AA6JA;IACA,kBAAA;IACA,wBAAA;IACA,mBAAA;IACA,aAAA;IACA,cAAA;IACA,YAAA;IACA,YAAA;IACA,wBAAA;IACA,mCAAA;IACA,mBAAA;IACA,kCAAA;CACA","file":"GMApproveSchedule.vue","sourcesContent":["<template>\n    <div  style=\"width:100%\">\n        <h1 class=\"title\" style=\"margin: 0 auto; font-size: x-large; text-align: center\">\n            Please confirm the week's schedule\n        </h1>\n        <hr />\n        <weekly-calendar\n                         :monday=\"this.monday\"\n                         :tuesday=\"this.tuesday\"\n                         :wednesday=\"this.wednesday\"\n                         :thursday=\"this.thursday\"\n                         :friday=\"this.friday\"\n                         :saturday=\"this.saturday\"\n                         :sunday=\"this.sunday\"\n                         @shiftSubmitted=\"this.shiftSubmitted\">\n            </weekly-calendar> <hr />\n        <div>\n            <ScheduleConsequences class=\"container\"></ScheduleConsequences>\n        </div>\n        <DisapproveModal v-if=\"disapproveModal\" @close=\"closeModal\"></DisapproveModal>\n        <ApproveModal v-if=\"approvalModal\" @close=\"closeModal\" @accept=\"approveThisSchedule\">\n\n        </ApproveModal>\n        <div style=\"width:50%; margin: 5px auto; vertical-align:central\">\n            <button class=\"button is-info\" @click=\"this.modalScheduleApproval\">Approve</button>\n            <button class=\"button is-warning\" @click=\"this.rejectSchedule\">Reject</button>\n        </div>\n    </div>\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n    import moment from 'moment'\n\n    export default {\n    name: 'gmapproveschedule',\n    methods: {\n        ...mapActions([\n            'approveSchedule',\n            'fetchLoggedInUser',\n            'fetchVacationHistory',\n            'fetchRequiredShifts',\n            'fetchManagers',\n            'fetchWeek',\n            'fetchShiftCodes',\n            'checkShiftRequirements'\n        ]),\n        distributeWeek(week) {\n            for (var day in week) {\n                var dotw = moment(week[day].date, 'MM-DD-YYYY').format('ddd')\n                if (dotw === 'Mon') {\n                    this.monday = week[day]\n                }\n                if (dotw === 'Tue') {\n                    this.tuesday = week[day]\n                }\n                if (dotw === 'Wed') {\n                    this.wednesday = week[day]\n                }\n                if (dotw === 'Thu') {\n                    this.thursday = week[day]\n                }\n                if (dotw === 'Fri') {\n                    this.friday = week[day]\n                }\n                if (dotw === 'Sat') {\n                    this.saturday = week[day]\n                }\n                if (dotw === 'Sun') {\n                    this.sunday = week[day]\n                }\n            }\n        },\n        closeModal() {\n            this.disapproveModal = false\n            this.approvalModal = false\n        },\n        approveThisSchedule() {\n            let approval = {\n                eow: this.eow,\n                GmId: this.$store.state.loggedInUser.id,\n                RestaurantId: this.$store.state.loggedInUser.locationId\n            }\n            this.approveSchedule(approval)\n        },\n        rejectSchedule() {\n            this.disapproveModal = true\n        },\n        modalScheduleApproval() {\n            this.approvalModal = true\n        },\n        shiftSubmitted() {\n            var param = {\n                eow: this.eow,\n                locationId: this.$store.state.loggedInUser.locationId\n            }\n            setTimeout(() => {\n                this.fetchWeek(param)\n                    .then(() => {\n                        this.distributeWeek(this.getWeek)\n                    })\n            }, 200)\n        },\n        rejected (event) {\n            this.disapproveModal = false\n        }\n    },\n    computed: {\n        ...mapGetters([\n            'getWeek',\n            'getManagers'\n        ])\n    },\n    data () {\n        return {\n            eow: this.$route.query.eow,\n            reason: '',\n            disapproveModal: false,\n            approvalModal: false,\n            monday: {},\n            tuesday: {},\n            wednesday: {},\n            thursday: {},\n            friday: {},\n            saturday: {},\n            sunday: {},\n        }\n    },\n    created () {\n        this.fetchLoggedInUser()\n            .then(() => {\n                var param = {\n                    eow: this.eow,\n                    locationId: this.$store.state.loggedInUser.locationId\n                }\n                this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                    .then(() => {\n                        this.fetchWeek(param)\n                            .then(() => {\n                                this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)\n                                    .then(() => {\n                                        this.distributeWeek(this.getWeek)\n                                        this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                                        this.fetchShiftCodes(this.state)\n                                        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\n                                    })\n                            })\n                    })\n            })\n\n\n        }\n    }\n</script>\n\n<style scoped>\n\n    .consequences {\n        background: white;\n        vertical-align: central;\n        text-align: center;\n        margin: auto;\n        padding: auto;\n        float: none;\n        clear: both;\n        height: 50vh !important;\n        border: 1px solid black !important;\n        border-radius: 5px;\n        box-shadow: 10px 10px 5px #999999;\n    }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17812,7 +17812,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\nnav .navbar {\n    background-color: #015351;\n}\n.slide-enter-active, .slide-leave-active {\n    transition: max-height .35s\n}\n.slide-enter, .slide-leave-to {\n    max-height: 0px;\n}\n.slide-enter-to, .slide-leave {\n    max-height: 20em;\n}\n.logo1 {\n    margin-top: 3px;\n    height: 50px;\n}\n.dropdown {\n    color:white;\n    position: relative;\n    display: inline-block;\n    margin-left: 2%;\n    float:left;\n    font-size:smaller;\n    height:100%;\n}\n.dropdown-content {\n    display: none;\n    position: absolute;\n    background-color: #f9f9f9;\n    min-width: 160px;\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \n    z-index: 1;\n    color:black;\n}\n.dropdown:hover {\n    background-color: #15a589;\n}\n.dropdown:hover .dropdown-content {\n    display: block;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/nav-menu.vue?dc06e548"],"names":[],"mappings":";AA2HA;IACA,0BAAA;CACA;AACA;IACA,2BAAA;CACA;AAEA;IACA,gBAAA;CACA;AAEA;IACA,iBAAA;CACA;AAEA;IACA,gBAAA;IACA,aAAA;CACA;AACA;IACA,YAAA;IACA,mBAAA;IACA,sBAAA;IACA,gBAAA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;CACA;AAEA;IACA,cAAA;IACA,mBAAA;IACA,0BAAA;IACA,iBAAA;IACA,6CAAA;IACA,WAAA;IACA,YAAA;CACA;AACA;IACA,0BAAA;CACA;AACA;IACA,eAAA;CACA","file":"nav-menu.vue","sourcesContent":["<template>\r\n    <!--<nav class=\"navbar\" role=\"navigation\" aria-label=\"main navigation\" >\r\n        <div class=\"container\">\r\n            <div class=\"navbar-header \">\r\n                <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                </button>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/Logo_Green_lq.jpg\" style=\"width: 100px; height: 60px; padding: .3em .5em .3em .5em\" alt=\"logo\" />\r\n                </a>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/logo2_lq.png\" style=\"width: 100px; height: 60px;  padding: 1em .5em 1em .5em\" alt=\"logo\" />\r\n                </a>\r\n            </div>\r\n            <div>\r\n                <dropdown title=\"Supply Hub\" :items=\"SupplyHub\"></dropdown>\r\n                <dropdown title=\"Menu Hub\" :items=\"MenuHub\"></dropdown>\r\n                <dropdown title=\"Ops Hub\" :items=\"OpsHub\"></dropdown>\r\n                <dropdown title=\"Finance Hub\" :items=\"FinanceHub\"></dropdown>\r\n                <dropdown title=\"Admin Hub\" :items=\"AdminHub\"></dropdown>\r\n                <dropdown title=\"Inventory Hub\" :items=\"InventoryHub\"></dropdown>\r\n            </div>\r\n                <ul class=\"nav navbar-nav navbar-right\">\r\n                    <li style=\"width: 100px; height: 60px\">\r\n                        <a href=\"/wsbis\" class=\"pull-right\" style=\"padding:0; \">\r\n                            <img src=\"../Assets/SmallLogo.png\" style=\"width: 100px; height: 60px; padding: .6em 1em .6em 1em\" alt=\"hub_logo\" />\r\n                        </a>\r\n                    </li>\r\n                </ul>\r\n\r\n            </div>\r\n        </nav>-->    \r\n</template>\r\n\r\n<script>\r\n    import { routes } from '../routes'\r\n    import { mapGetters, mapActions } from 'vuex'\r\n    import dropdown from './layout/dropdown'\r\n\r\n    export default {\r\n        data() {\r\n            return {\r\n                routes,\r\n                collapsed: true,\r\n                SupplyHub: [\r\n                    { title: 'Home (NEW)', link: \"\" },\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'SKUs', link: \"\" },\r\n                    { title: 'Contracts', link: \"\" },\r\n                    { title: 'Bids', link: \"\" },\r\n                    { title: 'Mapper', link: \"\" },\r\n                    { title: 'Admin', link: \"\" },\r\n                ],\r\n                MenuHub: [\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'Recipes', link: \"\" },\r\n                    { title: 'Menus', link: \"\" },\r\n                    { title: 'Menus Items', link: \"\" }\r\n                ],\r\n                OpsHub: [\r\n                    { title: 'My Pillars', link: \"\" },\r\n                    { title: 'OOO Grid', link: \"\" },\r\n                    { title: 'OOO Pivot Data', link: \"\" },\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Mgmt Scheduling', link: \"http://192.168.0.37:8000/schedule/\"},\r\n                    {title: \"Gm Page\", link: \"http://192.168.0.37:8000/GmPage\"}\r\n\r\n                ],\r\n                FinanceHub: [\r\n                    { title: 'PurchaseOrders', link: \"\" },\r\n                ],\r\n                AdminHub: [\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Alerts', link: \"\" },\r\n                    { title: 'Measure Units', link: \"\" },\r\n                    { title: 'Ops Review', link: \"\" },\r\n                ],\r\n                InventoryHub: [\r\n                    { title: 'Home', link: \"\" }\r\n                ]\r\n            }\r\n        },\r\n        watch: {\r\n            \r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'fetchLoggedInUser'\r\n            ]),\r\n            toggleCollapsed: function (event) {\r\n                this.collapsed = !this.collapsed;\r\n            }\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n             'getUser'\r\n            ]),\r\n            locationId: {\r\n                get: function () {\r\n                    return this.location\r\n                },\r\n                set: function (newValue){\r\n                    this.location = newValue\r\n                }\r\n            }\r\n        },\r\n        components: {\r\n            dropdown\r\n        },\r\n        created() {            \r\n            if (!this.$store.state.loggedInUser.locationId) {\r\n                this.fetchLoggedInUser()\r\n                    .then(() => {\r\n                        this.getUser\r\n                    })\r\n            }\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    nav .navbar {\r\n        background-color: #015351;\r\n    }\r\n    .slide-enter-active, .slide-leave-active {\r\n        transition: max-height .35s\r\n    }\r\n\r\n    .slide-enter, .slide-leave-to {\r\n        max-height: 0px;\r\n    }\r\n\r\n    .slide-enter-to, .slide-leave {\r\n        max-height: 20em;\r\n    }\r\n\r\n    .logo1 {\r\n        margin-top: 3px;\r\n        height: 50px;\r\n    }\r\n    .dropdown {\r\n        color:white;\r\n        position: relative;\r\n        display: inline-block;\r\n        margin-left: 2%;\r\n        float:left;\r\n        font-size:smaller;\r\n        height:100%;\r\n    }\r\n\r\n    .dropdown-content {\r\n        display: none;\r\n        position: absolute;\r\n        background-color: #f9f9f9;\r\n        min-width: 160px;\r\n        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \r\n        z-index: 1;\r\n        color:black;\r\n    }\r\n    .dropdown:hover {\r\n        background-color: #15a589;\r\n    }\r\n    .dropdown:hover .dropdown-content {\r\n        display: block;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* Dropdown Button */\n.dropbtn {\n    background-color: #015351;\n    color: white;\n    padding: 16px;\n    font-size: small;\n    border: none;\n    cursor: pointer;\n    height:100%;\n}\n\n    /* Dropdown button on hover & focus */\n.dropbtn:hover, .dropbtn:focus {\n        background-color: #2980B9;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n    position: relative;\n    display: inline-block;\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n    display: none;\n    position: absolute;\n    background-color: #f1f1f1;\n    min-width: 130px;\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);\n    z-index: 1;\n}\n\n    /* Links inside the dropdown */\n.dropdown-content a {\n        color: black;\n        text-decoration: none;\n        display: block;\n}\n\n        /* Change color of dropdown links on hover */\n.dropdown-content a:hover {\n            background-color: #ddd\n}\n\n/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */\n.show {\n    display: block;\n} \n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/layout/dropdown.vue?66e8c357"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;AAwBA,qBAAA;AACA;IACA,0BAAA;IACA,aAAA;IACA,cAAA;IACA,iBAAA;IACA,aAAA;IACA,gBAAA;IACA,YAAA;CACA;;IAEA,sCAAA;AACA;QACA,0BAAA;CACA;;AAEA,mEAAA;AACA;IACA,mBAAA;IACA,sBAAA;CACA;;AAEA,0CAAA;AACA;IACA,cAAA;IACA,mBAAA;IACA,0BAAA;IACA,iBAAA;IACA,6CAAA;IACA,WAAA;CACA;;IAEA,+BAAA;AACA;QACA,aAAA;QACA,sBAAA;QACA,eAAA;CACA;;QAEA,6CAAA;AACA;YACA,sBAAA;CACA;;AAEA,sIAAA;AACA;IACA,eAAA;CACA","file":"dropdown.vue","sourcesContent":["<template>\r\n    <div class=\"dropdown\">\r\n        <button class=\"dropbtn\">{{title}}</button>\r\n        <div id=\"myDropdown\" class=\"dropdown-content\">\r\n          <ul>\r\n              <br />\r\n              <li v-for=\"item in items\" style=\"list-style:none; padding: 2px 0px; margin:0;\"><a :href=item.link>{{item.title}}</a></li>\r\n          </ul>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n        name:'dropdown',\r\n        props: [\r\n            'title', 'items'\r\n        ],\r\n        methods: {\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    /* Dropdown Button */\r\n    .dropbtn {\r\n        background-color: #015351;\r\n        color: white;\r\n        padding: 16px;\r\n        font-size: small;\r\n        border: none;\r\n        cursor: pointer;\r\n        height:100%;\r\n    }\r\n\r\n        /* Dropdown button on hover & focus */\r\n        .dropbtn:hover, .dropbtn:focus {\r\n            background-color: #2980B9;\r\n        }\r\n\r\n    /* The container <div> - needed to position the dropdown content */\r\n    .dropdown {\r\n        position: relative;\r\n        display: inline-block;\r\n    }\r\n\r\n    /* Dropdown Content (Hidden by Default) */\r\n    .dropdown-content {\r\n        display: none;\r\n        position: absolute;\r\n        background-color: #f1f1f1;\r\n        min-width: 130px;\r\n        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);\r\n        z-index: 1;\r\n    }\r\n\r\n        /* Links inside the dropdown */\r\n        .dropdown-content a {\r\n            color: black;\r\n            text-decoration: none;\r\n            display: block;\r\n        }\r\n\r\n            /* Change color of dropdown links on hover */\r\n            .dropdown-content a:hover {\r\n                background-color: #ddd\r\n            }\r\n\r\n    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */\r\n    .show {\r\n        display: block;\r\n    } \r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17826,7 +17826,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-5400fe66] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-5400fe66] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-5400fe66] {\n  width: 500px;\n  height: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-5400fe66] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-5400fe66] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-5400fe66] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-5400fe66],\n.modal-leave-active .modal-container[data-v-5400fe66] {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n.rejection[data-v-5400fe66] {\n  width:100%\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/ApproveModal.vue?292fb55c"],"names":[],"mappings":";AAiEA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,cAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA;AACA;EACA,UAAA;CACA","file":"ApproveModal.vue","sourcesContent":["<template>\n  <transition name=\"modal\">\n    <div class=\"modal-mask\">\n      <div class=\"modal-wrapper\">\n        <div class=\"modal-container\">\n\n          <div class=\"modal-header\">A quick weekly review\n          </div>\n\n          <div class=\"modal-body\">\n\n              <div v-for=\"manager in getManagerDays\" >\n                  <p v-if=\"manager.shifts > 5 && manager.name !='Cancel Shift'\"> {{manager.name}} has more than 5 shifts and will be owed <strong style=\"color: red\">{{ ( manager.shifts - 5) }} </strong> days</p>\n                  <p v-if=\"manager.shifts < 5 && manager.name !='Cancel Shift'\"> {{manager.name}} has less than 5 shifts and will need to use <strong style=\"color: red\">{{5 -  manager.shifts }}</strong>  days owed</p>\n              </div>\n\n              <hr>\n\n              <div v-for=\"(value, key) in getMissingShifts\">\n                  <div v-if=\"value\">\n                      {{key}} <span v-for=\"code in value\" v-if=\"code\"> {{code}}, </span>\n                  </div>\n              </div>\n          </div>\n\n          <div class=\"modal-footer\">\n          </div>\n\n           <button class=\"modal-default-button\" @click=\"$emit('close', reason)\">close</button>\n           <button class=\"modal-default-button\" @click=\"$emit('accept', reason)\">Submit</button>\n\n        </div>\n      </div>\n    </div>\n  </transition>\n\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n\n    export default {\n        name: 'approve-modal',\n        data () {\n          return {\n            reason: ''\n          }\n        },\n        methods:{\n            ...mapActions(['checkShiftRequirements'])\n        },\n        computed:{\n            ...mapGetters([\n                 'getWeek',\n                 'getManagerDays',\n                 'getVacationHistory',\n                 'getMissingShifts'\n            ])\n        },\n        created(){\n        }\n    }\n</script>\n\n<style scoped>\n  .modal-mask {\n    position: fixed;\n    z-index: 9998;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n  }\n\n  .modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n  }\n\n  .modal-container {\n    width: 500px;\n    height: 300px;\n    margin: 0px auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 2px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    font-family: Helvetica, Arial, sans-serif;\n  }\n\n  .modal-header h3 {\n    margin-top: 0;\n    color: #42b983;\n  }\n\n  .modal-body {\n    margin: 20px 0;\n  }\n\n  .modal-default-button {\n    float: right;\n  }\n\n  /*\n   * The following styles are auto-applied to elements with\n   * transition=\"modal\" when their visibility is toggled\n   * by Vue.js.\n   *\n   * You can easily play with the modal transition by editing\n   * these styles.\n   */\n\n  .modal-enter {\n    opacity: 0;\n  }\n\n  .modal-leave-active {\n    opacity: 0;\n  }\n\n  .modal-enter .modal-container,\n  .modal-leave-active .modal-container {\n    -webkit-transform: scale(1.1);\n    transform: scale(1.1);\n  }\n  .rejection {\n    width:100%\n  }\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\nnav .navbar {\n    background-color: #015351;\n}\n.slide-enter-active, .slide-leave-active {\n    transition: max-height .35s\n}\n.slide-enter, .slide-leave-to {\n    max-height: 0px;\n}\n.slide-enter-to, .slide-leave {\n    max-height: 20em;\n}\n.logo1 {\n    margin-top: 3px;\n    height: 50px;\n}\n.dropdown {\n    color:white;\n    position: relative;\n    display: inline-block;\n    margin-left: 2%;\n    float:left;\n    font-size:smaller;\n    height:100%;\n}\n.dropdown-content {\n    display: none;\n    position: absolute;\n    background-color: #f9f9f9;\n    min-width: 160px;\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \n    z-index: 1;\n    color:black;\n}\n.dropdown:hover {\n    background-color: #15a589;\n}\n.dropdown:hover .dropdown-content {\n    display: block;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/nav-menu.vue?dc06e548"],"names":[],"mappings":";AA2HA;IACA,0BAAA;CACA;AACA;IACA,2BAAA;CACA;AAEA;IACA,gBAAA;CACA;AAEA;IACA,iBAAA;CACA;AAEA;IACA,gBAAA;IACA,aAAA;CACA;AACA;IACA,YAAA;IACA,mBAAA;IACA,sBAAA;IACA,gBAAA;IACA,WAAA;IACA,kBAAA;IACA,YAAA;CACA;AAEA;IACA,cAAA;IACA,mBAAA;IACA,0BAAA;IACA,iBAAA;IACA,6CAAA;IACA,WAAA;IACA,YAAA;CACA;AACA;IACA,0BAAA;CACA;AACA;IACA,eAAA;CACA","file":"nav-menu.vue","sourcesContent":["<template>\r\n    <!--<nav class=\"navbar\" role=\"navigation\" aria-label=\"main navigation\" >\r\n        <div class=\"container\">\r\n            <div class=\"navbar-header \">\r\n                <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                    <span class=\"icon-bar\"></span>\r\n                </button>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/Logo_Green_lq.jpg\" style=\"width: 100px; height: 60px; padding: .3em .5em .3em .5em\" alt=\"logo\" />\r\n                </a>\r\n                <a href=\"/wsbis\" class=\"pull-left\">\r\n                    <img src=\"../Assets/logo2_lq.png\" style=\"width: 100px; height: 60px;  padding: 1em .5em 1em .5em\" alt=\"logo\" />\r\n                </a>\r\n            </div>\r\n            <div>\r\n                <dropdown title=\"Supply Hub\" :items=\"SupplyHub\"></dropdown>\r\n                <dropdown title=\"Menu Hub\" :items=\"MenuHub\"></dropdown>\r\n                <dropdown title=\"Ops Hub\" :items=\"OpsHub\"></dropdown>\r\n                <dropdown title=\"Finance Hub\" :items=\"FinanceHub\"></dropdown>\r\n                <dropdown title=\"Admin Hub\" :items=\"AdminHub\"></dropdown>\r\n                <dropdown title=\"Inventory Hub\" :items=\"InventoryHub\"></dropdown>\r\n            </div>\r\n                <ul class=\"nav navbar-nav navbar-right\">\r\n                    <li style=\"width: 100px; height: 60px\">\r\n                        <a href=\"/wsbis\" class=\"pull-right\" style=\"padding:0; \">\r\n                            <img src=\"../Assets/SmallLogo.png\" style=\"width: 100px; height: 60px; padding: .6em 1em .6em 1em\" alt=\"hub_logo\" />\r\n                        </a>\r\n                    </li>\r\n                </ul>\r\n\r\n            </div>\r\n        </nav>-->    \r\n</template>\r\n\r\n<script>\r\n    import { routes } from '../routes'\r\n    import { mapGetters, mapActions } from 'vuex'\r\n    import dropdown from './layout/dropdown'\r\n\r\n    export default {\r\n        data() {\r\n            return {\r\n                routes,\r\n                collapsed: true,\r\n                SupplyHub: [\r\n                    { title: 'Home (NEW)', link: \"\" },\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'SKUs', link: \"\" },\r\n                    { title: 'Contracts', link: \"\" },\r\n                    { title: 'Bids', link: \"\" },\r\n                    { title: 'Mapper', link: \"\" },\r\n                    { title: 'Admin', link: \"\" },\r\n                ],\r\n                MenuHub: [\r\n                    { title: 'Products', link: \"\" },\r\n                    { title: 'Recipes', link: \"\" },\r\n                    { title: 'Menus', link: \"\" },\r\n                    { title: 'Menus Items', link: \"\" }\r\n                ],\r\n                OpsHub: [\r\n                    { title: 'My Pillars', link: \"\" },\r\n                    { title: 'OOO Grid', link: \"\" },\r\n                    { title: 'OOO Pivot Data', link: \"\" },\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Mgmt Scheduling', link: \"http://192.168.0.37:8000/schedule/\"},\r\n                    {title: \"Gm Page\", link: \"http://192.168.0.37:8000/GmPage\"}\r\n\r\n                ],\r\n                FinanceHub: [\r\n                    { title: 'PurchaseOrders', link: \"\" },\r\n                ],\r\n                AdminHub: [\r\n                    { title: 'Mgmt Change', link: \"\" },\r\n                    { title: 'Alerts', link: \"\" },\r\n                    { title: 'Measure Units', link: \"\" },\r\n                    { title: 'Ops Review', link: \"\" },\r\n                ],\r\n                InventoryHub: [\r\n                    { title: 'Home', link: \"\" }\r\n                ]\r\n            }\r\n        },\r\n        watch: {\r\n            \r\n        },\r\n        methods: {\r\n            ...mapActions([\r\n                'fetchLoggedInUser'\r\n            ]),\r\n            toggleCollapsed: function (event) {\r\n                this.collapsed = !this.collapsed;\r\n            }\r\n        },\r\n        computed: {\r\n            ...mapGetters([\r\n             'getUser'\r\n            ]),\r\n            locationId: {\r\n                get: function () {\r\n                    return this.location\r\n                },\r\n                set: function (newValue){\r\n                    this.location = newValue\r\n                }\r\n            }\r\n        },\r\n        components: {\r\n            dropdown\r\n        },\r\n        created() {            \r\n            if (!this.$store.state.loggedInUser.locationId) {\r\n                this.fetchLoggedInUser()\r\n                    .then(() => {\r\n                        this.getUser\r\n                    })\r\n            }\r\n        }\r\n    }\r\n</script>\r\n\r\n<style>\r\n    nav .navbar {\r\n        background-color: #015351;\r\n    }\r\n    .slide-enter-active, .slide-leave-active {\r\n        transition: max-height .35s\r\n    }\r\n\r\n    .slide-enter, .slide-leave-to {\r\n        max-height: 0px;\r\n    }\r\n\r\n    .slide-enter-to, .slide-leave {\r\n        max-height: 20em;\r\n    }\r\n\r\n    .logo1 {\r\n        margin-top: 3px;\r\n        height: 50px;\r\n    }\r\n    .dropdown {\r\n        color:white;\r\n        position: relative;\r\n        display: inline-block;\r\n        margin-left: 2%;\r\n        float:left;\r\n        font-size:smaller;\r\n        height:100%;\r\n    }\r\n\r\n    .dropdown-content {\r\n        display: none;\r\n        position: absolute;\r\n        background-color: #f9f9f9;\r\n        min-width: 160px;\r\n        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);      \r\n        z-index: 1;\r\n        color:black;\r\n    }\r\n    .dropdown:hover {\r\n        background-color: #15a589;\r\n    }\r\n    .dropdown:hover .dropdown-content {\r\n        display: block;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17840,7 +17840,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.full-calendar-body .dates .dates-events .events-week .events-day {\n    min-height:100px !important;\n}\n.event-box .event-item {\n    background-color: #015351 !important;\n    color:white !important\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/calendar/monthly-calendar.vue?461a4401"],"names":[],"mappings":";AAoSA;IACA,4BAAA;CACA;AACA;IACA,qCAAA;IACA,sBAAA;CACA","file":"monthly-calendar.vue","sourcesContent":["<template>\r\n    <div id=\"wrapper\" class=\"flex-container\">\r\n        <shift-modal v-if=\"showModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Set The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.shiftDate }}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\r\n                </div>\n                <span>If Manager in Charge</span>\n                <input v-model=\"managerInCharge\" placeholder=\"Manager in Charge name\"/>\r\n                <div>\r\n                    <span>Shift</span>\r\n                    <select id='ShiftCode'\r\n                            class=\"form-control\"\r\n                            v-model=\"newShiftCode\">\r\n                        <option v-for=\"code in getShiftCodes\"> {{ code.description }} </option>\r\n                    </select>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submit()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <shift-modal v-if=\"showChangeModal\">\r\n            <h3 slot=\"header\" class=\"modal-card-title\">Change The Shift</h3>\r\n            <div slot=\"body\">\r\n                <div>Shift Date {{ this.dayToChange }}  Shift: {{this.shiftCode}}</div>\r\n                <div>\r\n                    <span>Manager Name</span>\r\n                    <select id='managerName1'\r\n                            class=\"form-control\"\r\n                            v-model=\"selectedManager\">\r\n                        <option v-for=\"manager in getManagers\">{{ manager.Name }}</option>\r\n                    </select>\n\r\n                </div>\r\n                <div>\r\n                    <div>\r\n                        Reason For Change\r\n                    </div>\r\n                    <div>\r\n                        <input type=\"text\" v-model=\"reasonForChange\">\r\n                    </div>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"submitChange()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\n        <shift-modal v-if=\"printModal\">\r\n            <h3 slot=\"header\" class=\"=modal-card-title\">Which period would you like to print?</h3>\r\n            <div slot=\"body\">\n                <p>Select a start and end date</p>\n                <div style=\"width:15%; float:left;\" >\r\n                    <b-field label=\"\">\r\n                        <b-datepicker placeholder=\"Type or select a date...\"\r\n                                      icon=\"calendar-today\"\r\n                                      :readonly=\"false\"\r\n                                      v-model=\"PrintStartDate\"\n                                      :first-day-of-week=1>\r\n                        </b-datepicker>\r\n                    </b-field>\r\n                    <b-field label=\"\">\r\n                        <b-datepicker placeholder=\"Type or select a date...\"\r\n                                      icon=\"calendar-today\"\r\n                                      :readonly=\"false\"\r\n                                      v-model=\"PrintEndDate\"\n                                      :first-day-of-week=1>\r\n                        </b-datepicker>\r\n                    </b-field>\r\n                </div>\r\n            </div>\r\n            <div slot=\"footer\">\r\n                <button @click=\"printSchedule()\"> Submit </button>\r\n                <button @click=\"closeModal()\">Close</button>\r\n            </div>\r\n        </shift-modal>\r\n        <div class=\"title\">\r\n            <h1 style=\"text-align:center\">Schedule for Store {{getUser.locationId}} Manager shifts</h1>\r\n            <button v-if=\"this.getUser.role === 3\"\r\n                    style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    :onclick=\"gotoShift\">\r\n                ><router-link to=\"/dailyShiftRequirements\">Change Daily shift requirements</router-link>\r\n            </button>\r\n            <button style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\r\n                    :onclick=\"gotoShift\">\r\n                ><router-link :to=this.weeklyUrl>switch to weekly</router-link>\r\n            </button>\n            <button style=\"margin-left:80%;\r\n                    font-size:x-small;\r\n                    border-radius:5px;\r\n                    border:1px solid black;\"\n                    v-on:click=\"showPrintModal\">\n                Download the monthly schedule\n            </button>\r\n        </div>    \r\n        <calendar :firstDay=\"1\"\n                  :events='getSchedule'\r\n                  local=\"en\"\r\n                  @dayClick=\"addShift($event)\"\r\n                  @eventClick=\"changeShift($event)\">\r\n            >\r\n        </calendar>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import fullCalendar from 'vue-fullcalendar'\r\n  import ShiftModel from './ShiftModal.vue'\r\n  import moment from 'moment'\r\n  //import calendar from 'ccalendar'\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import Toasted from 'vue-toasted';\r\n    \r\n    export default {\r\n    name: 'monthly-calendar',\r\n    data () {\r\n         return {\r\n            showModal: false,\n            printModal:false,\r\n            manager: '',\r\n            shiftCode: '',\r\n            shiftDate: '',\r\n            shiftEOW: '',\r\n            Date: this.shiftDate,\r\n            newName: '',\r\n            newShiftCode: '',\r\n            reasonForChange: '',\r\n            selectedManager: '',\r\n            dayToChange: '',\r\n            shiftCodeToChangeFrom: '',\r\n            showChangeModal: false,\r\n            managerChangeFrom: '',\r\n            concerns: [{}],\r\n            params: '',\r\n            events: [{}],\n            weeklyUrl: \"\",\n            PrintEndDate: new Date(),\n            PrintStartDate: new Date(),\n            managerInCharge:\"\"\r\n         }\r\n    },\r\n    components: {\r\n        shiftModal: ShiftModel,\r\n        calendar: fullCalendar\r\n    },\r\n    computed: {\r\n        ...mapGetters([\r\n            'getSchedule',\r\n            'getManagers',\r\n            'getShiftCodes',\r\n            'getUser'\r\n        ]),\r\n        regetSchedule() {\r\n            return this.fetchSchedule(this.state)\r\n        }\r\n    },\r\n    methods: {\r\n      ...mapActions([\r\n            'fetchSchedule',\r\n            'fetchManagers',\r\n            'fetchShiftCodes',\r\n            'submitNewShift',\r\n            'submitShiftChange',\r\n            'fetchLoggedInUser',\n            'exportMonth'\r\n        ]),\n      getEow() {\n            let daysuntileow = 7 - moment().format('d');\n            let eowstring = moment().add(daysuntileow, 'day').format('MM-DD-YYYY')\n            return eowstring\n        },\r\n      addShift(event) {\n          this.shiftDate = moment(event.toString()).format(\"MM-DD-YYYY\")\n          this.showModal = true\r\n      },\r\n      changeShift(event) {\r\n            this.shiftCode = event.YOUR_DATA.class\r\n            this.dayToChange = event.start\r\n            this.showChangeModal = true\r\n            this.managerChangeFrom = event.title.split(' ')[0] + ' ' + event.title.split(' ')[1]\r\n            this.managerFromId = event.YOUR_DATA.ManagerId\r\n      },\n      checkWindowSize() {\n          let size = window.innerWidth;\n          if(size < 800) window.location.href = this.weeklyUrl\r\n      },\n      showPrintModal() {\n          this.printModal = true;\r\n      },\r\n      closeModal () {\r\n          this.showModal = false\r\n          this.showChangeModal = false\n          this.printModal = false\r\n      },\n      printSchedule() {\n          let payload = {\n              start: this.PrintStartDate.toString(),\n              end: this.PrintEndDate.toString(),\n              locationId:this.$store.state.loggedInUser.locationId\r\n          }\n          this.exportMonth(payload)\n          this.closeModal();\r\n      },\r\n      submit() {\n            console.log(this.selectedManager)\r\n            let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)\r\n            let aNewShift = {\r\n              LocationId: this.$store.state.loggedInUser.locationId,\r\n              ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,\r\n              ManagerId: this.getManagers[managerIndex].Id,\r\n              Day: this.shiftDate,\r\n              ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus\r\n            }\n            if (this.selectedManager === \"Manager In Charge\") {\n                aNewShift.ManagerId = this.managerInCharge + \" IC\"\r\n            }\r\n            this.submitNewShift(aNewShift)\r\n            this.emptyFields()\r\n            this.closeModal()\r\n            this.submissionCompletion()\r\n      },\r\n      submitChange () {\r\n            let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)\r\n            let GMIndex = this.getManagers.findIndex(m => m.Role === 3)\r\n            let shiftDayIndex = this.getSchedule.findIndex(d => d.start === this.dayToChange)\r\n            let shiftChange = {\r\n              RequestId: '',\r\n              Id: this.getManagers[managerIndex].Id,\r\n              ManagerId: this.getManagers[managerIndex].Id,\r\n              ManagerToName: this.getManagers[managerIndex].Name,\r\n              ManagerFromName: this.managerChangeFrom,\r\n              EOW: this.getSchedule[shiftDayIndex].EOW,\r\n              ShiftCode: this.shiftCode,\r\n              Reason: this.reasonForChange,\r\n              shiftDate: this.dayToChange,\r\n              ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,\r\n              GMEmailAddress: this.getManagers[GMIndex].EmailAddress,\r\n              LocationId: this.$store.state.loggedInUser.locationId,\r\n              RequestingManagerRole: this.$store.state.loggedInUser.role,\r\n              managerFromId:this.managerFromId\r\n            }\r\n            this.submitShiftChange(shiftChange)\r\n            this.closeModal()\r\n            this.emptyFields()\r\n            this.submissionCompletion()\r\n      },\r\n      emptyFields () {\r\n            this.selectedManager = ''\r\n            this.newShiftCode = ''\r\n            this.reasonForChange = ''\r\n      },\r\n      submissionCompletion() {\r\n            setTimeout(() => {this.fetchSchedule(this.$store.state.loggedInUser.locationId)}, 200)\r\n            this.$toast.open({duration:1000, type:'is-success', message: 'Shift change saved'})\r\n      },\r\n      gotoShift() {\r\n          \r\n      }      \r\n    },    \r\n    created() {\n    this.weeklyUrl = \"/approveSchedule/?eow=\" + this.getEow();\n    this.checkWindowSize()\r\n    this.fetchLoggedInUser()\r\n        .then(() => {\r\n            this.fetchSchedule(this.$store.state.loggedInUser.locationId)\r\n                .then(() => {\r\n                    this.fetchManagers(this.$store.state.loggedInUser.locationId)\r\n                    this.fetchShiftCodes(this.state)\r\n                })\r\n        })      \r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n    .full-calendar-body .dates .dates-events .events-week .events-day {\r\n        min-height:100px !important;\r\n    }\r\n    .event-box .event-item {\r\n        background-color: #015351 !important;\n        color:white !important\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.modal-mask[data-v-5400fe66] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-5400fe66] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-5400fe66] {\n  width: 500px;\n  height: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-5400fe66] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-5400fe66] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-5400fe66] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-5400fe66] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-5400fe66],\n.modal-leave-active .modal-container[data-v-5400fe66] {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n.rejection[data-v-5400fe66] {\n  width:100%\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/ApproveModal.vue?292fb55c"],"names":[],"mappings":";AAiEA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,cAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA;AACA;EACA,UAAA;CACA","file":"ApproveModal.vue","sourcesContent":["<template>\n  <transition name=\"modal\">\n    <div class=\"modal-mask\">\n      <div class=\"modal-wrapper\">\n        <div class=\"modal-container\">\n\n          <div class=\"modal-header\">A quick weekly review\n          </div>\n\n          <div class=\"modal-body\">\n\n              <div v-for=\"manager in getManagerDays\" >\n                  <p v-if=\"manager.shifts > 5 && manager.name !='Cancel Shift'\"> {{manager.name}} has more than 5 shifts and will be owed <strong style=\"color: red\">{{ ( manager.shifts - 5) }} </strong> days</p>\n                  <p v-if=\"manager.shifts < 5 && manager.name !='Cancel Shift'\"> {{manager.name}} has less than 5 shifts and will need to use <strong style=\"color: red\">{{5 -  manager.shifts }}</strong>  days owed</p>\n              </div>\n\n              <hr>\n\n              <div v-for=\"(value, key) in getMissingShifts\">\n                  <div v-if=\"value\">\n                      {{key}} <span v-for=\"code in value\" v-if=\"code\"> {{code}}, </span>\n                  </div>\n              </div>\n          </div>\n\n          <div class=\"modal-footer\">\n          </div>\n\n           <button class=\"modal-default-button\" @click=\"$emit('close', reason)\">close</button>\n           <button class=\"modal-default-button\" @click=\"$emit('accept', reason)\">Submit</button>\n\n        </div>\n      </div>\n    </div>\n  </transition>\n\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n\n    export default {\n        name: 'approve-modal',\n        data () {\n          return {\n            reason: ''\n          }\n        },\n        methods:{\n            ...mapActions(['checkShiftRequirements'])\n        },\n        computed:{\n            ...mapGetters([\n                 'getWeek',\n                 'getManagerDays',\n                 'getVacationHistory',\n                 'getMissingShifts'\n            ])\n        },\n        created(){\n        }\n    }\n</script>\n\n<style scoped>\n  .modal-mask {\n    position: fixed;\n    z-index: 9998;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n  }\n\n  .modal-wrapper {\n    display: table-cell;\n    vertical-align: middle;\n  }\n\n  .modal-container {\n    width: 500px;\n    height: 300px;\n    margin: 0px auto;\n    padding: 20px 30px;\n    background-color: #fff;\n    border-radius: 2px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n    transition: all .3s ease;\n    font-family: Helvetica, Arial, sans-serif;\n  }\n\n  .modal-header h3 {\n    margin-top: 0;\n    color: #42b983;\n  }\n\n  .modal-body {\n    margin: 20px 0;\n  }\n\n  .modal-default-button {\n    float: right;\n  }\n\n  /*\n   * The following styles are auto-applied to elements with\n   * transition=\"modal\" when their visibility is toggled\n   * by Vue.js.\n   *\n   * You can easily play with the modal transition by editing\n   * these styles.\n   */\n\n  .modal-enter {\n    opacity: 0;\n  }\n\n  .modal-leave-active {\n    opacity: 0;\n  }\n\n  .modal-enter .modal-container,\n  .modal-leave-active .modal-container {\n    -webkit-transform: scale(1.1);\n    transform: scale(1.1);\n  }\n  .rejection {\n    width:100%\n  }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17868,7 +17868,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.modal-mask {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container {\n  width: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3 {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body {\n  margin: 20px 0;\n}\n.modal-default-button {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter {\n  opacity: 0;\n}\n.modal-leave-active {\n  opacity: 0;\n}\n.modal-enter .modal-container,\n.modal-leave-active .modal-container {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/calendar/ShiftModal.vue?446187c2"],"names":[],"mappings":";AA0CA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA","file":"ShiftModal.vue","sourcesContent":["<template>\r\n  <transition name=\"modal\">\r\n    <div class=\"modal-mask\">\r\n      <div class=\"modal-wrapper\">\r\n        <div class=\"modal-container\">\r\n\r\n          <div class=\"modal-header\">\r\n            <slot name=\"header\">\r\n              default header\r\n            </slot>\r\n          </div>\r\n\r\n          <div class=\"modal-body\">\r\n            <slot name=\"body\">\r\n              default body\r\n            </slot>\r\n          </div>\r\n\r\n          <div class=\"modal-footer\">\r\n            <slot name=\"footer\">\r\n              default footer\r\n              <button class=\"modal-default-button\" @click=\"$emit('close')\">\r\n                OK\r\n              </button>\r\n            </slot>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </transition>\r\n</template>\r\n<script>\r\n  export default {\r\n    name: 'ShiftModal',\r\n    props: ['manager', 'shiftcode', 'shiftdate'],\r\n    data () {\r\n      return {\r\n      }\r\n    }\r\n  }\r\n</script>\r\n<style>\r\n  .modal-mask {\r\n    position: fixed;\r\n    z-index: 9998;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, .5);\r\n    display: table;\r\n    transition: opacity .3s ease;\r\n  }\r\n\r\n  .modal-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n  }\r\n\r\n  .modal-container {\r\n    width: 300px;\r\n    margin: 0px auto;\r\n    padding: 20px 30px;\r\n    background-color: #fff;\r\n    border-radius: 2px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\r\n    transition: all .3s ease;\r\n    font-family: Helvetica, Arial, sans-serif;\r\n  }\r\n\r\n  .modal-header h3 {\r\n    margin-top: 0;\r\n    color: #42b983;\r\n  }\r\n\r\n  .modal-body {\r\n    margin: 20px 0;\r\n  }\r\n\r\n  .modal-default-button {\r\n    float: right;\r\n  }\r\n\r\n  /*\r\n   * The following styles are auto-applied to elements with\r\n   * transition=\"modal\" when their visibility is toggled\r\n   * by Vue.js.\r\n   *\r\n   * You can easily play with the modal transition by editing\r\n   * these styles.\r\n   */\r\n\r\n  .modal-enter {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-leave-active {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-enter .modal-container,\r\n  .modal-leave-active .modal-container {\r\n    -webkit-transform: scale(1.1);\r\n    transform: scale(1.1);\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n#changeRequest[data-v-70d7f825] {\n  margin-top: 5%;\n  border-style: solid;\n  border-radius: 5px;\n  border-color: gray;\n}\n#request[data-v-70d7f825] {\n  width:auto;\n  margin: 0 auto;\n  padding: 20px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/ReviewScheduleChange.vue?6ccbddcf"],"names":[],"mappings":";AAyFA;EACA,eAAA;EACA,oBAAA;EACA,mBAAA;EACA,mBAAA;CACA;AACA;EACA,WAAA;EACA,eAAA;EACA,cAAA;CACA","file":"ReviewScheduleChange.vue","sourcesContent":["<template>\r\n<div class=\"container\">\r\n  <div v-for=\"request in getChangeRequest\" id=\"request\">\r\n    <section class=\"hero is-light\" id=\"changeRequest\">\r\n      <div class=\"hero-body\">\r\n        <h1 class=\"title\"> {{ request.fromName }} would like to trade change their shift </h1>\r\n        <h2 class=\"subtitle\"> Shift Date is {{ request.shiftDate}}</h2>\r\n        <p> This request would change the manager for that shift from  {{ request.fromName }} to {{ request.toName }}</p>\r\n        <p> the shiftCode for this shift is: {{ request.shiftCode }}</p>\r\n        <p> the reason for the request is: {{ request.reason }}</p>\r\n        <hr/>\r\n        <div>\r\n          Reason for decision:\r\n          <input type=\"text\" v-model=\"gmReason\" style=\"width:80%\">\r\n        </div> <br/>\r\n        <div style=\"width: 50%; margin: 0 auto;\">\r\n          <router-link\r\n            v-on:click.native=\"approveChange(request)\"\r\n            class=\"button is-info\"\r\n            to=\"/schedule\"\r\n           >\r\n            Approve\r\n          </router-link>\r\n          <router-link\r\n            style=\"margin-left: 20px\"\r\n            v-on:click.native=\"rejectChange(request)\"\r\n            class=\"button is-warning\"\r\n            to=\"/schedule\"\r\n          >\r\n            Reject\r\n          </router-link>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  </div>\r\n  <div style=\"margin: 0 auto\">\r\n    <weekly-calendar :locationId=\"104\" :eow=\"this.getChangeRequest[0].eow\"></weekly-calendar>\r\n  </div>\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import WeeklyCalendar from '../Calendar/WeeklyCalendar'\r\n\r\n  export default {\r\n    components: {WeeklyCalendar},\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchChangeRequest',\r\n        'gmAcceptShiftChange',\r\n        'gmRejectShiftChange'\r\n      ]),\r\n      components: {\r\n        WeeklyCalendar: WeeklyCalendar\r\n      },\r\n      approveChange (request) {\r\n        let approval = {GMId: 1, Request: request}\r\n        this.gmAcceptShiftChange(approval)\r\n      },\r\n      rejectChange (request) {\r\n        let rejection = {\r\n          GMId: 1,\r\n          Id: request.fromId,\r\n          requestId: request.id,\r\n          Reason: this.gmReason }\r\n        this.gmRejectShiftChange(rejection)\r\n      }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n        'getChangeRequest'\r\n      ])\r\n    },\r\n    data () {\r\n      return {\r\n        Id: this.$route.params,\r\n        gmReason: ''\r\n      }\r\n    },\r\n    async created () {\r\n      let params = this.$route.query\r\n      this.fetchChangeRequest(params)\r\n      await this.getChangeRequest\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n  #changeRequest {\r\n    margin-top: 5%;\r\n    border-style: solid;\r\n    border-radius: 5px;\r\n    border-color: gray;\r\n  }\r\n  #request {\r\n    width:auto;\r\n    margin: 0 auto;\r\n    padding: 20px;\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17882,7 +17882,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n#changeRequest[data-v-70d7f825] {\n  margin-top: 5%;\n  border-style: solid;\n  border-radius: 5px;\n  border-color: gray;\n}\n#request[data-v-70d7f825] {\n  width:auto;\n  margin: 0 auto;\n  padding: 20px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/ReviewScheduleChange.vue?6ccbddcf"],"names":[],"mappings":";AAyFA;EACA,eAAA;EACA,oBAAA;EACA,mBAAA;EACA,mBAAA;CACA;AACA;EACA,WAAA;EACA,eAAA;EACA,cAAA;CACA","file":"ReviewScheduleChange.vue","sourcesContent":["<template>\r\n<div class=\"container\">\r\n  <div v-for=\"request in getChangeRequest\" id=\"request\">\r\n    <section class=\"hero is-light\" id=\"changeRequest\">\r\n      <div class=\"hero-body\">\r\n        <h1 class=\"title\"> {{ request.fromName }} would like to trade change their shift </h1>\r\n        <h2 class=\"subtitle\"> Shift Date is {{ request.shiftDate}}</h2>\r\n        <p> This request would change the manager for that shift from  {{ request.fromName }} to {{ request.toName }}</p>\r\n        <p> the shiftCode for this shift is: {{ request.shiftCode }}</p>\r\n        <p> the reason for the request is: {{ request.reason }}</p>\r\n        <hr/>\r\n        <div>\r\n          Reason for decision:\r\n          <input type=\"text\" v-model=\"gmReason\" style=\"width:80%\">\r\n        </div> <br/>\r\n        <div style=\"width: 50%; margin: 0 auto;\">\r\n          <router-link\r\n            v-on:click.native=\"approveChange(request)\"\r\n            class=\"button is-info\"\r\n            to=\"/schedule\"\r\n           >\r\n            Approve\r\n          </router-link>\r\n          <router-link\r\n            style=\"margin-left: 20px\"\r\n            v-on:click.native=\"rejectChange(request)\"\r\n            class=\"button is-warning\"\r\n            to=\"/schedule\"\r\n          >\r\n            Reject\r\n          </router-link>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  </div>\r\n  <div style=\"margin: 0 auto\">\r\n    <weekly-calendar :locationId=\"104\" :eow=\"this.getChangeRequest[0].eow\"></weekly-calendar>\r\n  </div>\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n  import { mapActions, mapGetters } from 'vuex'\r\n  import WeeklyCalendar from '../Calendar/WeeklyCalendar'\r\n\r\n  export default {\r\n    components: {WeeklyCalendar},\r\n    methods: {\r\n      ...mapActions([\r\n        'fetchChangeRequest',\r\n        'gmAcceptShiftChange',\r\n        'gmRejectShiftChange'\r\n      ]),\r\n      components: {\r\n        WeeklyCalendar: WeeklyCalendar\r\n      },\r\n      approveChange (request) {\r\n        let approval = {GMId: 1, Request: request}\r\n        this.gmAcceptShiftChange(approval)\r\n      },\r\n      rejectChange (request) {\r\n        let rejection = {\r\n          GMId: 1,\r\n          Id: request.fromId,\r\n          requestId: request.id,\r\n          Reason: this.gmReason }\r\n        this.gmRejectShiftChange(rejection)\r\n      }\r\n    },\r\n    computed: {\r\n      ...mapGetters([\r\n        'getChangeRequest'\r\n      ])\r\n    },\r\n    data () {\r\n      return {\r\n        Id: this.$route.params,\r\n        gmReason: ''\r\n      }\r\n    },\r\n    async created () {\r\n      let params = this.$route.query\r\n      this.fetchChangeRequest(params)\r\n      await this.getChangeRequest\r\n    }\r\n  }\r\n</script>\r\n\r\n<style scoped>\r\n  #changeRequest {\r\n    margin-top: 5%;\r\n    border-style: solid;\r\n    border-radius: 5px;\r\n    border-color: gray;\r\n  }\r\n  #request {\r\n    width:auto;\r\n    margin: 0 auto;\r\n    padding: 20px;\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"home-page.vue","sourceRoot":""}]);
 
 // exports
 
@@ -17896,7 +17896,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"home-page.vue","sourceRoot":""}]);
+exports.push([module.i, "\nb-datepicker{\n    margin: 5px;\n    padding:5px;\n    width:80%;\n    float:left;\n}\nb-field{\n    color:white;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/payRoll.vue?0636f185"],"names":[],"mappings":";AAoDA;IACA,YAAA;IACA,YAAA;IACA,UAAA;IACA,WAAA;CACA;AACA;IACA,YAAA;CACA","file":"payRoll.vue","sourcesContent":["<template>\n    <div class=\"column is-one-fifth\" style=\"height:700px; background-color:#555; Color:white !important;\">\r\n        <div style=\"margin-top:20%; padding-top:20%;\">\r\n            <span>Select a start date</span>\r\n            <b-field>\r\n                <b-datepicker placeholder=\"Click to select...\"\r\n                              icon=\"calendar-today\"\r\n                              v-model=\"startDate\">\r\n                </b-datepicker>\r\n            </b-field>\r\n            <span>Select an end date</span>\r\n            <b-field>\r\n                <b-datepicker placeholder=\"Click to select...\"\r\n                              icon=\"calendar-today\"\r\n                              v-model=\"endDate\">\r\n                </b-datepicker>\r\n            </b-field>\r\n            <button class=\"btn btn-default\"\r\n                    style=\"padding:5px; margin-left:35%; margin-top:10px; vertical-align:central;\"\r\n                    v-on:click=\"this.downloadButton\">\r\n                Download\r\n            </button>\r\n        </div>\r\n    </div>\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\r\n    const thisMonth = new Date().getMonth()\n    const thisYear = new Date().getFullYear()\n    export default {\n        data() {\n            return {\n                startDate: new Date(thisYear, thisMonth, 1),\n                endDate: new Date(thisYear, thisMonth, 28)\n            }\r\n        },\n        methods: {\n            ...mapActions(['download']),\n            downloadButton() {                \n                let aStartDate = this.startDate.toString().split(' ')\n                let stringgyDate1 = aStartDate[1] + \"-\" + aStartDate[2] + \"-\" + aStartDate[3]\n                let anEndtDate = this.endDate.toString().split(' ')\n                let stringgyDate2 = anEndtDate[1] + \"-\" + anEndtDate[2] + \"-\" + anEndtDate[3] \n                let payload = { startDate: stringgyDate1, endDate: stringgyDate2 }\n                this.download(payload)\r\n            }\r\n        }\r\n    }\n</script>\n\n<style>\n    b-datepicker{\n        margin: 5px;\n        padding:5px;\n        width:80%;\n        float:left;\r\n    }\n    b-field{\n        color:white;\r\n    }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17910,7 +17910,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\nb-datepicker{\n    margin: 5px;\n    padding:5px;\n    width:80%;\n    float:left;\n}\nb-field{\n    color:white;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/payRoll.vue?0636f185"],"names":[],"mappings":";AAoDA;IACA,YAAA;IACA,YAAA;IACA,UAAA;IACA,WAAA;CACA;AACA;IACA,YAAA;CACA","file":"payRoll.vue","sourcesContent":["<template>\n    <div class=\"column is-one-fifth\" style=\"height:700px; background-color:#555; Color:white !important;\">\r\n        <div style=\"margin-top:20%; padding-top:20%;\">\r\n            <span>Select a start date</span>\r\n            <b-field>\r\n                <b-datepicker placeholder=\"Click to select...\"\r\n                              icon=\"calendar-today\"\r\n                              v-model=\"startDate\">\r\n                </b-datepicker>\r\n            </b-field>\r\n            <span>Select an end date</span>\r\n            <b-field>\r\n                <b-datepicker placeholder=\"Click to select...\"\r\n                              icon=\"calendar-today\"\r\n                              v-model=\"endDate\">\r\n                </b-datepicker>\r\n            </b-field>\r\n            <button class=\"btn btn-default\"\r\n                    style=\"padding:5px; margin-left:35%; margin-top:10px; vertical-align:central;\"\r\n                    v-on:click=\"this.downloadButton\">\r\n                Download\r\n            </button>\r\n        </div>\r\n    </div>\n</template>\n\n<script>\n    import { mapActions, mapGetters } from 'vuex'\r\n    const thisMonth = new Date().getMonth()\n    const thisYear = new Date().getFullYear()\n    export default {\n        data() {\n            return {\n                startDate: new Date(thisYear, thisMonth, 1),\n                endDate: new Date(thisYear, thisMonth, 28)\n            }\r\n        },\n        methods: {\n            ...mapActions(['download']),\n            downloadButton() {                \n                let aStartDate = this.startDate.toString().split(' ')\n                let stringgyDate1 = aStartDate[1] + \"-\" + aStartDate[2] + \"-\" + aStartDate[3]\n                let anEndtDate = this.endDate.toString().split(' ')\n                let stringgyDate2 = anEndtDate[1] + \"-\" + anEndtDate[2] + \"-\" + anEndtDate[3] \n                let payload = { startDate: stringgyDate1, endDate: stringgyDate2 }\n                this.download(payload)\r\n            }\r\n        }\r\n    }\n</script>\n\n<style>\n    b-datepicker{\n        margin: 5px;\n        padding:5px;\n        width:80%;\n        float:left;\r\n    }\n    b-field{\n        color:white;\r\n    }\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.modal-mask[data-v-7dd64f58] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-7dd64f58] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-7dd64f58] {\n  width: 500px;\n  height: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-7dd64f58] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-7dd64f58] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-7dd64f58] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-7dd64f58] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-7dd64f58] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-7dd64f58],\n.modal-leave-active .modal-container[data-v-7dd64f58] {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n.rejection[data-v-7dd64f58] {\n  width:100%\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/DisapproveModal.vue?f1a07830"],"names":[],"mappings":";AAqCA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,cAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA;AACA;EACA,UAAA;CACA","file":"DisapproveModal.vue","sourcesContent":["<template>\r\n  <transition name=\"modal\">\r\n    <div class=\"modal-mask\">\r\n      <div class=\"modal-wrapper\">\r\n        <div class=\"modal-container\">\r\n          <div class=\"modal-header\">\r\n            Reason for refusal\r\n          </div>\r\n          <div class=\"modal-body\">\r\n            <label>\r\n              Reason for rejecting the schedule\r\n              <input type=\"text\" v-model=\"reason\" class=\"rejection\">\r\n            </label>\r\n          </div>\r\n          <div class=\"modal-footer\">\r\n          </div>\r\n          <button class=\"modal-default-button\" @click=\"$emit('rejecting', reason)\">Reject</button>\n            <button class=\"modal-default-button\" @click=\"$emit('close', reason)\">Close</button>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </transition>\r\n\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n      name: 'disapprove-modal',\r\n      data () {\r\n        return {\r\n          reason: ''\r\n        }\r\n      }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n  .modal-mask {\r\n    position: fixed;\r\n    z-index: 9998;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, .5);\r\n    display: table;\r\n    transition: opacity .3s ease;\r\n  }\r\n\r\n  .modal-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n  }\r\n\r\n  .modal-container {\r\n    width: 500px;\r\n    height: 300px;\r\n    margin: 0px auto;\r\n    padding: 20px 30px;\r\n    background-color: #fff;\r\n    border-radius: 2px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\r\n    transition: all .3s ease;\r\n    font-family: Helvetica, Arial, sans-serif;\r\n  }\r\n\r\n  .modal-header h3 {\r\n    margin-top: 0;\r\n    color: #42b983;\r\n  }\r\n\r\n  .modal-body {\r\n    margin: 20px 0;\r\n  }\r\n\r\n  .modal-default-button {\r\n    float: right;\r\n  }\r\n\r\n  /*\r\n   * The following styles are auto-applied to elements with\r\n   * transition=\"modal\" when their visibility is toggled\r\n   * by Vue.js.\r\n   *\r\n   * You can easily play with the modal transition by editing\r\n   * these styles.\r\n   */\r\n\r\n  .modal-enter {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-leave-active {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-enter .modal-container,\r\n  .modal-leave-active .modal-container {\r\n    -webkit-transform: scale(1.1);\r\n    transform: scale(1.1);\r\n  }\r\n  .rejection {\r\n    width:100%\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17924,7 +17924,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.modal-mask[data-v-7dd64f58] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-7dd64f58] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-7dd64f58] {\n  width: 500px;\n  height: 300px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-7dd64f58] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-7dd64f58] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-7dd64f58] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-7dd64f58] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-7dd64f58] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-7dd64f58],\n.modal-leave-active .modal-container[data-v-7dd64f58] {\n  -webkit-transform: scale(1.1);\n  transform: scale(1.1);\n}\n.rejection[data-v-7dd64f58] {\n  width:100%\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Scheduling/DisapproveModal.vue?f1a07830"],"names":[],"mappings":";AAqCA;EACA,gBAAA;EACA,cAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,6BAAA;CACA;AAEA;EACA,oBAAA;EACA,uBAAA;CACA;AAEA;EACA,aAAA;EACA,cAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,yBAAA;EACA,0CAAA;CACA;AAEA;EACA,cAAA;EACA,eAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AAEA;;;;;;;GAOA;AAEA;EACA,WAAA;CACA;AAEA;EACA,WAAA;CACA;AAEA;;EAEA,8BAAA;EACA,sBAAA;CACA;AACA;EACA,UAAA;CACA","file":"DisapproveModal.vue","sourcesContent":["<template>\r\n  <transition name=\"modal\">\r\n    <div class=\"modal-mask\">\r\n      <div class=\"modal-wrapper\">\r\n        <div class=\"modal-container\">\r\n          <div class=\"modal-header\">\r\n            Reason for refusal\r\n          </div>\r\n          <div class=\"modal-body\">\r\n            <label>\r\n              Reason for rejecting the schedule\r\n              <input type=\"text\" v-model=\"reason\" class=\"rejection\">\r\n            </label>\r\n          </div>\r\n          <div class=\"modal-footer\">\r\n          </div>\r\n          <button class=\"modal-default-button\" @click=\"$emit('rejecting', reason)\">Reject</button>\n            <button class=\"modal-default-button\" @click=\"$emit('close', reason)\">Close</button>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </transition>\r\n\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n      name: 'disapprove-modal',\r\n      data () {\r\n        return {\r\n          reason: ''\r\n        }\r\n      }\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n  .modal-mask {\r\n    position: fixed;\r\n    z-index: 9998;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, .5);\r\n    display: table;\r\n    transition: opacity .3s ease;\r\n  }\r\n\r\n  .modal-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n  }\r\n\r\n  .modal-container {\r\n    width: 500px;\r\n    height: 300px;\r\n    margin: 0px auto;\r\n    padding: 20px 30px;\r\n    background-color: #fff;\r\n    border-radius: 2px;\r\n    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\r\n    transition: all .3s ease;\r\n    font-family: Helvetica, Arial, sans-serif;\r\n  }\r\n\r\n  .modal-header h3 {\r\n    margin-top: 0;\r\n    color: #42b983;\r\n  }\r\n\r\n  .modal-body {\r\n    margin: 20px 0;\r\n  }\r\n\r\n  .modal-default-button {\r\n    float: right;\r\n  }\r\n\r\n  /*\r\n   * The following styles are auto-applied to elements with\r\n   * transition=\"modal\" when their visibility is toggled\r\n   * by Vue.js.\r\n   *\r\n   * You can easily play with the modal transition by editing\r\n   * these styles.\r\n   */\r\n\r\n  .modal-enter {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-leave-active {\r\n    opacity: 0;\r\n  }\r\n\r\n  .modal-enter .modal-container,\r\n  .modal-leave-active .modal-container {\r\n    -webkit-transform: scale(1.1);\r\n    transform: scale(1.1);\r\n  }\r\n  .rejection {\r\n    width:100%\r\n  }\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.nav-left {\n    margin: 4% 0 0 0;\n    padding: 0 0 0 0;\n    position: absolute;\n    height: 100%;\n    width: 16.5%;\n    background-color: #555;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/layout/nav-left.vue?3b8052fb"],"names":[],"mappings":";AAeA;IACA,iBAAA;IACA,iBAAA;IACA,mBAAA;IACA,aAAA;IACA,aAAA;IACA,uBAAA;CACA","file":"nav-left.vue","sourcesContent":["<template>\n    <div class=\"nav-left\">\n        <slot name=\"body\">\n            default body\r\n        </slot>\n    </div>\n</template>\n\n<script>\n    export default {\n        name:\"nav-left\"\r\n    }\n</script>\n\n<style>\r\n    .nav-left {\r\n        margin: 4% 0 0 0;\r\n        padding: 0 0 0 0;\r\n        position: absolute;\r\n        height: 100%;\r\n        width: 16.5%;\r\n        background-color: #555;\r\n    }\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17938,7 +17938,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.nav-left {\n    margin: 4% 0 0 0;\n    padding: 0 0 0 0;\n    position: absolute;\n    height: 100%;\n    width: 16.5%;\n    background-color: #555;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/layout/nav-left.vue?3b8052fb"],"names":[],"mappings":";AAeA;IACA,iBAAA;IACA,iBAAA;IACA,mBAAA;IACA,aAAA;IACA,aAAA;IACA,uBAAA;CACA","file":"nav-left.vue","sourcesContent":["<template>\n    <div class=\"nav-left\">\n        <slot name=\"body\">\n            default body\r\n        </slot>\n    </div>\n</template>\n\n<script>\n    export default {\n        name:\"nav-left\"\r\n    }\n</script>\n\n<style>\r\n    .nav-left {\r\n        margin: 4% 0 0 0;\r\n        padding: 0 0 0 0;\r\n        position: absolute;\r\n        height: 100%;\r\n        width: 16.5%;\r\n        background-color: #555;\r\n    }\n</style>\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.card[data-v-cb1cdcba] {\n  border-radius: 5px;\n  border: 1px solid darkgray;\n  height: auto;\n  overflow:auto;\n}\nstrong[data-v-cb1cdcba] {\n  text-align: right;\n}\n@media(min-width:801px) {\n.ConsiderationCard[data-v-cb1cdcba] {\n          border-radius: 5px;\n          padding: 2px;\n          margin-left: 1vw;\n          float: left;\n          text-align: left;\n          border: 1px solid black;\n          height: 35vh;\n          width: 16vw;\n}\n}\n@media(max-width:800px) {\n.ConsiderationCard[data-v-cb1cdcba] {\n          border-radius: 5px;\n          padding: 2px;\n          margin-left: 1vw;\n          float: left;\n          text-align: left;\n          border: 1px solid black;\n          height: auto;\n          width: 80%;\n          overflow:auto;\n}\n}\n\n\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/ScheduleConsequences.vue?c6700770"],"names":[],"mappings":";AA4FA;EACA,mBAAA;EACA,2BAAA;EACA,aAAA;EACA,cAAA;CACA;AACA;EACA,kBAAA;CACA;AACA;AACA;UACA,mBAAA;UACA,aAAA;UACA,iBAAA;UACA,YAAA;UACA,iBAAA;UACA,wBAAA;UACA,aAAA;UACA,YAAA;CACA;CACA;AACA;AACA;UACA,mBAAA;UACA,aAAA;UACA,iBAAA;UACA,YAAA;UACA,iBAAA;UACA,wBAAA;UACA,aAAA;UACA,WAAA;UACA,cAAA;CACA;CACA","file":"ScheduleConsequences.vue","sourcesContent":["<template>\r\n  <section class=\"card \">\r\n      <div class=\"card-content container\">\r\n          <strong>Things To Consider</strong><hr />\r\n          <div class=\"ConsiderationCard\" style=\"margin-left:1.5vw;\">\r\n              <strong style=\"margin-left:18%; margin-bottom:5px;\">Shift break down for the week</strong>\r\n              <div v-for=\"manager in getManagerDays\" v-if=\"manager.name != 'Cancel Shift'\" >\n                  <p style=\"margin:1% 10%\">\r\n                      - {{manager.name}}\r\n                      <span v-if=\"manager.shifts !== 5\" style=\"color:red\">has {{manager.shifts}} shifts</span>\r\n                      <span v-if=\"manager.shifts === 5\">has 5 shifts</span>\r\n                      <!--<span v-if=\"manager.daysToOwe !== 0\"> Will be owed {{manager.daysToOwe}} shift</span>-->\r\n                  </p>\n                  <hr style=\"margin:1px;\" />\n              </div>\r\n          </div>\r\n          <div class=\"ConsiderationCard\">\n              <strong style=\"margin-left:14%; margin-bottom:5px;\">Make sure that these shifts are covered:</strong>\n              <div v-for=\"day in Object.keys(getWeeklyRequirements)\" v-if=\"day != 'id'\"  >\n                  <p style=\"margin:1% 10%\">\r\n                      {{day}}:\r\n                      <span v-for=\"shift in getWeeklyRequirements[day]\">{{shift}}, </span>\r\n                  </p>\n              <hr style=\"margin:1px\" />\r\n              </div>\r\n          </div>\r\n          <div class=\"ConsiderationCard\">\r\n              <strong style=\"margin-left:0; margin-bottom:5px;\">The following managers have accrued this number of days:</strong>\r\n              <div v-for=\"history in getVacationHistory\">\r\n                  <p>\r\n                      {{history.managerFirstName}} {{history.managerLastName}} has {{Math.round(history.statHolidaysOwed + history.vacationOwed)}} days owed\r\n                  </p>\r\n                  <p>At years end they will be owed {{Math.round(getDays(history.vacationRate) + history.vacationOwed)}} days</p>\r\n\r\n                  <hr style=\"margin:1px\" />\r\n              </div>\r\n          </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n\r\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n    import moment from 'moment'\n\n    export default {\n        name: 'schedule-consequences',\n        data() {\n            return {\n                managerDays: [],\n                schedule: [],\n                consequences: []\n            }\n        },\n        methods: {\n            ...mapActions([\n                'fetchVacationHistory',\n                'fetchRequiredShifts',\n                'fetchLoggedInUser',\n                'fetchManagers',\n                'fetchWeek'\n            ]),\n            getDays(rate) {\n                var days = ((365 - moment().format(\"DDDD\")) * rate)/1.4\n                return days\r\n            }\n        },\n        computed: {\n            ...mapGetters([\n                'getWeek',\n                'getManagerDays',\n                'getUser',\n                'getVacationHistory',\n                'getWeeklyRequirements'\n            ])\n        },\n        created() {\n            var param = {\n                eow: this.eow,\n                locationId: this.$store.state.loggedInUser.locationId\n            }\n            this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\n                .then(() => {\n                    this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)\n                    this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                        .then(() => { this.fetchWeek(param) })\r\n                }) \n        }\n     }\n</script>\r\n\r\n<style scoped>\r\n  .card {\r\n    border-radius: 5px;\r\n    border: 1px solid darkgray;\r\n    height: auto;\n    overflow:auto;\r\n  }\r\n  strong {\r\n    text-align: right;\r\n  }\r\n    @media(min-width:801px) {\r\n        .ConsiderationCard {\r\n            border-radius: 5px;\r\n            padding: 2px;\r\n            margin-left: 1vw;\r\n            float: left;\r\n            text-align: left;\r\n            border: 1px solid black;\r\n            height: 35vh;\r\n            width: 16vw;\r\n        }\r\n    }\r\n    @media(max-width:800px) {\r\n        .ConsiderationCard {\r\n            border-radius: 5px;\r\n            padding: 2px;\r\n            margin-left: 1vw;\r\n            float: left;\r\n            text-align: left;\r\n            border: 1px solid black;\r\n            height: auto;\r\n            width: 80%;\n            overflow:auto;\r\n        }\r\n    }\n\n\r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17952,7 +17952,7 @@ exports = module.exports = __webpack_require__(3)();
 
 
 // module
-exports.push([module.i, "\n.card[data-v-cb1cdcba] {\n  border-radius: 5px;\n  border: 1px solid darkgray;\n  height: auto;\n  overflow:auto;\n}\nstrong[data-v-cb1cdcba] {\n  text-align: right;\n}\n@media(min-width:801px) {\n.ConsiderationCard[data-v-cb1cdcba] {\n          border-radius: 5px;\n          padding: 2px;\n          margin-left: 1vw;\n          float: left;\n          text-align: left;\n          border: 1px solid black;\n          height: 35vh;\n          width: 16vw;\n}\n}\n@media(max-width:800px) {\n.ConsiderationCard[data-v-cb1cdcba] {\n          border-radius: 5px;\n          padding: 2px;\n          margin-left: 1vw;\n          float: left;\n          text-align: left;\n          border: 1px solid black;\n          height: auto;\n          width: 80%;\n          overflow:auto;\n}\n}\n\n\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/ScheduleConsequences.vue?c6700770"],"names":[],"mappings":";AA4FA;EACA,mBAAA;EACA,2BAAA;EACA,aAAA;EACA,cAAA;CACA;AACA;EACA,kBAAA;CACA;AACA;AACA;UACA,mBAAA;UACA,aAAA;UACA,iBAAA;UACA,YAAA;UACA,iBAAA;UACA,wBAAA;UACA,aAAA;UACA,YAAA;CACA;CACA;AACA;AACA;UACA,mBAAA;UACA,aAAA;UACA,iBAAA;UACA,YAAA;UACA,iBAAA;UACA,wBAAA;UACA,aAAA;UACA,WAAA;UACA,cAAA;CACA;CACA","file":"ScheduleConsequences.vue","sourcesContent":["<template>\r\n  <section class=\"card \">\r\n      <div class=\"card-content container\">\r\n          <strong>Things To Consider</strong><hr />\r\n          <div class=\"ConsiderationCard\" style=\"margin-left:1.5vw;\">\r\n              <strong style=\"margin-left:18%; margin-bottom:5px;\">Shift break down for the week</strong>\r\n              <div v-for=\"manager in getManagerDays\" v-if=\"manager.name != 'Cancel Shift'\" >\n                  <p style=\"margin:1% 10%\">\r\n                      - {{manager.name}}\r\n                      <span v-if=\"manager.shifts !== 5\" style=\"color:red\">has {{manager.shifts}} shifts</span>\r\n                      <span v-if=\"manager.shifts === 5\">has 5 shifts</span>\r\n                      <!--<span v-if=\"manager.daysToOwe !== 0\"> Will be owed {{manager.daysToOwe}} shift</span>-->\r\n                  </p>\n                  <hr style=\"margin:1px;\" />\n              </div>\r\n          </div>\r\n          <div class=\"ConsiderationCard\">\n              <strong style=\"margin-left:14%; margin-bottom:5px;\">Make sure that these shifts are covered:</strong>\n              <div v-for=\"day in Object.keys(getWeeklyRequirements)\" v-if=\"day != 'id'\"  >\n                  <p style=\"margin:1% 10%\">\r\n                      {{day}}:\r\n                      <span v-for=\"shift in getWeeklyRequirements[day]\">{{shift}}, </span>\r\n                  </p>\n              <hr style=\"margin:1px\" />\r\n              </div>\r\n          </div>\r\n          <div class=\"ConsiderationCard\">\r\n              <strong style=\"margin-left:0; margin-bottom:5px;\">The following managers have accrued this number of days:</strong>\r\n              <div v-for=\"history in getVacationHistory\">\r\n                  <p>\r\n                      {{history.managerFirstName}} {{history.managerLastName}} has {{Math.round(history.statHolidaysOwed + history.vacationOwed)}} days owed\r\n                  </p>\r\n                  <p>At years end they will be owed {{Math.round(getDays(history.vacationRate) + history.vacationOwed)}} days</p>\r\n\r\n                  <hr style=\"margin:1px\" />\r\n              </div>\r\n          </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n\r\n<script>\n    import { mapActions, mapGetters } from 'vuex'\n    import moment from 'moment'\n\n    export default {\n        name: 'schedule-consequences',\n        data() {\n            return {\n                managerDays: [],\n                schedule: [],\n                consequences: []\n            }\n        },\n        methods: {\n            ...mapActions([\n                'fetchVacationHistory',\n                'fetchRequiredShifts',\n                'fetchLoggedInUser',\n                'fetchManagers',\n                'fetchWeek'\n            ]),\n            getDays(rate) {\n                var days = ((365 - moment().format(\"DDDD\")) * rate)/1.4\n                return days\r\n            }\n        },\n        computed: {\n            ...mapGetters([\n                'getWeek',\n                'getManagerDays',\n                'getUser',\n                'getVacationHistory',\n                'getWeeklyRequirements'\n            ])\n        },\n        created() {\n            var param = {\n                eow: this.eow,\n                locationId: this.$store.state.loggedInUser.locationId\n            }\n            this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)\n                .then(() => {\n                    this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)\n                    this.fetchManagers(this.$store.state.loggedInUser.locationId)\n                        .then(() => { this.fetchWeek(param) })\r\n                }) \n        }\n     }\n</script>\r\n\r\n<style scoped>\r\n  .card {\r\n    border-radius: 5px;\r\n    border: 1px solid darkgray;\r\n    height: auto;\n    overflow:auto;\r\n  }\r\n  strong {\r\n    text-align: right;\r\n  }\r\n    @media(min-width:801px) {\r\n        .ConsiderationCard {\r\n            border-radius: 5px;\r\n            padding: 2px;\r\n            margin-left: 1vw;\r\n            float: left;\r\n            text-align: left;\r\n            border: 1px solid black;\r\n            height: 35vh;\r\n            width: 16vw;\r\n        }\r\n    }\r\n    @media(max-width:800px) {\r\n        .ConsiderationCard {\r\n            border-radius: 5px;\r\n            padding: 2px;\r\n            margin-left: 1vw;\r\n            float: left;\r\n            text-align: left;\r\n            border: 1px solid black;\r\n            height: auto;\r\n            width: 80%;\n            overflow:auto;\r\n        }\r\n    }\n\n\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.card[data-v-d5d0729c] {\n    margin:6px 2px;\n    border:1px solid black;\n    border-radius:5px;\n    font-size:small;\n    padding:2px;\n}\nstrong[data-v-d5d0729c] {\n  text-align: right;\n  font-size:medium;\n}  \n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/OneDay.vue?b86534fc"],"names":[],"mappings":";AAsCA;IACA,eAAA;IACA,uBAAA;IACA,kBAAA;IACA,gBAAA;IACA,YAAA;CACA;AACA;EACA,kBAAA;EACA,iBAAA;CACA","file":"OneDay.vue","sourcesContent":["<template>\r\n  <section class=\"day\" v-on:click=\"$emit('dayClicked', Day.date)\">\r\n    <div >\r\n      <strong v-if=\"this.Day.date\">{{ this.getDay(this.Day.date) }} {{ this.Day.date}}</strong>\r\n      <div v-for=\"theshift in this.Day.shifts\" >\r\n          <shift :date=\"Day.date\"\n                 :shiftCode=\"theshift.shiftCode\"\n                 :shiftType=\"theshift.shiftType\"\n                 :managerName=\"theshift.managerName\"\n                 :managerFromId=\"theshift.managerId\"\n                 v-on:eventClicked=\"eventClicked($event)\"></shift>\r\n      </div>\r\n        \r\n    </div>\r\n  </section>\r\n</template>\r\n\r\n<script>\r\n    import moment from 'moment'\r\n    import shift from './TheShift'\r\n\r\n   export default {\r\n     name: 'day',\r\n     props: ['thisDay', 'Day'],\r\n     methods: {\r\n       getDay (date) {\r\n         return moment(date, 'MM-DD-YYYY').format('dddd')\r\n         },\r\n       eventClicked(event) {\r\n           event.shiftDate = this.Day.date\r\n           this.$emit('eventClicked', event)\r\n       },\r\n       components: { shift: shift }\r\n     }\r\n   }\r\n</script>\r\n\r\n<style scoped>\r\n  .card {\r\n      margin:6px 2px;\r\n      border:1px solid black;\r\n      border-radius:5px;\r\n      font-size:small;\r\n      padding:2px;\r\n  }\r\n  strong {\r\n    text-align: right;\r\n    font-size:medium;\r\n  }  \r\n</style>\r\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -17961,51 +17961,23 @@ exports.push([module.i, "\n.card[data-v-cb1cdcba] {\n  border-radius: 5px;\n  bo
 /* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(3)();
-// imports
-
-
-// module
-exports.push([module.i, "\n.card[data-v-d5d0729c] {\n    margin:6px 2px;\n    border:1px solid black;\n    border-radius:5px;\n    font-size:small;\n    padding:2px;\n}\nstrong[data-v-d5d0729c] {\n  text-align: right;\n  font-size:medium;\n}  \n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/Calendar/OneDay.vue?b86534fc"],"names":[],"mappings":";AAsCA;IACA,eAAA;IACA,uBAAA;IACA,kBAAA;IACA,gBAAA;IACA,YAAA;CACA;AACA;EACA,kBAAA;EACA,iBAAA;CACA","file":"OneDay.vue","sourcesContent":["<template>\r\n  <section class=\"day\" v-on:click=\"$emit('dayClicked', Day.date)\">\r\n    <div >\r\n      <strong v-if=\"this.Day.date\">{{ this.getDay(this.Day.date) }} {{ this.Day.date}}</strong>\r\n      <div v-for=\"theshift in this.Day.shifts\" >\r\n          <shift :date=\"Day.date\"\n                 :shiftCode=\"theshift.shiftCode\"\n                 :shiftType=\"theshift.shiftType\"\n                 :managerName=\"theshift.managerName\"\n                 :managerFromId=\"theshift.managerId\"\n                 v-on:eventClicked=\"eventClicked($event)\"></shift>\r\n      </div>\r\n        \r\n    </div>\r\n  </section>\r\n</template>\r\n\r\n<script>\r\n    import moment from 'moment'\r\n    import shift from './TheShift'\r\n\r\n   export default {\r\n     name: 'day',\r\n     props: ['thisDay', 'Day'],\r\n     methods: {\r\n       getDay (date) {\r\n         return moment(date, 'MM-DD-YYYY').format('dddd')\r\n         },\r\n       eventClicked(event) {\r\n           event.shiftDate = this.Day.date\r\n           this.$emit('eventClicked', event)\r\n       },\r\n       components: { shift: shift }\r\n     }\r\n   }\r\n</script>\r\n\r\n<style scoped>\r\n  .card {\r\n      margin:6px 2px;\r\n      border:1px solid black;\r\n      border-radius:5px;\r\n      font-size:small;\r\n      padding:2px;\r\n  }\r\n  strong {\r\n    text-align: right;\r\n    font-size:medium;\r\n  }  \r\n</style>\r\n"],"sourceRoot":""}]);
-
-// exports
-
-
-/***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(3)();
-// imports
-
-
-// module
-exports.push([module.i, "\n.card {\n    margin: 6px 2px;\n    border: 1px solid black;\n    border-radius: 5px;\n    font-size: small;\n    padding: 2px;\n}\n", "", {"version":3,"sources":["C:/Working/Ops/ClientApp/components/calendar/TheShift.vue?084ea324"],"names":[],"mappings":";AAqCA;IACA,gBAAA;IACA,wBAAA;IACA,mBAAA;IACA,iBAAA;IACA,aAAA;CACA","file":"TheShift.vue","sourcesContent":["<template>\r\n    <div class=\"card\" v-if=\"this.shiftType != 'Cancelled' && this.managerName !='Cancel Shift'\" v-on:click=\"eventClicked()\">\r\n        <div style=\"padding:2px 2px;\">Shift: {{shiftType}}</div>\r\n        <div style=\"padding:2px 2px;\">Manager: {{managerName}}</div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    export default {\r\n        name: \"shift\",\r\n        data() {\r\n            return {}\r\n        },\r\n        props: [\r\n            'shiftType',\r\n            'managerName',\r\n            'managerFromId',\r\n            'date',\r\n            'shiftCode'\r\n        ],\r\n        methods: {\r\n            eventClicked() {\r\n                let Event = {\r\n                    name: this.managerName,\r\n                    managerFromId: this.managerFromId,\r\n                    Date: this.date,\r\n                    shiftCode: this.shiftCode,\r\n                    shiftDate:\"\"\r\n                }\r\n                this.$emit('eventClicked', Event)\r\n            }\r\n        }\r\n\r\n    }\r\n</script>\r\n\r\n<style>\r\n    .card {\r\n        margin: 6px 2px;\r\n        border: 1px solid black;\r\n        border-radius: 5px;\r\n        font-size: small;\r\n        padding: 2px;\r\n    }\r\n</style>\r\n"],"sourceRoot":""}]);
-
-// exports
-
-
-/***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
 
 /* styles */
-__webpack_require__(442)
+__webpack_require__(431)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(267),
+  __webpack_require__(275),
   /* template */
-  __webpack_require__(417),
+  __webpack_require__(408),
   /* scopeId */
-  null,
+  "data-v-13975d2c",
   /* cssModules */
   null
 )
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Calendar\\TheShift.vue"
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\DailyShiftRequirements.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] TheShift.vue: functional components are not supported with templates, they should use render functions.")}
+if (Component.options.functional) {console.error("[vue-loader] DailyShiftRequirements.vue: functional components are not supported with templates, they should use render functions.")}
 
 /* hot reload */
 if (true) {(function () {
@@ -18014,9 +17986,9 @@ if (true) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-2111a126", Component.options)
+    hotAPI.createRecord("data-v-13975d2c", Component.options)
   } else {
-    hotAPI.reload("data-v-2111a126", Component.options)
+    hotAPI.reload("data-v-13975d2c", Component.options)
   }
 })()}
 
@@ -18024,19 +17996,19 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 93 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (__webpack_require__(29))(10);
 
 /***/ }),
-/* 94 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (__webpack_require__(29))(47);
 
 /***/ }),
-/* 95 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18046,7 +18018,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(289);
+var _keys = __webpack_require__(292);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -18058,11 +18030,11 @@ var _vuex = __webpack_require__(8);
 
 var _vuex2 = _interopRequireDefault(_vuex);
 
-var _vueResource = __webpack_require__(436);
+var _vueResource = __webpack_require__(427);
 
 var _vueResource2 = _interopRequireDefault(_vueResource);
 
-var _axios = __webpack_require__(93);
+var _axios = __webpack_require__(91);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -18655,15 +18627,15 @@ var stringifyRequest = function stringifyRequest(request) {
 };
 
 /***/ }),
-/* 96 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {(function(e,t){ true?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.Buefy=t():e.Buefy=t()})(this,function(){return function(e){function t(i){if(n[i])return n[i].exports;var r=n[i]={i:i,l:!1,exports:{}};return e[i].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var n={};return t.m=e,t.c=n,t.i=function(e){return e},t.d=function(e,n,i){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:i})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="/",t(t.s=238)}([function(e,t){e.exports=function(e,t,n,i,r){var a,o=e=e||{},s=typeof e.default;"object"!==s&&"function"!==s||(a=e,o=e.default);var l="function"==typeof o?o.options:o;t&&(l.render=t.render,l.staticRenderFns=t.staticRenderFns),i&&(l._scopeId=i);var u;if(r?(u=function(e){e=e||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext,e||"undefined"==typeof __VUE_SSR_CONTEXT__||(e=__VUE_SSR_CONTEXT__),n&&n.call(this,e),e&&e._registeredComponents&&e._registeredComponents.add(r)},l._ssrRegister=u):n&&(u=n),u){var c=l.functional,d=c?l.render:l.beforeCreate;c?l.render=function(e,t){return u.call(t),d(e,t)}:l.beforeCreate=d?[].concat(d,u):[u]}return{esModule:a,exports:o,options:l}}},function(e,t,n){"use strict";n.d(t,"a",function(){return r});var i={defaultContainerElement:null,defaultIconPack:"mdi",defaultDialogConfirmText:null,defaultDialogCancelText:null,defaultSnackbarDuration:3500,defaultToastDuration:2e3,defaultTooltipType:"is-primary",defaultTooltipAnimated:!1,defaultInputAutocomplete:"on",defaultDateFormatter:null,defaultDateParser:null,defaultDayNames:null,defaultMonthNames:null,defaultFirstDayOfWeek:null,defaultUnselectableDaysOfWeek:null,defaultTimeFormatter:null,defaultTimeParser:null,defaultModalScroll:null,defaultDatepickerMobileNative:!0,defaultTimepickerMobileNative:!0,defaultNoticeQueue:!0};t.b=i;var r=function(e){i=e}},function(e,t,n){"use strict";var i=n(178),r=n.n(i);t.a=r.a},function(e,t,n){e.exports={default:n(131),__esModule:!0}},function(e,t,n){var i=n(37)("wks"),r=n(27),a=n(8).Symbol,o="function"==typeof a;(e.exports=function(e){return i[e]||(i[e]=o&&a[e]||(o?a:r)("Symbol."+e))}).store=i},function(e,t,n){"use strict";function i(e,t){return t.split(".").reduce(function(e,t){return e[t]},e)}function r(e,t,n){if(!e)return-1;if(!n||"function"!=typeof n)return e.indexOf(t);for(var i=0;i<e.length;i++)if(n(e[i],t))return i;return-1}function a(e){void 0!==e.remove?e.remove():e.parentNode.removeChild(e)}function o(e){return e?e.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,"\\$&"):e}t.c=i,t.d=r,n.d(t,"b",function(){return s}),t.a=a,t.e=o;var s={Android:function(){return"undefined"!=typeof window&&window.navigator.userAgent.match(/Android/i)},BlackBerry:function(){return"undefined"!=typeof window&&window.navigator.userAgent.match(/BlackBerry/i)},iOS:function(){return"undefined"!=typeof window&&window.navigator.userAgent.match(/iPhone|iPad|iPod/i)},Opera:function(){return"undefined"!=typeof window&&window.navigator.userAgent.match(/Opera Mini/i)},Windows:function(){return"undefined"!=typeof window&&window.navigator.userAgent.match(/IEMobile/i)},any:function(){return s.Android()||s.BlackBerry()||s.iOS()||s.Opera()||s.Windows()}}},function(e,t,n){"use strict";t.__esModule=!0;var i=n(124),r=function(e){return e&&e.__esModule?e:{default:e}}(i);t.default=function(e,t,n){return t in e?(0,r.default)(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}},function(e,t){var n=e.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(e,t){var n=e.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(e,t,n){var i=n(15),r=n(54),a=n(40),o=Object.defineProperty;t.f=n(11)?Object.defineProperty:function(e,t,n){if(i(e),t=a(t,!0),i(n),r)try{return o(e,t,n)}catch(e){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(e[t]=n.value),e}},function(e,t,n){"use strict";var i=n(1);t.a={props:{size:String,expanded:Boolean,loading:Boolean,rounded:Boolean,icon:String,iconPack:String,autocomplete:String,maxlength:[Number,String]},data:function(){return{isValid:!0,isFocused:!1,newIconPack:this.iconPack||i.b.defaultIconPack}},computed:{parentField:function(){for(var e=this.$parent,t=0;t<3;t++)e&&!e.$data._isField&&(e=e.$parent);return e},statusType:function(){if(this.parentField)return this.parentField.newType},statusMessage:function(){if(this.parentField)return this.parentField.newMessage},iconSize:function(){switch(this.size){case"is-small":return this.size;case"is-medium":return;case"is-large":return"fa"===this.newIconPack?"":"is-medium"}}},methods:{focus:function(){var e=this;void 0!==this.$data._elementRef&&this.$nextTick(function(){return e.$el.querySelector(e.$data._elementRef).focus()})},onBlur:function(e){this.isFocused=!1,this.$emit("blur",e),this.checkHtml5Validity()},onFocus:function(e){this.isFocused=!0,this.$emit("focus",e)},checkHtml5Validity:function(){if(void 0!==this.$refs[this.$data._elementRef]){var e=this.$el.querySelector(this.$data._elementRef),t=null,n=null,i=!0;return e.checkValidity()||(t="is-danger",n=e.validationMessage,i=!1),this.isValid=i,this.parentField&&(this.parentField.type||(this.parentField.newType=t),this.parentField.message||(this.parentField.newMessage=n)),this.isValid}}}}},function(e,t,n){e.exports=!n(18)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(e,t){var n={}.hasOwnProperty;e.exports=function(e,t){return n.call(e,t)}},function(e,t,n){var i=n(55),r=n(31);e.exports=function(e){return i(r(e))}},function(e,t,n){e.exports={default:n(129),__esModule:!0}},function(e,t,n){var i=n(25);e.exports=function(e){if(!i(e))throw TypeError(e+" is not an object!");return e}},function(e,t,n){var i=n(9),r=n(21);e.exports=n(11)?function(e,t,n){return i.f(e,t,r(1,n))}:function(e,t,n){return e[t]=n,e}},function(e,t,n){var i=n(8),r=n(7),a=n(52),o=n(16),s=function(e,t,n){var l,u,c,d=e&s.F,f=e&s.G,p=e&s.S,h=e&s.P,v=e&s.B,m=e&s.W,y=f?r:r[t]||(r[t]={}),g=y.prototype,b=f?i:p?i[t]:(i[t]||{}).prototype;f&&(n=t);for(l in n)(u=!d&&b&&void 0!==b[l])&&l in y||(c=u?b[l]:n[l],y[l]=f&&"function"!=typeof b[l]?n[l]:v&&u?a(c,i):m&&b[l]==c?function(e){var t=function(t,n,i){if(this instanceof e){switch(arguments.length){case 0:return new e;case 1:return new e(t);case 2:return new e(t,n)}return new e(t,n,i)}return e.apply(this,arguments)};return t.prototype=e.prototype,t}(c):h&&"function"==typeof c?a(Function.call,c):c,h&&((y.virtual||(y.virtual={}))[l]=c,e&s.R&&g&&!g[l]&&o(g,l,c)))};s.F=1,s.G=2,s.S=4,s.P=8,s.B=16,s.W=32,s.U=64,s.R=128,e.exports=s},function(e,t){e.exports=function(e){try{return!!e()}catch(e){return!0}}},function(e,t){e.exports={}},function(e,t,n){var i=n(59),r=n(32);e.exports=Object.keys||function(e){return i(e,r)}},function(e,t){e.exports=function(e,t){return{enumerable:!(1&e),configurable:!(2&e),writable:!(4&e),value:t}}},function(e,t,n){"use strict";(function(e,n){function i(e){return void 0===e||null===e}function r(e){return void 0!==e&&null!==e}function a(e){return!0===e}function o(e){return!1===e}function s(e){return"string"==typeof e||"number"==typeof e||"symbol"==typeof e||"boolean"==typeof e}function l(e){return null!==e&&"object"==typeof e}function u(e){return"[object Object]"===pi.call(e)}function c(e){return"[object RegExp]"===pi.call(e)}function d(e){var t=parseFloat(String(e));return t>=0&&Math.floor(t)===t&&isFinite(e)}function f(e){return null==e?"":"object"==typeof e?JSON.stringify(e,null,2):String(e)}function p(e){var t=parseFloat(e);return isNaN(t)?e:t}function h(e,t){for(var n=Object.create(null),i=e.split(","),r=0;r<i.length;r++)n[i[r]]=!0;return t?function(e){return n[e.toLowerCase()]}:function(e){return n[e]}}function v(e,t){if(e.length){var n=e.indexOf(t);if(n>-1)return e.splice(n,1)}}function m(e,t){return vi.call(e,t)}function y(e){var t=Object.create(null);return function(n){return t[n]||(t[n]=e(n))}}function g(e,t){function n(n){var i=arguments.length;return i?i>1?e.apply(t,arguments):e.call(t,n):e.call(t)}return n._length=e.length,n}function b(e,t){t=t||0;for(var n=e.length-t,i=new Array(n);n--;)i[n]=e[n+t];return i}function _(e,t){for(var n in t)e[n]=t[n];return e}function w(e){for(var t={},n=0;n<e.length;n++)e[n]&&_(t,e[n]);return t}function k(e,t,n){}function C(e,t){if(e===t)return!0;var n=l(e),i=l(t);if(!n||!i)return!n&&!i&&String(e)===String(t);try{var r=Array.isArray(e),a=Array.isArray(t);if(r&&a)return e.length===t.length&&e.every(function(e,n){return C(e,t[n])});if(r||a)return!1;var o=Object.keys(e),s=Object.keys(t);return o.length===s.length&&o.every(function(n){return C(e[n],t[n])})}catch(e){return!1}}function x(e,t){for(var n=0;n<e.length;n++)if(C(e[n],t))return n;return-1}function S(e){var t=!1;return function(){t||(t=!0,e.apply(this,arguments))}}function D(e){var t=(e+"").charCodeAt(0);return 36===t||95===t}function $(e,t,n,i){Object.defineProperty(e,t,{value:n,enumerable:!!i,writable:!0,configurable:!0})}function A(e){if(!$i.test(e)){var t=e.split(".");return function(e){for(var n=0;n<t.length;n++){if(!e)return;e=e[t[n]]}return e}}}function O(e){return"function"==typeof e&&/native code/.test(e.toString())}function T(e){Ki.target&&Ji.push(Ki.target),Ki.target=e}function M(){Ki.target=Ji.pop()}function P(e){return new Xi(void 0,void 0,void 0,String(e))}function B(e,t){var n=e.componentOptions,i=new Xi(e.tag,e.data,e.children,e.text,e.elm,e.context,n,e.asyncFactory);return i.ns=e.ns,i.isStatic=e.isStatic,i.key=e.key,i.isComment=e.isComment,i.fnContext=e.fnContext,i.fnOptions=e.fnOptions,i.fnScopeId=e.fnScopeId,i.isCloned=!0,t&&(e.children&&(i.children=V(e.children,!0)),n&&n.children&&(n.children=V(n.children,!0))),i}function V(e,t){for(var n=e.length,i=new Array(n),r=0;r<n;r++)i[r]=B(e[r],t);return i}function I(e,t,n){e.__proto__=t}function F(e,t,n){for(var i=0,r=n.length;i<r;i++){var a=n[i];$(e,a,t[a])}}function E(e,t){if(l(e)&&!(e instanceof Xi)){var n;return m(e,"__ob__")&&e.__ob__ instanceof ir?n=e.__ob__:nr.shouldConvert&&!Hi()&&(Array.isArray(e)||u(e))&&Object.isExtensible(e)&&!e._isVue&&(n=new ir(e)),t&&n&&n.vmCount++,n}}function j(e,t,n,i,r){var a=new Ki,o=Object.getOwnPropertyDescriptor(e,t);if(!o||!1!==o.configurable){var s=o&&o.get,l=o&&o.set,u=!r&&E(n);Object.defineProperty(e,t,{enumerable:!0,configurable:!0,get:function(){var t=s?s.call(e):n;return Ki.target&&(a.depend(),u&&(u.dep.depend(),Array.isArray(t)&&L(t))),t},set:function(t){var i=s?s.call(e):n;t===i||t!==t&&i!==i||(l?l.call(e,t):n=t,u=!r&&E(t),a.notify())}})}}function N(e,t,n){if(Array.isArray(e)&&d(t))return e.length=Math.max(e.length,t),e.splice(t,1,n),n;if(t in e&&!(t in Object.prototype))return e[t]=n,n;var i=e.__ob__;return e._isVue||i&&i.vmCount?n:i?(j(i.value,t,n),i.dep.notify(),n):(e[t]=n,n)}function R(e,t){if(Array.isArray(e)&&d(t))return void e.splice(t,1);var n=e.__ob__;e._isVue||n&&n.vmCount||m(e,t)&&(delete e[t],n&&n.dep.notify())}function L(e){for(var t=void 0,n=0,i=e.length;n<i;n++)t=e[n],t&&t.__ob__&&t.__ob__.dep.depend(),Array.isArray(t)&&L(t)}function z(e,t){if(!t)return e;for(var n,i,r,a=Object.keys(t),o=0;o<a.length;o++)n=a[o],i=e[n],r=t[n],m(e,n)?u(i)&&u(r)&&z(i,r):N(e,n,r);return e}function H(e,t,n){return n?function(){var i="function"==typeof t?t.call(n,n):t,r="function"==typeof e?e.call(n,n):e;return i?z(i,r):r}:t?e?function(){return z("function"==typeof t?t.call(this,this):t,"function"==typeof e?e.call(this,this):e)}:t:e}function W(e,t){return t?e?e.concat(t):Array.isArray(t)?t:[t]:e}function q(e,t,n,i){var r=Object.create(e||null);return t?_(r,t):r}function Y(e,t){var n=e.props;if(n){var i,r,a,o={};if(Array.isArray(n))for(i=n.length;i--;)"string"==typeof(r=n[i])&&(a=yi(r),o[a]={type:null});else if(u(n))for(var s in n)r=n[s],a=yi(s),o[a]=u(r)?r:{type:r};e.props=o}}function U(e,t){var n=e.inject;if(n){var i=e.inject={};if(Array.isArray(n))for(var r=0;r<n.length;r++)i[n[r]]={from:n[r]};else if(u(n))for(var a in n){var o=n[a];i[a]=u(o)?_({from:a},o):{from:o}}}}function K(e){var t=e.directives;if(t)for(var n in t){var i=t[n];"function"==typeof i&&(t[n]={bind:i,update:i})}}function J(e,t,n){function i(i){var r=rr[i]||sr;l[i]=r(e[i],t[i],n,i)}"function"==typeof t&&(t=t.options),Y(t,n),U(t,n),K(t);var r=t.extends;if(r&&(e=J(e,r,n)),t.mixins)for(var a=0,o=t.mixins.length;a<o;a++)e=J(e,t.mixins[a],n);var s,l={};for(s in e)i(s);for(s in t)m(e,s)||i(s);return l}function X(e,t,n,i){if("string"==typeof n){var r=e[t];if(m(r,n))return r[n];var a=yi(n);if(m(r,a))return r[a];var o=gi(a);if(m(r,o))return r[o];return r[n]||r[a]||r[o]}}function G(e,t,n,i){var r=t[e],a=!m(n,e),o=n[e];if(ee(Boolean,r.type)&&(a&&!m(r,"default")?o=!1:ee(String,r.type)||""!==o&&o!==_i(e)||(o=!0)),void 0===o){o=Q(i,r,e);var s=nr.shouldConvert;nr.shouldConvert=!0,E(o),nr.shouldConvert=s}return o}function Q(e,t,n){if(m(t,"default")){var i=t.default;return e&&e.$options.propsData&&void 0===e.$options.propsData[n]&&void 0!==e._props[n]?e._props[n]:"function"==typeof i&&"Function"!==Z(t.type)?i.call(e):i}}function Z(e){var t=e&&e.toString().match(/^\s*function (\w+)/);return t?t[1]:""}function ee(e,t){if(!Array.isArray(t))return Z(t)===Z(e);for(var n=0,i=t.length;n<i;n++)if(Z(t[n])===Z(e))return!0;return!1}function te(e,t,n){if(t)for(var i=t;i=i.$parent;){var r=i.$options.errorCaptured;if(r)for(var a=0;a<r.length;a++)try{var o=!1===r[a].call(i,e,t,n);if(o)return}catch(e){ne(e,i,"errorCaptured hook")}}ne(e,t,n)}function ne(e,t,n){if(Di.errorHandler)try{return Di.errorHandler.call(null,e,t,n)}catch(e){ie(e,null,"config.errorHandler")}ie(e,t,n)}function ie(e,t,n){if(!Oi&&!Ti||"undefined"==typeof console)throw e;console.error(e)}function re(){ur=!1;var e=lr.slice(0);lr.length=0;for(var t=0;t<e.length;t++)e[t]()}function ae(e){return e._withTask||(e._withTask=function(){cr=!0;var t=e.apply(null,arguments);return cr=!1,t})}function oe(e,t){var n;if(lr.push(function(){if(e)try{e.call(t)}catch(e){te(e,t,"nextTick")}else n&&n(t)}),ur||(ur=!0,cr?or():ar()),!e&&"undefined"!=typeof Promise)return new Promise(function(e){n=e})}function se(e){le(e,vr),vr.clear()}function le(e,t){var n,i,r=Array.isArray(e);if((r||l(e))&&!Object.isFrozen(e)){if(e.__ob__){var a=e.__ob__.dep.id;if(t.has(a))return;t.add(a)}if(r)for(n=e.length;n--;)le(e[n],t);else for(i=Object.keys(e),n=i.length;n--;)le(e[i[n]],t)}}function ue(e){function t(){var e=arguments,n=t.fns;if(!Array.isArray(n))return n.apply(null,arguments);for(var i=n.slice(),r=0;r<i.length;r++)i[r].apply(null,e)}return t.fns=e,t}function ce(e,t,n,r,a){var o,s,l,u;for(o in e)s=e[o],l=t[o],u=mr(o),i(s)||(i(l)?(i(s.fns)&&(s=e[o]=ue(s)),n(u.name,s,u.once,u.capture,u.passive,u.params)):s!==l&&(l.fns=s,e[o]=l));for(o in t)i(e[o])&&(u=mr(o),r(u.name,t[o],u.capture))}function de(e,t,n){function o(){n.apply(this,arguments),v(s.fns,o)}e instanceof Xi&&(e=e.data.hook||(e.data.hook={}));var s,l=e[t];i(l)?s=ue([o]):r(l.fns)&&a(l.merged)?(s=l,s.fns.push(o)):s=ue([l,o]),s.merged=!0,e[t]=s}function fe(e,t,n){var a=t.options.props;if(!i(a)){var o={},s=e.attrs,l=e.props;if(r(s)||r(l))for(var u in a){var c=_i(u);pe(o,l,u,c,!0)||pe(o,s,u,c,!1)}return o}}function pe(e,t,n,i,a){if(r(t)){if(m(t,n))return e[n]=t[n],a||delete t[n],!0;if(m(t,i))return e[n]=t[i],a||delete t[i],!0}return!1}function he(e){for(var t=0;t<e.length;t++)if(Array.isArray(e[t]))return Array.prototype.concat.apply([],e);return e}function ve(e){return s(e)?[P(e)]:Array.isArray(e)?ye(e):void 0}function me(e){return r(e)&&r(e.text)&&o(e.isComment)}function ye(e,t){var n,o,l,u,c=[];for(n=0;n<e.length;n++)o=e[n],i(o)||"boolean"==typeof o||(l=c.length-1,u=c[l],Array.isArray(o)?o.length>0&&(o=ye(o,(t||"")+"_"+n),me(o[0])&&me(u)&&(c[l]=P(u.text+o[0].text),o.shift()),c.push.apply(c,o)):s(o)?me(u)?c[l]=P(u.text+o):""!==o&&c.push(P(o)):me(o)&&me(u)?c[l]=P(u.text+o.text):(a(e._isVList)&&r(o.tag)&&i(o.key)&&r(t)&&(o.key="__vlist"+t+"_"+n+"__"),c.push(o)));return c}function ge(e,t){return(e.__esModule||qi&&"Module"===e[Symbol.toStringTag])&&(e=e.default),l(e)?t.extend(e):e}function be(e,t,n,i,r){var a=Qi();return a.asyncFactory=e,a.asyncMeta={data:t,context:n,children:i,tag:r},a}function _e(e,t,n){if(a(e.error)&&r(e.errorComp))return e.errorComp;if(r(e.resolved))return e.resolved;if(a(e.loading)&&r(e.loadingComp))return e.loadingComp;if(!r(e.contexts)){var o=e.contexts=[n],s=!0,u=function(){for(var e=0,t=o.length;e<t;e++)o[e].$forceUpdate()},c=S(function(n){e.resolved=ge(n,t),s||u()}),d=S(function(t){r(e.errorComp)&&(e.error=!0,u())}),f=e(c,d);return l(f)&&("function"==typeof f.then?i(e.resolved)&&f.then(c,d):r(f.component)&&"function"==typeof f.component.then&&(f.component.then(c,d),r(f.error)&&(e.errorComp=ge(f.error,t)),r(f.loading)&&(e.loadingComp=ge(f.loading,t),0===f.delay?e.loading=!0:setTimeout(function(){i(e.resolved)&&i(e.error)&&(e.loading=!0,u())},f.delay||200)),r(f.timeout)&&setTimeout(function(){i(e.resolved)&&d(null)},f.timeout))),s=!1,e.loading?e.loadingComp:e.resolved}e.contexts.push(n)}function we(e){return e.isComment&&e.asyncFactory}function ke(e){if(Array.isArray(e))for(var t=0;t<e.length;t++){var n=e[t];if(r(n)&&(r(n.componentOptions)||we(n)))return n}}function Ce(e){e._events=Object.create(null),e._hasHookEvent=!1;var t=e.$options._parentListeners;t&&De(e,t)}function xe(e,t,n){n?hr.$once(e,t):hr.$on(e,t)}function Se(e,t){hr.$off(e,t)}function De(e,t,n){hr=e,ce(t,n||{},xe,Se,e),hr=void 0}function $e(e,t){var n={};if(!e)return n;for(var i=0,r=e.length;i<r;i++){var a=e[i],o=a.data;if(o&&o.attrs&&o.attrs.slot&&delete o.attrs.slot,a.context!==t&&a.fnContext!==t||!o||null==o.slot)(n.default||(n.default=[])).push(a);else{var s=o.slot,l=n[s]||(n[s]=[]);"template"===a.tag?l.push.apply(l,a.children||[]):l.push(a)}}for(var u in n)n[u].every(Ae)&&delete n[u];return n}function Ae(e){return e.isComment&&!e.asyncFactory||" "===e.text}function Oe(e,t){t=t||{};for(var n=0;n<e.length;n++)Array.isArray(e[n])?Oe(e[n],t):t[e[n].key]=e[n].fn;return t}function Te(e){var t=e.$options,n=t.parent;if(n&&!t.abstract){for(;n.$options.abstract&&n.$parent;)n=n.$parent;n.$children.push(e)}e.$parent=n,e.$root=n?n.$root:e,e.$children=[],e.$refs={},e._watcher=null,e._inactive=null,e._directInactive=!1,e._isMounted=!1,e._isDestroyed=!1,e._isBeingDestroyed=!1}function Me(e,t,n){e.$el=t,e.$options.render||(e.$options.render=Qi),Fe(e,"beforeMount");var i;return i=function(){e._update(e._render(),n)},new Sr(e,i,k,null,!0),n=!1,null==e.$vnode&&(e._isMounted=!0,Fe(e,"mounted")),e}function Pe(e,t,n,i,r){var a=!!(r||e.$options._renderChildren||i.data.scopedSlots||e.$scopedSlots!==fi);if(e.$options._parentVnode=i,e.$vnode=i,e._vnode&&(e._vnode.parent=i),e.$options._renderChildren=r,e.$attrs=i.data&&i.data.attrs||fi,e.$listeners=n||fi,t&&e.$options.props){nr.shouldConvert=!1;for(var o=e._props,s=e.$options._propKeys||[],l=0;l<s.length;l++){var u=s[l];o[u]=G(u,e.$options.props,t,e)}nr.shouldConvert=!0,e.$options.propsData=t}if(n){var c=e.$options._parentListeners;e.$options._parentListeners=n,De(e,n,c)}a&&(e.$slots=$e(r,i.context),e.$forceUpdate())}function Be(e){for(;e&&(e=e.$parent);)if(e._inactive)return!0;return!1}function Ve(e,t){if(t){if(e._directInactive=!1,Be(e))return}else if(e._directInactive)return;if(e._inactive||null===e._inactive){e._inactive=!1;for(var n=0;n<e.$children.length;n++)Ve(e.$children[n]);Fe(e,"activated")}}function Ie(e,t){if(!(t&&(e._directInactive=!0,Be(e))||e._inactive)){e._inactive=!0;for(var n=0;n<e.$children.length;n++)Ie(e.$children[n]);Fe(e,"deactivated")}}function Fe(e,t){var n=e.$options[t];if(n)for(var i=0,r=n.length;i<r;i++)try{n[i].call(e)}catch(n){te(n,e,t+" hook")}e._hasHookEvent&&e.$emit("hook:"+t)}function Ee(){Cr=gr.length=br.length=0,_r={},wr=kr=!1}function je(){kr=!0;var e,t;for(gr.sort(function(e,t){return e.id-t.id}),Cr=0;Cr<gr.length;Cr++)e=gr[Cr],t=e.id,_r[t]=null,e.run();var n=br.slice(),i=gr.slice();Ee(),Le(n),Ne(i),Wi&&Di.devtools&&Wi.emit("flush")}function Ne(e){for(var t=e.length;t--;){var n=e[t],i=n.vm;i._watcher===n&&i._isMounted&&Fe(i,"updated")}}function Re(e){e._inactive=!1,br.push(e)}function Le(e){for(var t=0;t<e.length;t++)e[t]._inactive=!0,Ve(e[t],!0)}function ze(e){var t=e.id;if(null==_r[t]){if(_r[t]=!0,kr){for(var n=gr.length-1;n>Cr&&gr[n].id>e.id;)n--;gr.splice(n+1,0,e)}else gr.push(e);wr||(wr=!0,oe(je))}}function He(e,t,n){Dr.get=function(){return this[t][n]},Dr.set=function(e){this[t][n]=e},Object.defineProperty(e,n,Dr)}function We(e){e._watchers=[];var t=e.$options;t.props&&qe(e,t.props),t.methods&&Ge(e,t.methods),t.data?Ye(e):E(e._data={},!0),t.computed&&Ke(e,t.computed),t.watch&&t.watch!==ji&&Qe(e,t.watch)}function qe(e,t){var n=e.$options.propsData||{},i=e._props={},r=e.$options._propKeys=[],a=!e.$parent;nr.shouldConvert=a;for(var o in t)(function(a){r.push(a);var o=G(a,t,n,e);j(i,a,o),a in e||He(e,"_props",a)})(o);nr.shouldConvert=!0}function Ye(e){var t=e.$options.data;t=e._data="function"==typeof t?Ue(t,e):t||{},u(t)||(t={});for(var n=Object.keys(t),i=e.$options.props,r=(e.$options.methods,n.length);r--;){var a=n[r];i&&m(i,a)||D(a)||He(e,"_data",a)}E(t,!0)}function Ue(e,t){try{return e.call(t,t)}catch(e){return te(e,t,"data()"),{}}}function Ke(e,t){var n=e._computedWatchers=Object.create(null),i=Hi();for(var r in t){var a=t[r],o="function"==typeof a?a:a.get;i||(n[r]=new Sr(e,o||k,k,$r)),r in e||Je(e,r,a)}}function Je(e,t,n){var i=!Hi();"function"==typeof n?(Dr.get=i?Xe(t):n,Dr.set=k):(Dr.get=n.get?i&&!1!==n.cache?Xe(t):n.get:k,Dr.set=n.set?n.set:k),Object.defineProperty(e,t,Dr)}function Xe(e){return function(){var t=this._computedWatchers&&this._computedWatchers[e];if(t)return t.dirty&&t.evaluate(),Ki.target&&t.depend(),t.value}}function Ge(e,t){e.$options.props;for(var n in t)e[n]=null==t[n]?k:g(t[n],e)}function Qe(e,t){for(var n in t){var i=t[n];if(Array.isArray(i))for(var r=0;r<i.length;r++)Ze(e,n,i[r]);else Ze(e,n,i)}}function Ze(e,t,n,i){return u(n)&&(i=n,n=n.handler),"string"==typeof n&&(n=e[n]),e.$watch(t,n,i)}function et(e){var t=e.$options.provide;t&&(e._provided="function"==typeof t?t.call(e):t)}function tt(e){var t=nt(e.$options.inject,e);t&&(nr.shouldConvert=!1,Object.keys(t).forEach(function(n){j(e,n,t[n])}),nr.shouldConvert=!0)}function nt(e,t){if(e){for(var n=Object.create(null),i=qi?Reflect.ownKeys(e).filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}):Object.keys(e),r=0;r<i.length;r++){for(var a=i[r],o=e[a].from,s=t;s;){if(s._provided&&o in s._provided){n[a]=s._provided[o];break}s=s.$parent}if(!s&&"default"in e[a]){var l=e[a].default;n[a]="function"==typeof l?l.call(t):l}}return n}}function it(e,t){var n,i,a,o,s;if(Array.isArray(e)||"string"==typeof e)for(n=new Array(e.length),i=0,a=e.length;i<a;i++)n[i]=t(e[i],i);else if("number"==typeof e)for(n=new Array(e),i=0;i<e;i++)n[i]=t(i+1,i);else if(l(e))for(o=Object.keys(e),n=new Array(o.length),i=0,a=o.length;i<a;i++)s=o[i],n[i]=t(e[s],s,i);return r(n)&&(n._isVList=!0),n}function rt(e,t,n,i){var r,a=this.$scopedSlots[e];if(a)n=n||{},i&&(n=_(_({},i),n)),r=a(n)||t;else{var o=this.$slots[e];o&&(o._rendered=!0),r=o||t}var s=n&&n.slot;return s?this.$createElement("template",{slot:s},r):r}function at(e){return X(this.$options,"filters",e,!0)||ki}function ot(e,t,n,i){var r=Di.keyCodes[t]||n;return r?Array.isArray(r)?-1===r.indexOf(e):r!==e:i?_i(i)!==t:void 0}function st(e,t,n,i,r){if(n)if(l(n)){Array.isArray(n)&&(n=w(n));var a;for(var o in n)(function(o){if("class"===o||"style"===o||hi(o))a=e;else{var s=e.attrs&&e.attrs.type;a=i||Di.mustUseProp(t,s,o)?e.domProps||(e.domProps={}):e.attrs||(e.attrs={})}if(!(o in a)&&(a[o]=n[o],r)){(e.on||(e.on={}))["update:"+o]=function(e){n[o]=e}}})(o)}else;return e}function lt(e,t){var n=this._staticTrees||(this._staticTrees=[]),i=n[e];return i&&!t?Array.isArray(i)?V(i):B(i):(i=n[e]=this.$options.staticRenderFns[e].call(this._renderProxy,null,this),ct(i,"__static__"+e,!1),i)}function ut(e,t,n){return ct(e,"__once__"+t+(n?"_"+n:""),!0),e}function ct(e,t,n){if(Array.isArray(e))for(var i=0;i<e.length;i++)e[i]&&"string"!=typeof e[i]&&dt(e[i],t+"_"+i,n);else dt(e,t,n)}function dt(e,t,n){e.isStatic=!0,e.key=t,e.isOnce=n}function ft(e,t){if(t)if(u(t)){var n=e.on=e.on?_({},e.on):{};for(var i in t){var r=n[i],a=t[i];n[i]=r?[].concat(r,a):a}}else;return e}function pt(e){e._o=ut,e._n=p,e._s=f,e._l=it,e._t=rt,e._q=C,e._i=x,e._m=lt,e._f=at,e._k=ot,e._b=st,e._v=P,e._e=Qi,e._u=Oe,e._g=ft}function ht(e,t,n,i,r){var o=r.options;this.data=e,this.props=t,this.children=n,this.parent=i,this.listeners=e.on||fi,this.injections=nt(o.inject,i),this.slots=function(){return $e(n,i)};var s=Object.create(i),l=a(o._compiled),u=!l;l&&(this.$options=o,this.$slots=this.slots(),this.$scopedSlots=e.scopedSlots||fi),o._scopeId?this._c=function(e,t,n,r){var a=kt(s,e,t,n,r,u);return a&&(a.fnScopeId=o._scopeId,a.fnContext=i),a}:this._c=function(e,t,n,i){return kt(s,e,t,n,i,u)}}function vt(e,t,n,i,a){var o=e.options,s={},l=o.props;if(r(l))for(var u in l)s[u]=G(u,l,t||fi);else r(n.attrs)&&mt(s,n.attrs),r(n.props)&&mt(s,n.props);var c=new ht(n,s,a,i,e),d=o.render.call(null,c._c,c);return d instanceof Xi&&(d.fnContext=i,d.fnOptions=o,n.slot&&((d.data||(d.data={})).slot=n.slot)),d}function mt(e,t){for(var n in t)e[yi(n)]=t[n]}function yt(e,t,n,o,s){if(!i(e)){var u=n.$options._base;if(l(e)&&(e=u.extend(e)),"function"==typeof e){var c;if(i(e.cid)&&(c=e,void 0===(e=_e(c,u,n))))return be(c,t,n,o,s);t=t||{},$t(e),r(t.model)&&wt(e.options,t);var d=fe(t,e,s);if(a(e.options.functional))return vt(e,d,t,n,o);var f=t.on;if(t.on=t.nativeOn,a(e.options.abstract)){var p=t.slot;t={},p&&(t.slot=p)}bt(t);var h=e.options.name||s;return new Xi("vue-component-"+e.cid+(h?"-"+h:""),t,void 0,void 0,void 0,n,{Ctor:e,propsData:d,listeners:f,tag:s,children:o},c)}}}function gt(e,t,n,i){var a={_isComponent:!0,parent:t,_parentVnode:e,_parentElm:n||null,_refElm:i||null},o=e.data.inlineTemplate;return r(o)&&(a.render=o.render,a.staticRenderFns=o.staticRenderFns),new e.componentOptions.Ctor(a)}function bt(e){e.hook||(e.hook={});for(var t=0;t<Or.length;t++){var n=Or[t],i=e.hook[n],r=Ar[n];e.hook[n]=i?_t(r,i):r}}function _t(e,t){return function(n,i,r,a){e(n,i,r,a),t(n,i,r,a)}}function wt(e,t){var n=e.model&&e.model.prop||"value",i=e.model&&e.model.event||"input";(t.props||(t.props={}))[n]=t.model.value;var a=t.on||(t.on={});r(a[i])?a[i]=[t.model.callback].concat(a[i]):a[i]=t.model.callback}function kt(e,t,n,i,r,o){return(Array.isArray(n)||s(n))&&(r=i,i=n,n=void 0),a(o)&&(r=Mr),Ct(e,t,n,i,r)}function Ct(e,t,n,i,a){if(r(n)&&r(n.__ob__))return Qi();if(r(n)&&r(n.is)&&(t=n.is),!t)return Qi();Array.isArray(i)&&"function"==typeof i[0]&&(n=n||{},n.scopedSlots={default:i[0]},i.length=0),a===Mr?i=ve(i):a===Tr&&(i=he(i));var o,s;if("string"==typeof t){var l;s=e.$vnode&&e.$vnode.ns||Di.getTagNamespace(t),o=Di.isReservedTag(t)?new Xi(Di.parsePlatformTagName(t),n,i,void 0,void 0,e):r(l=X(e.$options,"components",t))?yt(l,n,e,i,t):new Xi(t,n,i,void 0,void 0,e)}else o=yt(t,n,e,i);return r(o)?(s&&xt(o,s),o):Qi()}function xt(e,t,n){if(e.ns=t,"foreignObject"===e.tag&&(t=void 0,n=!0),r(e.children))for(var o=0,s=e.children.length;o<s;o++){var l=e.children[o];r(l.tag)&&(i(l.ns)||a(n))&&xt(l,t,n)}}function St(e){e._vnode=null,e._staticTrees=null;var t=e.$options,n=e.$vnode=t._parentVnode,i=n&&n.context;e.$slots=$e(t._renderChildren,i),e.$scopedSlots=fi,e._c=function(t,n,i,r){return kt(e,t,n,i,r,!1)},e.$createElement=function(t,n,i,r){return kt(e,t,n,i,r,!0)};var r=n&&n.data;j(e,"$attrs",r&&r.attrs||fi,null,!0),j(e,"$listeners",t._parentListeners||fi,null,!0)}function Dt(e,t){var n=e.$options=Object.create(e.constructor.options),i=t._parentVnode;n.parent=t.parent,n._parentVnode=i,n._parentElm=t._parentElm,n._refElm=t._refElm;var r=i.componentOptions;n.propsData=r.propsData,n._parentListeners=r.listeners,n._renderChildren=r.children,n._componentTag=r.tag,t.render&&(n.render=t.render,n.staticRenderFns=t.staticRenderFns)}function $t(e){var t=e.options;if(e.super){var n=$t(e.super);if(n!==e.superOptions){e.superOptions=n;var i=At(e);i&&_(e.extendOptions,i),t=e.options=J(n,e.extendOptions),t.name&&(t.components[t.name]=e)}}return t}function At(e){var t,n=e.options,i=e.extendOptions,r=e.sealedOptions;for(var a in n)n[a]!==r[a]&&(t||(t={}),t[a]=Ot(n[a],i[a],r[a]));return t}function Ot(e,t,n){if(Array.isArray(e)){var i=[];n=Array.isArray(n)?n:[n],t=Array.isArray(t)?t:[t];for(var r=0;r<e.length;r++)(t.indexOf(e[r])>=0||n.indexOf(e[r])<0)&&i.push(e[r]);return i}return e}function Tt(e){this._init(e)}function Mt(e){e.use=function(e){var t=this._installedPlugins||(this._installedPlugins=[]);if(t.indexOf(e)>-1)return this;var n=b(arguments,1);return n.unshift(this),"function"==typeof e.install?e.install.apply(e,n):"function"==typeof e&&e.apply(null,n),t.push(e),this}}function Pt(e){e.mixin=function(e){return this.options=J(this.options,e),this}}function Bt(e){e.cid=0;var t=1;e.extend=function(e){e=e||{};var n=this,i=n.cid,r=e._Ctor||(e._Ctor={});if(r[i])return r[i];var a=e.name||n.options.name,o=function(e){this._init(e)};return o.prototype=Object.create(n.prototype),o.prototype.constructor=o,o.cid=t++,o.options=J(n.options,e),o.super=n,o.options.props&&Vt(o),o.options.computed&&It(o),o.extend=n.extend,o.mixin=n.mixin,o.use=n.use,xi.forEach(function(e){o[e]=n[e]}),a&&(o.options.components[a]=o),o.superOptions=n.options,o.extendOptions=e,o.sealedOptions=_({},o.options),r[i]=o,o}}function Vt(e){var t=e.options.props;for(var n in t)He(e.prototype,"_props",n)}function It(e){var t=e.options.computed;for(var n in t)Je(e.prototype,n,t[n])}function Ft(e){xi.forEach(function(t){e[t]=function(e,n){return n?("component"===t&&u(n)&&(n.name=n.name||e,n=this.options._base.extend(n)),"directive"===t&&"function"==typeof n&&(n={bind:n,update:n}),this.options[t+"s"][e]=n,n):this.options[t+"s"][e]}})}function Et(e){return e&&(e.Ctor.options.name||e.tag)}function jt(e,t){return Array.isArray(e)?e.indexOf(t)>-1:"string"==typeof e?e.split(",").indexOf(t)>-1:!!c(e)&&e.test(t)}function Nt(e,t){var n=e.cache,i=e.keys,r=e._vnode;for(var a in n){var o=n[a];if(o){var s=Et(o.componentOptions);s&&!t(s)&&Rt(n,a,i,r)}}}function Rt(e,t,n,i){var r=e[t];!r||i&&r.tag===i.tag||r.componentInstance.$destroy(),e[t]=null,v(n,t)}function Lt(e){for(var t=e.data,n=e,i=e;r(i.componentInstance);)(i=i.componentInstance._vnode)&&i.data&&(t=zt(i.data,t));for(;r(n=n.parent);)n&&n.data&&(t=zt(t,n.data));return Ht(t.staticClass,t.class)}function zt(e,t){return{staticClass:Wt(e.staticClass,t.staticClass),class:r(e.class)?[e.class,t.class]:t.class}}function Ht(e,t){return r(e)||r(t)?Wt(e,qt(t)):""}function Wt(e,t){return e?t?e+" "+t:e:t||""}function qt(e){return Array.isArray(e)?Yt(e):l(e)?Ut(e):"string"==typeof e?e:""}function Yt(e){for(var t,n="",i=0,a=e.length;i<a;i++)r(t=qt(e[i]))&&""!==t&&(n&&(n+=" "),n+=t);return n}function Ut(e){var t="";for(var n in e)e[n]&&(t&&(t+=" "),t+=n);return t}function Kt(e){return Jr(e)?"svg":"math"===e?"math":void 0}function Jt(e){if(!Oi)return!0;if(Xr(e))return!1;if(e=e.toLowerCase(),null!=Gr[e])return Gr[e];var t=document.createElement(e);return e.indexOf("-")>-1?Gr[e]=t.constructor===window.HTMLUnknownElement||t.constructor===window.HTMLElement:Gr[e]=/HTMLUnknownElement/.test(t.toString())}function Xt(e){if("string"==typeof e){var t=document.querySelector(e);return t||document.createElement("div")}return e}function Gt(e,t){var n=document.createElement(e);return"select"!==e?n:(t.data&&t.data.attrs&&void 0!==t.data.attrs.multiple&&n.setAttribute("multiple","multiple"),n)}function Qt(e,t){return document.createElementNS(Ur[e],t)}function Zt(e){return document.createTextNode(e)}function en(e){return document.createComment(e)}function tn(e,t,n){e.insertBefore(t,n)}function nn(e,t){e.removeChild(t)}function rn(e,t){e.appendChild(t)}function an(e){return e.parentNode}function on(e){return e.nextSibling}function sn(e){return e.tagName}function ln(e,t){e.textContent=t}function un(e,t,n){e.setAttribute(t,n)}function cn(e,t){var n=e.data.ref;if(n){var i=e.context,r=e.componentInstance||e.elm,a=i.$refs;t?Array.isArray(a[n])?v(a[n],r):a[n]===r&&(a[n]=void 0):e.data.refInFor?Array.isArray(a[n])?a[n].indexOf(r)<0&&a[n].push(r):a[n]=[r]:a[n]=r}}function dn(e,t){return e.key===t.key&&(e.tag===t.tag&&e.isComment===t.isComment&&r(e.data)===r(t.data)&&fn(e,t)||a(e.isAsyncPlaceholder)&&e.asyncFactory===t.asyncFactory&&i(t.asyncFactory.error))}function fn(e,t){if("input"!==e.tag)return!0;var n,i=r(n=e.data)&&r(n=n.attrs)&&n.type,a=r(n=t.data)&&r(n=n.attrs)&&n.type;return i===a||Qr(i)&&Qr(a)}function pn(e,t,n){var i,a,o={};for(i=t;i<=n;++i)a=e[i].key,r(a)&&(o[a]=i);return o}function hn(e,t){(e.data.directives||t.data.directives)&&vn(e,t)}function vn(e,t){var n,i,r,a=e===ta,o=t===ta,s=mn(e.data.directives,e.context),l=mn(t.data.directives,t.context),u=[],c=[];for(n in l)i=s[n],r=l[n],i?(r.oldValue=i.value,gn(r,"update",t,e),r.def&&r.def.componentUpdated&&c.push(r)):(gn(r,"bind",t,e),r.def&&r.def.inserted&&u.push(r));if(u.length){var d=function(){for(var n=0;n<u.length;n++)gn(u[n],"inserted",t,e)};a?de(t,"insert",d):d()}if(c.length&&de(t,"postpatch",function(){for(var n=0;n<c.length;n++)gn(c[n],"componentUpdated",t,e)}),!a)for(n in s)l[n]||gn(s[n],"unbind",e,e,o)}function mn(e,t){var n=Object.create(null);if(!e)return n;var i,r;for(i=0;i<e.length;i++)r=e[i],r.modifiers||(r.modifiers=ra),n[yn(r)]=r,r.def=X(t.$options,"directives",r.name,!0);return n}function yn(e){return e.rawName||e.name+"."+Object.keys(e.modifiers||{}).join(".")}function gn(e,t,n,i,r){var a=e.def&&e.def[t];if(a)try{a(n.elm,e,n,i,r)}catch(i){te(i,n.context,"directive "+e.name+" "+t+" hook")}}function bn(e,t){var n=t.componentOptions;if(!(r(n)&&!1===n.Ctor.options.inheritAttrs||i(e.data.attrs)&&i(t.data.attrs))){var a,o,s=t.elm,l=e.data.attrs||{},u=t.data.attrs||{};r(u.__ob__)&&(u=t.data.attrs=_({},u));for(a in u)o=u[a],l[a]!==o&&_n(s,a,o);(Bi||Ii)&&u.value!==l.value&&_n(s,"value",u.value);for(a in l)i(u[a])&&(Wr(a)?s.removeAttributeNS(Hr,qr(a)):Lr(a)||s.removeAttribute(a))}}function _n(e,t,n){if(zr(t))Yr(n)?e.removeAttribute(t):(n="allowfullscreen"===t&&"EMBED"===e.tagName?"true":t,e.setAttribute(t,n));else if(Lr(t))e.setAttribute(t,Yr(n)||"false"===n?"false":"true");else if(Wr(t))Yr(n)?e.removeAttributeNS(Hr,qr(t)):e.setAttributeNS(Hr,t,n);else if(Yr(n))e.removeAttribute(t);else{if(Bi&&!Vi&&"TEXTAREA"===e.tagName&&"placeholder"===t&&!e.__ieph){var i=function(t){t.stopImmediatePropagation(),e.removeEventListener("input",i)};e.addEventListener("input",i),e.__ieph=!0}e.setAttribute(t,n)}}function wn(e,t){var n=t.elm,a=t.data,o=e.data;if(!(i(a.staticClass)&&i(a.class)&&(i(o)||i(o.staticClass)&&i(o.class)))){var s=Lt(t),l=n._transitionClasses;r(l)&&(s=Wt(s,qt(l))),s!==n._prevClass&&(n.setAttribute("class",s),n._prevClass=s)}}function kn(e){if(r(e[la])){var t=Bi?"change":"input";e[t]=[].concat(e[la],e[t]||[]),delete e[la]}r(e[ua])&&(e.change=[].concat(e[ua],e.change||[]),delete e[ua])}function Cn(e,t,n){var i=Fr;return function r(){null!==e.apply(null,arguments)&&Sn(t,r,n,i)}}function xn(e,t,n,i,r){t=ae(t),n&&(t=Cn(t,e,i)),Fr.addEventListener(e,t,Ni?{capture:i,passive:r}:i)}function Sn(e,t,n,i){(i||Fr).removeEventListener(e,t._withTask||t,n)}function Dn(e,t){if(!i(e.data.on)||!i(t.data.on)){var n=t.data.on||{},r=e.data.on||{};Fr=t.elm,kn(n),ce(n,r,xn,Sn,t.context),Fr=void 0}}function $n(e,t){if(!i(e.data.domProps)||!i(t.data.domProps)){var n,a,o=t.elm,s=e.data.domProps||{},l=t.data.domProps||{};r(l.__ob__)&&(l=t.data.domProps=_({},l));for(n in s)i(l[n])&&(o[n]="");for(n in l){if(a=l[n],"textContent"===n||"innerHTML"===n){if(t.children&&(t.children.length=0),a===s[n])continue;1===o.childNodes.length&&o.removeChild(o.childNodes[0])}if("value"===n){o._value=a;var u=i(a)?"":String(a);An(o,u)&&(o.value=u)}else o[n]=a}}}function An(e,t){return!e.composing&&("OPTION"===e.tagName||On(e,t)||Tn(e,t))}function On(e,t){var n=!0;try{n=document.activeElement!==e}catch(e){}return n&&e.value!==t}function Tn(e,t){var n=e.value,i=e._vModifiers;if(r(i)){if(i.lazy)return!1;if(i.number)return p(n)!==p(t);if(i.trim)return n.trim()!==t.trim()}return n!==t}function Mn(e){var t=Pn(e.style);return e.staticStyle?_(e.staticStyle,t):t}function Pn(e){return Array.isArray(e)?w(e):"string"==typeof e?fa(e):e}function Bn(e,t){var n,i={};if(t)for(var r=e;r.componentInstance;)(r=r.componentInstance._vnode)&&r.data&&(n=Mn(r.data))&&_(i,n);(n=Mn(e.data))&&_(i,n);for(var a=e;a=a.parent;)a.data&&(n=Mn(a.data))&&_(i,n);return i}function Vn(e,t){var n=t.data,a=e.data;if(!(i(n.staticStyle)&&i(n.style)&&i(a.staticStyle)&&i(a.style))){var o,s,l=t.elm,u=a.staticStyle,c=a.normalizedStyle||a.style||{},d=u||c,f=Pn(t.data.style)||{};t.data.normalizedStyle=r(f.__ob__)?_({},f):f;var p=Bn(t,!0);for(s in d)i(p[s])&&va(l,s,"");for(s in p)(o=p[s])!==d[s]&&va(l,s,null==o?"":o)}}function In(e,t){if(t&&(t=t.trim()))if(e.classList)t.indexOf(" ")>-1?t.split(/\s+/).forEach(function(t){return e.classList.add(t)}):e.classList.add(t);else{var n=" "+(e.getAttribute("class")||"")+" ";n.indexOf(" "+t+" ")<0&&e.setAttribute("class",(n+t).trim())}}function Fn(e,t){if(t&&(t=t.trim()))if(e.classList)t.indexOf(" ")>-1?t.split(/\s+/).forEach(function(t){return e.classList.remove(t)}):e.classList.remove(t),e.classList.length||e.removeAttribute("class");else{for(var n=" "+(e.getAttribute("class")||"")+" ",i=" "+t+" ";n.indexOf(i)>=0;)n=n.replace(i," ");n=n.trim(),n?e.setAttribute("class",n):e.removeAttribute("class")}}function En(e){if(e){if("object"==typeof e){var t={};return!1!==e.css&&_(t,ba(e.name||"v")),_(t,e),t}return"string"==typeof e?ba(e):void 0}}function jn(e){$a(function(){$a(e)})}function Nn(e,t){var n=e._transitionClasses||(e._transitionClasses=[]);n.indexOf(t)<0&&(n.push(t),In(e,t))}function Rn(e,t){e._transitionClasses&&v(e._transitionClasses,t),Fn(e,t)}function Ln(e,t,n){var i=zn(e,t),r=i.type,a=i.timeout,o=i.propCount;if(!r)return n();var s=r===wa?xa:Da,l=0,u=function(){e.removeEventListener(s,c),n()},c=function(t){t.target===e&&++l>=o&&u()};setTimeout(function(){l<o&&u()},a+1),e.addEventListener(s,c)}function zn(e,t){var n,i=window.getComputedStyle(e),r=i[Ca+"Delay"].split(", "),a=i[Ca+"Duration"].split(", "),o=Hn(r,a),s=i[Sa+"Delay"].split(", "),l=i[Sa+"Duration"].split(", "),u=Hn(s,l),c=0,d=0;return t===wa?o>0&&(n=wa,c=o,d=a.length):t===ka?u>0&&(n=ka,c=u,d=l.length):(c=Math.max(o,u),n=c>0?o>u?wa:ka:null,d=n?n===wa?a.length:l.length:0),{type:n,timeout:c,propCount:d,hasTransform:n===wa&&Aa.test(i[Ca+"Property"])}}function Hn(e,t){for(;e.length<t.length;)e=e.concat(e);return Math.max.apply(null,t.map(function(t,n){return Wn(t)+Wn(e[n])}))}function Wn(e){return 1e3*Number(e.slice(0,-1))}function qn(e,t){var n=e.elm;r(n._leaveCb)&&(n._leaveCb.cancelled=!0,n._leaveCb());var a=En(e.data.transition);if(!i(a)&&!r(n._enterCb)&&1===n.nodeType){for(var o=a.css,s=a.type,u=a.enterClass,c=a.enterToClass,d=a.enterActiveClass,f=a.appearClass,h=a.appearToClass,v=a.appearActiveClass,m=a.beforeEnter,y=a.enter,g=a.afterEnter,b=a.enterCancelled,_=a.beforeAppear,w=a.appear,k=a.afterAppear,C=a.appearCancelled,x=a.duration,D=yr,$=yr.$vnode;$&&$.parent;)$=$.parent,D=$.context;var A=!D._isMounted||!e.isRootInsert;if(!A||w||""===w){var O=A&&f?f:u,T=A&&v?v:d,M=A&&h?h:c,P=A?_||m:m,B=A&&"function"==typeof w?w:y,V=A?k||g:g,I=A?C||b:b,F=p(l(x)?x.enter:x),E=!1!==o&&!Vi,j=Kn(B),N=n._enterCb=S(function(){E&&(Rn(n,M),Rn(n,T)),N.cancelled?(E&&Rn(n,O),I&&I(n)):V&&V(n),n._enterCb=null});e.data.show||de(e,"insert",function(){var t=n.parentNode,i=t&&t._pending&&t._pending[e.key];i&&i.tag===e.tag&&i.elm._leaveCb&&i.elm._leaveCb(),B&&B(n,N)}),P&&P(n),E&&(Nn(n,O),Nn(n,T),jn(function(){Nn(n,M),Rn(n,O),N.cancelled||j||(Un(F)?setTimeout(N,F):Ln(n,s,N))})),e.data.show&&(t&&t(),B&&B(n,N)),E||j||N()}}}function Yn(e,t){function n(){C.cancelled||(e.data.show||((a.parentNode._pending||(a.parentNode._pending={}))[e.key]=e),h&&h(a),_&&(Nn(a,c),Nn(a,f),jn(function(){Nn(a,d),Rn(a,c),C.cancelled||w||(Un(k)?setTimeout(C,k):Ln(a,u,C))})),v&&v(a,C),_||w||C())}var a=e.elm;r(a._enterCb)&&(a._enterCb.cancelled=!0,a._enterCb());var o=En(e.data.transition);if(i(o)||1!==a.nodeType)return t();if(!r(a._leaveCb)){var s=o.css,u=o.type,c=o.leaveClass,d=o.leaveToClass,f=o.leaveActiveClass,h=o.beforeLeave,v=o.leave,m=o.afterLeave,y=o.leaveCancelled,g=o.delayLeave,b=o.duration,_=!1!==s&&!Vi,w=Kn(v),k=p(l(b)?b.leave:b),C=a._leaveCb=S(function(){a.parentNode&&a.parentNode._pending&&(a.parentNode._pending[e.key]=null),_&&(Rn(a,d),Rn(a,f)),C.cancelled?(_&&Rn(a,c),y&&y(a)):(t(),m&&m(a)),a._leaveCb=null});g?g(n):n()}}function Un(e){return"number"==typeof e&&!isNaN(e)}function Kn(e){if(i(e))return!1;var t=e.fns;return r(t)?Kn(Array.isArray(t)?t[0]:t):(e._length||e.length)>1}function Jn(e,t){!0!==t.data.show&&qn(t)}function Xn(e,t,n){Gn(e,t,n),(Bi||Ii)&&setTimeout(function(){Gn(e,t,n)},0)}function Gn(e,t,n){var i=t.value,r=e.multiple;if(!r||Array.isArray(i)){for(var a,o,s=0,l=e.options.length;s<l;s++)if(o=e.options[s],r)a=x(i,Zn(o))>-1,o.selected!==a&&(o.selected=a);else if(C(Zn(o),i))return void(e.selectedIndex!==s&&(e.selectedIndex=s));r||(e.selectedIndex=-1)}}function Qn(e,t){return t.every(function(t){return!C(t,e)})}function Zn(e){return"_value"in e?e._value:e.value}function ei(e){e.target.composing=!0}function ti(e){e.target.composing&&(e.target.composing=!1,ni(e.target,"input"))}function ni(e,t){var n=document.createEvent("HTMLEvents");n.initEvent(t,!0,!0),e.dispatchEvent(n)}function ii(e){return!e.componentInstance||e.data&&e.data.transition?e:ii(e.componentInstance._vnode)}function ri(e){var t=e&&e.componentOptions;return t&&t.Ctor.options.abstract?ri(ke(t.children)):e}function ai(e){var t={},n=e.$options;for(var i in n.propsData)t[i]=e[i];var r=n._parentListeners;for(var a in r)t[yi(a)]=r[a];return t}function oi(e,t){if(/\d-keep-alive$/.test(t.tag))return e("keep-alive",{props:t.componentOptions.propsData})}function si(e){for(;e=e.parent;)if(e.data.transition)return!0}function li(e,t){return t.key===e.key&&t.tag===e.tag}function ui(e){e.elm._moveCb&&e.elm._moveCb(),e.elm._enterCb&&e.elm._enterCb()}function ci(e){e.data.newPos=e.elm.getBoundingClientRect()}function di(e){var t=e.data.pos,n=e.data.newPos,i=t.left-n.left,r=t.top-n.top;if(i||r){e.data.moved=!0;var a=e.elm.style;a.transform=a.WebkitTransform="translate("+i+"px,"+r+"px)",a.transitionDuration="0s"}}var fi=Object.freeze({}),pi=Object.prototype.toString,hi=(h("slot,component",!0),h("key,ref,slot,slot-scope,is")),vi=Object.prototype.hasOwnProperty,mi=/-(\w)/g,yi=y(function(e){return e.replace(mi,function(e,t){return t?t.toUpperCase():""})}),gi=y(function(e){return e.charAt(0).toUpperCase()+e.slice(1)}),bi=/\B([A-Z])/g,_i=y(function(e){return e.replace(bi,"-$1").toLowerCase()}),wi=function(e,t,n){return!1},ki=function(e){return e},Ci="data-server-rendered",xi=["component","directive","filter"],Si=["beforeCreate","created","beforeMount","mounted","beforeUpdate","updated","beforeDestroy","destroyed","activated","deactivated","errorCaptured"],Di={optionMergeStrategies:Object.create(null),silent:!1,productionTip:!1,devtools:!1,performance:!1,errorHandler:null,warnHandler:null,ignoredElements:[],keyCodes:Object.create(null),isReservedTag:wi,isReservedAttr:wi,isUnknownElement:wi,getTagNamespace:k,parsePlatformTagName:ki,mustUseProp:wi,_lifecycleHooks:Si},$i=/[^\w.$]/,Ai="__proto__"in{},Oi="undefined"!=typeof window,Ti="undefined"!=typeof WXEnvironment&&!!WXEnvironment.platform,Mi=Ti&&WXEnvironment.platform.toLowerCase(),Pi=Oi&&window.navigator.userAgent.toLowerCase(),Bi=Pi&&/msie|trident/.test(Pi),Vi=Pi&&Pi.indexOf("msie 9.0")>0,Ii=Pi&&Pi.indexOf("edge/")>0,Fi=Pi&&Pi.indexOf("android")>0||"android"===Mi,Ei=Pi&&/iphone|ipad|ipod|ios/.test(Pi)||"ios"===Mi,ji=(Pi&&/chrome\/\d+/.test(Pi),{}.watch),Ni=!1;if(Oi)try{var Ri={};Object.defineProperty(Ri,"passive",{get:function(){Ni=!0}}),window.addEventListener("test-passive",null,Ri)}catch(e){}var Li,zi,Hi=function(){return void 0===Li&&(Li=!Oi&&void 0!==e&&"server"===e.process.env.VUE_ENV),Li},Wi=Oi&&window.__VUE_DEVTOOLS_GLOBAL_HOOK__,qi="undefined"!=typeof Symbol&&O(Symbol)&&"undefined"!=typeof Reflect&&O(Reflect.ownKeys);zi="undefined"!=typeof Set&&O(Set)?Set:function(){function e(){this.set=Object.create(null)}return e.prototype.has=function(e){return!0===this.set[e]},e.prototype.add=function(e){this.set[e]=!0},e.prototype.clear=function(){this.set=Object.create(null)},e}();var Yi=k,Ui=0,Ki=function(){this.id=Ui++,this.subs=[]};Ki.prototype.addSub=function(e){this.subs.push(e)},Ki.prototype.removeSub=function(e){v(this.subs,e)},Ki.prototype.depend=function(){Ki.target&&Ki.target.addDep(this)},Ki.prototype.notify=function(){for(var e=this.subs.slice(),t=0,n=e.length;t<n;t++)e[t].update()},Ki.target=null;var Ji=[],Xi=function(e,t,n,i,r,a,o,s){this.tag=e,this.data=t,this.children=n,this.text=i,this.elm=r,this.ns=void 0,this.context=a,this.fnContext=void 0,this.fnOptions=void 0,this.fnScopeId=void 0,this.key=t&&t.key,this.componentOptions=o,this.componentInstance=void 0,this.parent=void 0,this.raw=!1,this.isStatic=!1,this.isRootInsert=!0,this.isComment=!1,this.isCloned=!1,this.isOnce=!1,this.asyncFactory=s,this.asyncMeta=void 0,this.isAsyncPlaceholder=!1},Gi={child:{configurable:!0}};Gi.child.get=function(){return this.componentInstance},Object.defineProperties(Xi.prototype,Gi);var Qi=function(e){void 0===e&&(e="");var t=new Xi;return t.text=e,t.isComment=!0,t},Zi=Array.prototype,er=Object.create(Zi);["push","pop","shift","unshift","splice","sort","reverse"].forEach(function(e){var t=Zi[e];$(er,e,function(){for(var n=[],i=arguments.length;i--;)n[i]=arguments[i];var r,a=t.apply(this,n),o=this.__ob__;switch(e){case"push":case"unshift":r=n;break;case"splice":r=n.slice(2)}return r&&o.observeArray(r),o.dep.notify(),a})});var tr=Object.getOwnPropertyNames(er),nr={shouldConvert:!0},ir=function(e){if(this.value=e,this.dep=new Ki,this.vmCount=0,$(e,"__ob__",this),Array.isArray(e)){(Ai?I:F)(e,er,tr),this.observeArray(e)}else this.walk(e)};ir.prototype.walk=function(e){for(var t=Object.keys(e),n=0;n<t.length;n++)j(e,t[n],e[t[n]])},ir.prototype.observeArray=function(e){for(var t=0,n=e.length;t<n;t++)E(e[t])};var rr=Di.optionMergeStrategies;rr.data=function(e,t,n){return n?H(e,t,n):t&&"function"!=typeof t?e:H(e,t)},Si.forEach(function(e){rr[e]=W}),xi.forEach(function(e){rr[e+"s"]=q}),rr.watch=function(e,t,n,i){if(e===ji&&(e=void 0),t===ji&&(t=void 0),!t)return Object.create(e||null);if(!e)return t;var r={};_(r,e);for(var a in t){var o=r[a],s=t[a];o&&!Array.isArray(o)&&(o=[o]),r[a]=o?o.concat(s):Array.isArray(s)?s:[s]}return r},rr.props=rr.methods=rr.inject=rr.computed=function(e,t,n,i){if(!e)return t;var r=Object.create(null);return _(r,e),t&&_(r,t),r},rr.provide=H;var ar,or,sr=function(e,t){return void 0===t?e:t},lr=[],ur=!1,cr=!1;if(void 0!==n&&O(n))or=function(){n(re)};else if("undefined"==typeof MessageChannel||!O(MessageChannel)&&"[object MessageChannelConstructor]"!==MessageChannel.toString())or=function(){setTimeout(re,0)};else{var dr=new MessageChannel,fr=dr.port2;dr.port1.onmessage=re,or=function(){fr.postMessage(1)}}if("undefined"!=typeof Promise&&O(Promise)){var pr=Promise.resolve();ar=function(){pr.then(re),Ei&&setTimeout(k)}}else ar=or;var hr,vr=new zi,mr=y(function(e){var t="&"===e.charAt(0);e=t?e.slice(1):e;var n="~"===e.charAt(0);e=n?e.slice(1):e;var i="!"===e.charAt(0);return e=i?e.slice(1):e,{name:e,once:n,capture:i,passive:t}}),yr=null,gr=[],br=[],_r={},wr=!1,kr=!1,Cr=0,xr=0,Sr=function(e,t,n,i,r){this.vm=e,r&&(e._watcher=this),e._watchers.push(this),i?(this.deep=!!i.deep,this.user=!!i.user,this.lazy=!!i.lazy,this.sync=!!i.sync):this.deep=this.user=this.lazy=this.sync=!1,this.cb=n,this.id=++xr,this.active=!0,this.dirty=this.lazy,this.deps=[],this.newDeps=[],this.depIds=new zi,this.newDepIds=new zi,this.expression="","function"==typeof t?this.getter=t:(this.getter=A(t),this.getter||(this.getter=function(){})),this.value=this.lazy?void 0:this.get()};Sr.prototype.get=function(){T(this);var e,t=this.vm;try{e=this.getter.call(t,t)}catch(e){if(!this.user)throw e;te(e,t,'getter for watcher "'+this.expression+'"')}finally{this.deep&&se(e),M(),this.cleanupDeps()}return e},Sr.prototype.addDep=function(e){var t=e.id;this.newDepIds.has(t)||(this.newDepIds.add(t),this.newDeps.push(e),this.depIds.has(t)||e.addSub(this))},Sr.prototype.cleanupDeps=function(){for(var e=this,t=this.deps.length;t--;){var n=e.deps[t];e.newDepIds.has(n.id)||n.removeSub(e)}var i=this.depIds;this.depIds=this.newDepIds,this.newDepIds=i,this.newDepIds.clear(),i=this.deps,this.deps=this.newDeps,this.newDeps=i,this.newDeps.length=0},Sr.prototype.update=function(){this.lazy?this.dirty=!0:this.sync?this.run():ze(this)},Sr.prototype.run=function(){if(this.active){var e=this.get();if(e!==this.value||l(e)||this.deep){var t=this.value;if(this.value=e,this.user)try{this.cb.call(this.vm,e,t)}catch(e){te(e,this.vm,'callback for watcher "'+this.expression+'"')}else this.cb.call(this.vm,e,t)}}},Sr.prototype.evaluate=function(){this.value=this.get(),this.dirty=!1},Sr.prototype.depend=function(){for(var e=this,t=this.deps.length;t--;)e.deps[t].depend()},Sr.prototype.teardown=function(){var e=this;if(this.active){this.vm._isBeingDestroyed||v(this.vm._watchers,this);for(var t=this.deps.length;t--;)e.deps[t].removeSub(e);this.active=!1}};var Dr={enumerable:!0,configurable:!0,get:k,set:k},$r={lazy:!0};pt(ht.prototype);var Ar={init:function(e,t,n,i){if(!e.componentInstance||e.componentInstance._isDestroyed){(e.componentInstance=gt(e,yr,n,i)).$mount(t?e.elm:void 0,t)}else if(e.data.keepAlive){var r=e;Ar.prepatch(r,r)}},prepatch:function(e,t){var n=t.componentOptions;Pe(t.componentInstance=e.componentInstance,n.propsData,n.listeners,t,n.children)},insert:function(e){var t=e.context,n=e.componentInstance;n._isMounted||(n._isMounted=!0,Fe(n,"mounted")),e.data.keepAlive&&(t._isMounted?Re(n):Ve(n,!0))},destroy:function(e){var t=e.componentInstance;t._isDestroyed||(e.data.keepAlive?Ie(t,!0):t.$destroy())}},Or=Object.keys(Ar),Tr=1,Mr=2,Pr=0;(function(e){e.prototype._init=function(e){var t=this;t._uid=Pr++;t._isVue=!0,e&&e._isComponent?Dt(t,e):t.$options=J($t(t.constructor),e||{},t),t._renderProxy=t,t._self=t,Te(t),Ce(t),St(t),Fe(t,"beforeCreate"),tt(t),We(t),et(t),Fe(t,"created"),t.$options.el&&t.$mount(t.$options.el)}})(Tt),function(e){var t={};t.get=function(){return this._data};var n={};n.get=function(){return this._props},Object.defineProperty(e.prototype,"$data",t),Object.defineProperty(e.prototype,"$props",n),e.prototype.$set=N,e.prototype.$delete=R,e.prototype.$watch=function(e,t,n){var i=this;if(u(t))return Ze(i,e,t,n);n=n||{},n.user=!0;var r=new Sr(i,e,t,n);return n.immediate&&t.call(i,r.value),function(){r.teardown()}}}(Tt),function(e){var t=/^hook:/;e.prototype.$on=function(e,n){var i=this,r=this;if(Array.isArray(e))for(var a=0,o=e.length;a<o;a++)i.$on(e[a],n);else(r._events[e]||(r._events[e]=[])).push(n),t.test(e)&&(r._hasHookEvent=!0);return r},e.prototype.$once=function(e,t){function n(){i.$off(e,n),t.apply(i,arguments)}var i=this;return n.fn=t,i.$on(e,n),i},e.prototype.$off=function(e,t){var n=this,i=this;if(!arguments.length)return i._events=Object.create(null),i;if(Array.isArray(e)){for(var r=0,a=e.length;r<a;r++)n.$off(e[r],t);return i}var o=i._events[e];if(!o)return i;if(!t)return i._events[e]=null,i;if(t)for(var s,l=o.length;l--;)if((s=o[l])===t||s.fn===t){o.splice(l,1);break}return i},e.prototype.$emit=function(e){var t=this,n=t._events[e];if(n){n=n.length>1?b(n):n;for(var i=b(arguments,1),r=0,a=n.length;r<a;r++)try{n[r].apply(t,i)}catch(n){te(n,t,'event handler for "'+e+'"')}}return t}}(Tt),function(e){e.prototype._update=function(e,t){var n=this;n._isMounted&&Fe(n,"beforeUpdate");var i=n.$el,r=n._vnode,a=yr;yr=n,n._vnode=e,r?n.$el=n.__patch__(r,e):(n.$el=n.__patch__(n.$el,e,t,!1,n.$options._parentElm,n.$options._refElm),n.$options._parentElm=n.$options._refElm=null),yr=a,i&&(i.__vue__=null),n.$el&&(n.$el.__vue__=n),n.$vnode&&n.$parent&&n.$vnode===n.$parent._vnode&&(n.$parent.$el=n.$el)},e.prototype.$forceUpdate=function(){var e=this;e._watcher&&e._watcher.update()},e.prototype.$destroy=function(){var e=this;if(!e._isBeingDestroyed){Fe(e,"beforeDestroy"),e._isBeingDestroyed=!0;var t=e.$parent;!t||t._isBeingDestroyed||e.$options.abstract||v(t.$children,e),e._watcher&&e._watcher.teardown();for(var n=e._watchers.length;n--;)e._watchers[n].teardown();e._data.__ob__&&e._data.__ob__.vmCount--,e._isDestroyed=!0,e.__patch__(e._vnode,null),Fe(e,"destroyed"),e.$off(),e.$el&&(e.$el.__vue__=null),e.$vnode&&(e.$vnode.parent=null)}}}(Tt),function(e){pt(e.prototype),e.prototype.$nextTick=function(e){return oe(e,this)},e.prototype._render=function(){var e=this,t=e.$options,n=t.render,i=t._parentVnode;if(e._isMounted)for(var r in e.$slots){var a=e.$slots[r];(a._rendered||a[0]&&a[0].elm)&&(e.$slots[r]=V(a,!0))}e.$scopedSlots=i&&i.data.scopedSlots||fi,e.$vnode=i;var o;try{o=n.call(e._renderProxy,e.$createElement)}catch(t){te(t,e,"render"),o=e._vnode}return o instanceof Xi||(o=Qi()),o.parent=i,o}}(Tt);var Br=[String,RegExp,Array],Vr={name:"keep-alive",abstract:!0,props:{include:Br,exclude:Br,max:[String,Number]},created:function(){this.cache=Object.create(null),this.keys=[]},destroyed:function(){var e=this;for(var t in e.cache)Rt(e.cache,t,e.keys)},watch:{include:function(e){Nt(this,function(t){return jt(e,t)})},exclude:function(e){Nt(this,function(t){return!jt(e,t)})}},render:function(){var e=this.$slots.default,t=ke(e),n=t&&t.componentOptions;if(n){var i=Et(n),r=this,a=r.include,o=r.exclude;if(a&&(!i||!jt(a,i))||o&&i&&jt(o,i))return t;var s=this,l=s.cache,u=s.keys,c=null==t.key?n.Ctor.cid+(n.tag?"::"+n.tag:""):t.key;l[c]?(t.componentInstance=l[c].componentInstance,v(u,c),u.push(c)):(l[c]=t,u.push(c),this.max&&u.length>parseInt(this.max)&&Rt(l,u[0],u,this._vnode)),t.data.keepAlive=!0}return t||e&&e[0]}},Ir={KeepAlive:Vr};(function(e){var t={};t.get=function(){return Di},Object.defineProperty(e,"config",t),e.util={warn:Yi,extend:_,mergeOptions:J,defineReactive:j},e.set=N,e.delete=R,e.nextTick=oe,e.options=Object.create(null),xi.forEach(function(t){e.options[t+"s"]=Object.create(null)}),e.options._base=e,_(e.options.components,Ir),Mt(e),Pt(e),Bt(e),Ft(e)})(Tt),Object.defineProperty(Tt.prototype,"$isServer",{get:Hi}),Object.defineProperty(Tt.prototype,"$ssrContext",{get:function(){return this.$vnode&&this.$vnode.ssrContext}}),Tt.version="2.5.13";var Fr,Er,jr=h("style,class"),Nr=h("input,textarea,option,select,progress"),Rr=function(e,t,n){return"value"===n&&Nr(e)&&"button"!==t||"selected"===n&&"option"===e||"checked"===n&&"input"===e||"muted"===n&&"video"===e},Lr=h("contenteditable,draggable,spellcheck"),zr=h("allowfullscreen,async,autofocus,autoplay,checked,compact,controls,declare,default,defaultchecked,defaultmuted,defaultselected,defer,disabled,enabled,formnovalidate,hidden,indeterminate,inert,ismap,itemscope,loop,multiple,muted,nohref,noresize,noshade,novalidate,nowrap,open,pauseonexit,readonly,required,reversed,scoped,seamless,selected,sortable,translate,truespeed,typemustmatch,visible"),Hr="http://www.w3.org/1999/xlink",Wr=function(e){return":"===e.charAt(5)&&"xlink"===e.slice(0,5)},qr=function(e){return Wr(e)?e.slice(6,e.length):""},Yr=function(e){return null==e||!1===e},Ur={svg:"http://www.w3.org/2000/svg",math:"http://www.w3.org/1998/Math/MathML"},Kr=h("html,body,base,head,link,meta,style,title,address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,div,dd,dl,dt,figcaption,figure,picture,hr,img,li,main,ol,p,pre,ul,a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,s,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,embed,object,param,source,canvas,script,noscript,del,ins,caption,col,colgroup,table,thead,tbody,td,th,tr,button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,output,progress,select,textarea,details,dialog,menu,menuitem,summary,content,element,shadow,template,blockquote,iframe,tfoot"),Jr=h("svg,animate,circle,clippath,cursor,defs,desc,ellipse,filter,font-face,foreignObject,g,glyph,image,line,marker,mask,missing-glyph,path,pattern,polygon,polyline,rect,switch,symbol,text,textpath,tspan,use,view",!0),Xr=function(e){return Kr(e)||Jr(e)},Gr=Object.create(null),Qr=h("text,number,password,search,email,tel,url"),Zr=Object.freeze({createElement:Gt,createElementNS:Qt,createTextNode:Zt,createComment:en,insertBefore:tn,removeChild:nn,appendChild:rn,parentNode:an,nextSibling:on,tagName:sn,setTextContent:ln,setAttribute:un}),ea={create:function(e,t){cn(t)},update:function(e,t){e.data.ref!==t.data.ref&&(cn(e,!0),cn(t))},destroy:function(e){cn(e,!0)}},ta=new Xi("",{},[]),na=["create","activate","update","remove","destroy"],ia={create:hn,update:hn,destroy:function(e){hn(e,ta)}},ra=Object.create(null),aa=[ea,ia],oa={create:bn,update:bn},sa={create:wn,update:wn},la="__r",ua="__c",ca={create:Dn,update:Dn},da={create:$n,update:$n},fa=y(function(e){var t={},n=/;(?![^(]*\))/g,i=/:(.+)/;return e.split(n).forEach(function(e){if(e){var n=e.split(i);n.length>1&&(t[n[0].trim()]=n[1].trim())}}),t}),pa=/^--/,ha=/\s*!important$/,va=function(e,t,n){if(pa.test(t))e.style.setProperty(t,n);else if(ha.test(n))e.style.setProperty(t,n.replace(ha,""),"important");else{var i=ya(t);if(Array.isArray(n))for(var r=0,a=n.length;r<a;r++)e.style[i]=n[r];else e.style[i]=n}},ma=["Webkit","Moz","ms"],ya=y(function(e){if(Er=Er||document.createElement("div").style,"filter"!==(e=yi(e))&&e in Er)return e;for(var t=e.charAt(0).toUpperCase()+e.slice(1),n=0;n<ma.length;n++){var i=ma[n]+t;if(i in Er)return i}}),ga={create:Vn,update:Vn},ba=y(function(e){return{enterClass:e+"-enter",enterToClass:e+"-enter-to",enterActiveClass:e+"-enter-active",leaveClass:e+"-leave",leaveToClass:e+"-leave-to",leaveActiveClass:e+"-leave-active"}}),_a=Oi&&!Vi,wa="transition",ka="animation",Ca="transition",xa="transitionend",Sa="animation",Da="animationend";_a&&(void 0===window.ontransitionend&&void 0!==window.onwebkittransitionend&&(Ca="WebkitTransition",xa="webkitTransitionEnd"),void 0===window.onanimationend&&void 0!==window.onwebkitanimationend&&(Sa="WebkitAnimation",Da="webkitAnimationEnd"));var $a=Oi?window.requestAnimationFrame?window.requestAnimationFrame.bind(window):setTimeout:function(e){return e()},Aa=/\b(transform|all)(,|$)/,Oa=Oi?{create:Jn,activate:Jn,remove:function(e,t){!0!==e.data.show?Yn(e,t):t()}}:{},Ta=[oa,sa,ca,da,ga,Oa],Ma=Ta.concat(aa),Pa=function(e){function t(e){return new Xi(M.tagName(e).toLowerCase(),{},[],void 0,e)}function n(e,t){function n(){0==--n.listeners&&o(e)}return n.listeners=t,n}function o(e){var t=M.parentNode(e);r(t)&&M.removeChild(t,e)}function l(e,t,n,i,o){if(e.isRootInsert=!o,!u(e,t,n,i)){var s=e.data,l=e.children,c=e.tag;r(c)?(e.elm=e.ns?M.createElementNS(e.ns,c):M.createElement(c,e),y(e),p(e,l,t),r(s)&&m(e,t),f(n,e.elm,i)):a(e.isComment)?(e.elm=M.createComment(e.text),f(n,e.elm,i)):(e.elm=M.createTextNode(e.text),f(n,e.elm,i))}}function u(e,t,n,i){var o=e.data;if(r(o)){var s=r(e.componentInstance)&&o.keepAlive;if(r(o=o.hook)&&r(o=o.init)&&o(e,!1,n,i),r(e.componentInstance))return c(e,t),a(s)&&d(e,t,n,i),!0}}function c(e,t){r(e.data.pendingInsert)&&(t.push.apply(t,e.data.pendingInsert),e.data.pendingInsert=null),e.elm=e.componentInstance.$el,v(e)?(m(e,t),y(e)):(cn(e),t.push(e))}function d(e,t,n,i){for(var a,o=e;o.componentInstance;)if(o=o.componentInstance._vnode,r(a=o.data)&&r(a=a.transition)){for(a=0;a<O.activate.length;++a)O.activate[a](ta,o);t.push(o);break}f(n,e.elm,i)}function f(e,t,n){r(e)&&(r(n)?n.parentNode===e&&M.insertBefore(e,t,n):M.appendChild(e,t))}function p(e,t,n){if(Array.isArray(t))for(var i=0;i<t.length;++i)l(t[i],n,e.elm,null,!0);else s(e.text)&&M.appendChild(e.elm,M.createTextNode(String(e.text)))}function v(e){for(;e.componentInstance;)e=e.componentInstance._vnode;return r(e.tag)}function m(e,t){for(var n=0;n<O.create.length;++n)O.create[n](ta,e);$=e.data.hook,r($)&&(r($.create)&&$.create(ta,e),r($.insert)&&t.push(e))}function y(e){var t;if(r(t=e.fnScopeId))M.setAttribute(e.elm,t,"");else for(var n=e;n;)r(t=n.context)&&r(t=t.$options._scopeId)&&M.setAttribute(e.elm,t,""),n=n.parent;r(t=yr)&&t!==e.context&&t!==e.fnContext&&r(t=t.$options._scopeId)&&M.setAttribute(e.elm,t,"")}function g(e,t,n,i,r,a){for(;i<=r;++i)l(n[i],a,e,t)}function b(e){var t,n,i=e.data;if(r(i))for(r(t=i.hook)&&r(t=t.destroy)&&t(e),t=0;t<O.destroy.length;++t)O.destroy[t](e);if(r(t=e.children))for(n=0;n<e.children.length;++n)b(e.children[n])}function _(e,t,n,i){for(;n<=i;++n){var a=t[n];r(a)&&(r(a.tag)?(w(a),b(a)):o(a.elm))}}function w(e,t){if(r(t)||r(e.data)){var i,a=O.remove.length+1;for(r(t)?t.listeners+=a:t=n(e.elm,a),r(i=e.componentInstance)&&r(i=i._vnode)&&r(i.data)&&w(i,t),i=0;i<O.remove.length;++i)O.remove[i](e,t);r(i=e.data.hook)&&r(i=i.remove)?i(e,t):t()}else o(e.elm)}function k(e,t,n,a,o){for(var s,u,c,d,f=0,p=0,h=t.length-1,v=t[0],m=t[h],y=n.length-1,b=n[0],w=n[y],k=!o;f<=h&&p<=y;)i(v)?v=t[++f]:i(m)?m=t[--h]:dn(v,b)?(x(v,b,a),v=t[++f],b=n[++p]):dn(m,w)?(x(m,w,a),m=t[--h],w=n[--y]):dn(v,w)?(x(v,w,a),k&&M.insertBefore(e,v.elm,M.nextSibling(m.elm)),v=t[++f],w=n[--y]):dn(m,b)?(x(m,b,a),k&&M.insertBefore(e,m.elm,v.elm),m=t[--h],b=n[++p]):(i(s)&&(s=pn(t,f,h)),u=r(b.key)?s[b.key]:C(b,t,f,h),i(u)?l(b,a,e,v.elm):(c=t[u],dn(c,b)?(x(c,b,a),t[u]=void 0,k&&M.insertBefore(e,c.elm,v.elm)):l(b,a,e,v.elm)),b=n[++p]);f>h?(d=i(n[y+1])?null:n[y+1].elm,g(e,d,n,p,y,a)):p>y&&_(e,t,f,h)}function C(e,t,n,i){for(var a=n;a<i;a++){var o=t[a];if(r(o)&&dn(e,o))return a}}function x(e,t,n,o){if(e!==t){var s=t.elm=e.elm;if(a(e.isAsyncPlaceholder))return void(r(t.asyncFactory.resolved)?D(e.elm,t,n):t.isAsyncPlaceholder=!0);if(a(t.isStatic)&&a(e.isStatic)&&t.key===e.key&&(a(t.isCloned)||a(t.isOnce)))return void(t.componentInstance=e.componentInstance);var l,u=t.data;r(u)&&r(l=u.hook)&&r(l=l.prepatch)&&l(e,t);var c=e.children,d=t.children;if(r(u)&&v(t)){for(l=0;l<O.update.length;++l)O.update[l](e,t);r(l=u.hook)&&r(l=l.update)&&l(e,t)}i(t.text)?r(c)&&r(d)?c!==d&&k(s,c,d,n,o):r(d)?(r(e.text)&&M.setTextContent(s,""),g(s,null,d,0,d.length-1,n)):r(c)?_(s,c,0,c.length-1):r(e.text)&&M.setTextContent(s,""):e.text!==t.text&&M.setTextContent(s,t.text),r(u)&&r(l=u.hook)&&r(l=l.postpatch)&&l(e,t)}}function S(e,t,n){if(a(n)&&r(e.parent))e.parent.data.pendingInsert=t;else for(var i=0;i<t.length;++i)t[i].data.hook.insert(t[i])}function D(e,t,n,i){var o,s=t.tag,l=t.data,u=t.children;if(i=i||l&&l.pre,t.elm=e,a(t.isComment)&&r(t.asyncFactory))return t.isAsyncPlaceholder=!0,!0;if(r(l)&&(r(o=l.hook)&&r(o=o.init)&&o(t,!0),r(o=t.componentInstance)))return c(t,n),!0;if(r(s)){if(r(u))if(e.hasChildNodes())if(r(o=l)&&r(o=o.domProps)&&r(o=o.innerHTML)){if(o!==e.innerHTML)return!1}else{for(var d=!0,f=e.firstChild,h=0;h<u.length;h++){if(!f||!D(f,u[h],n,i)){d=!1;break}f=f.nextSibling}if(!d||f)return!1}else p(t,u,n);if(r(l)){var v=!1;for(var y in l)if(!P(y)){v=!0,m(t,n);break}!v&&l.class&&se(l.class)}}else e.data!==t.text&&(e.data=t.text);return!0}var $,A,O={},T=e.modules,M=e.nodeOps;for($=0;$<na.length;++$)for(O[na[$]]=[],A=0;A<T.length;++A)r(T[A][na[$]])&&O[na[$]].push(T[A][na[$]]);var P=h("attrs,class,staticClass,staticStyle,key");return function(e,n,o,s,u,c){if(i(n))return void(r(e)&&b(e));var d=!1,f=[];if(i(e))d=!0,l(n,f,u,c);else{var p=r(e.nodeType);if(!p&&dn(e,n))x(e,n,f,s);else{if(p){if(1===e.nodeType&&e.hasAttribute(Ci)&&(e.removeAttribute(Ci),o=!0),a(o)&&D(e,n,f))return S(n,f,!0),e;e=t(e)}var h=e.elm,m=M.parentNode(h);if(l(n,f,h._leaveCb?null:m,M.nextSibling(h)),r(n.parent))for(var y=n.parent,g=v(n);y;){for(var w=0;w<O.destroy.length;++w)O.destroy[w](y);if(y.elm=n.elm,g){for(var k=0;k<O.create.length;++k)O.create[k](ta,y);var C=y.data.hook.insert;if(C.merged)for(var $=1;$<C.fns.length;$++)C.fns[$]()}else cn(y);y=y.parent}r(m)?_(m,[e],0,0):r(e.tag)&&b(e)}}return S(n,f,d),n.elm}}({nodeOps:Zr,modules:Ma});Vi&&document.addEventListener("selectionchange",function(){var e=document.activeElement;e&&e.vmodel&&ni(e,"input")});var Ba={inserted:function(e,t,n,i){"select"===n.tag?(i.elm&&!i.elm._vOptions?de(n,"postpatch",function(){Ba.componentUpdated(e,t,n)}):Xn(e,t,n.context),e._vOptions=[].map.call(e.options,Zn)):("textarea"===n.tag||Qr(e.type))&&(e._vModifiers=t.modifiers,t.modifiers.lazy||(e.addEventListener("change",ti),Fi||(e.addEventListener("compositionstart",ei),e.addEventListener("compositionend",ti)),Vi&&(e.vmodel=!0)))},componentUpdated:function(e,t,n){if("select"===n.tag){Xn(e,t,n.context);var i=e._vOptions,r=e._vOptions=[].map.call(e.options,Zn);if(r.some(function(e,t){return!C(e,i[t])})){(e.multiple?t.value.some(function(e){return Qn(e,r)}):t.value!==t.oldValue&&Qn(t.value,r))&&ni(e,"change")}}}},Va={bind:function(e,t,n){var i=t.value;n=ii(n);var r=n.data&&n.data.transition,a=e.__vOriginalDisplay="none"===e.style.display?"":e.style.display;i&&r?(n.data.show=!0,qn(n,function(){e.style.display=a})):e.style.display=i?a:"none"},update:function(e,t,n){var i=t.value;i!==t.oldValue&&(n=ii(n),n.data&&n.data.transition?(n.data.show=!0,i?qn(n,function(){e.style.display=e.__vOriginalDisplay}):Yn(n,function(){e.style.display="none"})):e.style.display=i?e.__vOriginalDisplay:"none")},unbind:function(e,t,n,i,r){r||(e.style.display=e.__vOriginalDisplay)}},Ia={model:Ba,show:Va},Fa={name:String,appear:Boolean,css:Boolean,mode:String,type:String,enterClass:String,leaveClass:String,enterToClass:String,leaveToClass:String,enterActiveClass:String,leaveActiveClass:String,appearClass:String,appearActiveClass:String,appearToClass:String,duration:[Number,String,Object]},Ea={name:"transition",props:Fa,abstract:!0,render:function(e){var t=this,n=this.$slots.default;if(n&&(n=n.filter(function(e){return e.tag||we(e)}),n.length)){var i=this.mode,r=n[0];if(si(this.$vnode))return r;var a=ri(r);if(!a)return r;if(this._leaving)return oi(e,r);var o="__transition-"+this._uid+"-";a.key=null==a.key?a.isComment?o+"comment":o+a.tag:s(a.key)?0===String(a.key).indexOf(o)?a.key:o+a.key:a.key;var l=(a.data||(a.data={})).transition=ai(this),u=this._vnode,c=ri(u);if(a.data.directives&&a.data.directives.some(function(e){return"show"===e.name})&&(a.data.show=!0),c&&c.data&&!li(a,c)&&!we(c)&&(!c.componentInstance||!c.componentInstance._vnode.isComment)){var d=c.data.transition=_({},l);if("out-in"===i)return this._leaving=!0,de(d,"afterLeave",function(){t._leaving=!1,t.$forceUpdate()}),oi(e,r);if("in-out"===i){if(we(a))return u;var f,p=function(){f()};de(l,"afterEnter",p),de(l,"enterCancelled",p),de(d,"delayLeave",function(e){f=e})}}return r}}},ja=_({tag:String,moveClass:String},Fa);delete ja.mode;var Na={props:ja,render:function(e){for(var t=this.tag||this.$vnode.data.tag||"span",n=Object.create(null),i=this.prevChildren=this.children,r=this.$slots.default||[],a=this.children=[],o=ai(this),s=0;s<r.length;s++){var l=r[s];if(l.tag)if(null!=l.key&&0!==String(l.key).indexOf("__vlist"))a.push(l),n[l.key]=l,(l.data||(l.data={})).transition=o;else;}if(i){for(var u=[],c=[],d=0;d<i.length;d++){var f=i[d];f.data.transition=o,f.data.pos=f.elm.getBoundingClientRect(),n[f.key]?u.push(f):c.push(f)}this.kept=e(t,null,u),this.removed=c}return e(t,null,a)},beforeUpdate:function(){this.__patch__(this._vnode,this.kept,!1,!0),this._vnode=this.kept},updated:function(){var e=this.prevChildren,t=this.moveClass||(this.name||"v")+"-move";e.length&&this.hasMove(e[0].elm,t)&&(e.forEach(ui),e.forEach(ci),e.forEach(di),this._reflow=document.body.offsetHeight,e.forEach(function(e){if(e.data.moved){var n=e.elm,i=n.style;Nn(n,t),i.transform=i.WebkitTransform=i.transitionDuration="",n.addEventListener(xa,n._moveCb=function e(i){i&&!/transform$/.test(i.propertyName)||(n.removeEventListener(xa,e),n._moveCb=null,Rn(n,t))})}}))},methods:{hasMove:function(e,t){if(!_a)return!1;if(this._hasMove)return this._hasMove;var n=e.cloneNode();e._transitionClasses&&e._transitionClasses.forEach(function(e){Fn(n,e)}),In(n,t),n.style.display="none",this.$el.appendChild(n);var i=zn(n);return this.$el.removeChild(n),this._hasMove=i.hasTransform}}},Ra={Transition:Ea,TransitionGroup:Na};Tt.config.mustUseProp=Rr,Tt.config.isReservedTag=Xr,Tt.config.isReservedAttr=jr,Tt.config.getTagNamespace=Kt,Tt.config.isUnknownElement=Jt,_(Tt.options.directives,Ia),_(Tt.options.components,Ra),Tt.prototype.__patch__=Oi?Pa:k,Tt.prototype.$mount=function(e,t){return e=e&&Oi?Xt(e):void 0,Me(this,e,t)},Tt.nextTick(function(){Di.devtools&&Wi&&Wi.emit("init",Tt)},0),t.a=Tt}).call(t,n(66),n(166).setImmediate)},function(e,t,n){"use strict";var i=n(179),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(188),r=n.n(i);t.a=r.a},function(e,t){e.exports=function(e){return"object"==typeof e?null!==e:"function"==typeof e}},function(e,t){t.f={}.propertyIsEnumerable},function(e,t){var n=0,i=Math.random();e.exports=function(e){return"Symbol(".concat(void 0===e?"":e,")_",(++n+i).toString(36))}},function(e,t,n){"use strict";var i=n(175),r=n.n(i),a=n(176),o=n.n(a);n.d(t,"a",function(){return r.a}),n.d(t,"b",function(){return o.a})},function(e,t,n){"use strict";var i=n(177),r=n.n(i),a=n(64);n.n(a);t.a=r.a},function(e,t){var n={}.toString;e.exports=function(e){return n.call(e).slice(8,-1)}},function(e,t){e.exports=function(e){if(void 0==e)throw TypeError("Can't call method on  "+e);return e}},function(e,t){e.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(e,t){e.exports=!0},function(e,t){t.f=Object.getOwnPropertySymbols},function(e,t,n){var i=n(9).f,r=n(12),a=n(4)("toStringTag");e.exports=function(e,t,n){e&&!r(e=n?e:e.prototype,a)&&i(e,a,{configurable:!0,value:t})}},function(e,t,n){var i=n(37)("keys"),r=n(27);e.exports=function(e){return i[e]||(i[e]=r(e))}},function(e,t,n){var i=n(8),r=i["__core-js_shared__"]||(i["__core-js_shared__"]={});e.exports=function(e){return r[e]||(r[e]={})}},function(e,t){var n=Math.ceil,i=Math.floor;e.exports=function(e){return isNaN(e=+e)?0:(e>0?i:n)(e)}},function(e,t,n){var i=n(31);e.exports=function(e){return Object(i(e))}},function(e,t,n){var i=n(25);e.exports=function(e,t){if(!i(e))return e;var n,r;if(t&&"function"==typeof(n=e.toString)&&!i(r=n.call(e)))return r;if("function"==typeof(n=e.valueOf)&&!i(r=n.call(e)))return r;if(!t&&"function"==typeof(n=e.toString)&&!i(r=n.call(e)))return r;throw TypeError("Can't convert object to primitive value")}},function(e,t,n){var i=n(8),r=n(7),a=n(33),o=n(42),s=n(9).f;e.exports=function(e){var t=r.Symbol||(r.Symbol=a?{}:i.Symbol||{});"_"==e.charAt(0)||e in t||s(t,e,{value:o.f(e)})}},function(e,t,n){t.f=n(4)},function(e,t,n){"use strict";var i=n(153)(!0);n(56)(String,"String",function(e){this._t=String(e),this._i=0},function(){var e,t=this._t,n=this._i;return n>=t.length?{value:void 0,done:!0}:(e=i(t,n),this._i+=e.length,{value:e,done:!1})})},function(e,t,n){"use strict";var i=n(167),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(168),r=n.n(i),a=n(169),o=n.n(a);n.d(t,"a",function(){return r.a}),n.d(t,"b",function(){return o.a})},function(e,t,n){"use strict";var i=n(14),r=n.n(i),a=n(22),o=n(182),s=n.n(o);n.d(t,"a",function(){return s.a}),t.b={open:function(e){var t=void 0,n=void 0;"string"==typeof e&&(t=e);var i={programmatic:!0,content:t};e.parent&&(n=e.parent,delete e.parent);var o=r()(i,e);return new(a.a.extend(s.a))({parent:n,el:document.createElement("div"),propsData:o})}}},function(e,t,n){"use strict";var i=n(184),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(6),r=n.n(i),a=n(2);t.a={components:r()({},a.a.name,a.a),props:{active:{type:Boolean,default:!0},title:String,closable:{type:Boolean,default:!0},type:String,hasIcon:Boolean,size:String,iconSize:String},data:function(){return{isActive:this.active}},watch:{active:function(e){this.isActive=e}},computed:{icon:function(){switch(this.type){case"is-info":return"information";case"is-success":return"check-circle";case"is-warning":return"alert";case"is-danger":return"alert-circle";default:return null}}},methods:{close:function(){this.isActive=!1,this.$emit("close"),this.$emit("update:active",!1)}}}},function(e,t,n){"use strict";var i=n(1),r=n(5);t.a={props:{type:{type:String,default:"is-dark"},message:String,duration:Number,queue:{type:Boolean,default:void 0},position:{type:String,default:"is-top",validator:function(e){return["is-top-right","is-top","is-top-left","is-bottom-right","is-bottom","is-bottom-left"].indexOf(e)>-1}},container:String},data:function(){return{isActive:!1,parentTop:null,parentBottom:null,newContainer:this.container||i.b.defaultContainerElement}},computed:{correctParent:function(){switch(this.position){case"is-top-right":case"is-top":case"is-top-left":return this.parentTop;case"is-bottom-right":case"is-bottom":case"is-bottom-left":return this.parentBottom}},transition:function(){switch(this.position){case"is-top-right":case"is-top":case"is-top-left":return{enter:"fadeInDown",leave:"fadeOut"};case"is-bottom-right":case"is-bottom":case"is-bottom-left":return{enter:"fadeInUp",leave:"fadeOut"}}}},methods:{shouldQueue:function(){return!!(void 0!==this.queue?this.queue:i.b.defaultNoticeQueue)&&(this.parentTop.childElementCount>0||this.parentBottom.childElementCount>0)},close:function(){var e=this;clearTimeout(this.timer),this.isActive=!1,setTimeout(function(){e.$destroy(),n.i(r.a)(e.$el)},150)},showNotice:function(){var e=this;if(this.shouldQueue())return void setTimeout(function(){return e.showNotice()},250);this.correctParent.insertAdjacentElement("afterbegin",this.$el),this.isActive=!0,this.timer=setTimeout(function(){return e.close()},this.newDuration)},setupContainer:function(){if(this.parentTop=document.querySelector(".notices.is-top"),this.parentBottom=document.querySelector(".notices.is-bottom"),!this.parentTop||!this.parentBottom){this.parentTop||(this.parentTop=document.createElement("div"),this.parentTop.className="notices is-top"),this.parentBottom||(this.parentBottom=document.createElement("div"),this.parentBottom.className="notices is-bottom");var e=document.querySelector(this.newContainer)||document.body;e.appendChild(this.parentTop),e.appendChild(this.parentBottom),this.newContainer&&(this.parentTop.classList.add("has-custom-container"),this.parentBottom.classList.add("has-custom-container"))}}},beforeMount:function(){this.setupContainer()},mounted:function(){this.showNotice()}}},function(e,t,n){e.exports={default:n(128),__esModule:!0}},function(e,t,n){"use strict";function i(e){return e&&e.__esModule?e:{default:e}}t.__esModule=!0;var r=n(125),a=i(r),o=n(3),s=i(o),l="function"==typeof s.default&&"symbol"==typeof a.default?function(e){return typeof e}:function(e){return e&&"function"==typeof s.default&&e.constructor===s.default&&e!==s.default.prototype?"symbol":typeof e};t.default="function"==typeof s.default&&"symbol"===l(a.default)?function(e){return void 0===e?"undefined":l(e)}:function(e){return e&&"function"==typeof s.default&&e.constructor===s.default&&e!==s.default.prototype?"symbol":void 0===e?"undefined":l(e)}},function(e,t,n){var i=n(133);e.exports=function(e,t,n){if(i(e),void 0===t)return e;switch(n){case 1:return function(n){return e.call(t,n)};case 2:return function(n,i){return e.call(t,n,i)};case 3:return function(n,i,r){return e.call(t,n,i,r)}}return function(){return e.apply(t,arguments)}}},function(e,t,n){var i=n(25),r=n(8).document,a=i(r)&&i(r.createElement);e.exports=function(e){return a?r.createElement(e):{}}},function(e,t,n){e.exports=!n(11)&&!n(18)(function(){return 7!=Object.defineProperty(n(53)("div"),"a",{get:function(){return 7}}).a})},function(e,t,n){var i=n(30);e.exports=Object("z").propertyIsEnumerable(0)?Object:function(e){return"String"==i(e)?e.split(""):Object(e)}},function(e,t,n){"use strict";var i=n(33),r=n(17),a=n(60),o=n(16),s=n(12),l=n(19),u=n(143),c=n(35),d=n(152),f=n(4)("iterator"),p=!([].keys&&"next"in[].keys()),h=function(){return this};e.exports=function(e,t,n,v,m,y,g){u(n,t,v);var b,_,w,k=function(e){if(!p&&e in D)return D[e];switch(e){case"keys":case"values":return function(){return new n(this,e)}}return function(){return new n(this,e)}},C=t+" Iterator",x="values"==m,S=!1,D=e.prototype,$=D[f]||D["@@iterator"]||m&&D[m],A=$||k(m),O=m?x?k("entries"):A:void 0,T="Array"==t?D.entries||$:$;if(T&&(w=d(T.call(new e)))!==Object.prototype&&(c(w,C,!0),i||s(w,f)||o(w,f,h)),x&&$&&"values"!==$.name&&(S=!0,A=function(){return $.call(this)}),i&&!g||!p&&!S&&D[f]||o(D,f,A),l[t]=A,l[C]=h,m)if(b={values:x?A:k("values"),keys:y?A:k("keys"),entries:O},g)for(_ in b)_ in D||a(D,_,b[_]);else r(r.P+r.F*(p||S),t,b);return b}},function(e,t,n){var i=n(15),r=n(149),a=n(32),o=n(36)("IE_PROTO"),s=function(){},l=function(){var e,t=n(53)("iframe"),i=a.length;for(t.style.display="none",n(139).appendChild(t),t.src="javascript:",e=t.contentWindow.document,e.open(),e.write("<script>document.F=Object<\/script>"),e.close(),l=e.F;i--;)delete l.prototype[a[i]];return l()};e.exports=Object.create||function(e,t){var n;return null!==e?(s.prototype=i(e),n=new s,s.prototype=null,n[o]=e):n=l(),void 0===t?n:r(n,t)}},function(e,t,n){var i=n(59),r=n(32).concat("length","prototype");t.f=Object.getOwnPropertyNames||function(e){return i(e,r)}},function(e,t,n){var i=n(12),r=n(13),a=n(135)(!1),o=n(36)("IE_PROTO");e.exports=function(e,t){var n,s=r(e),l=0,u=[];for(n in s)n!=o&&i(s,n)&&u.push(n);for(;t.length>l;)i(s,n=t[l++])&&(~a(u,n)||u.push(n));return u}},function(e,t,n){e.exports=n(16)},function(e,t,n){var i=n(38),r=Math.min;e.exports=function(e){return e>0?r(i(e),9007199254740991):0}},function(e,t,n){var i=n(136),r=n(4)("iterator"),a=n(19);e.exports=n(7).getIteratorMethod=function(e){if(void 0!=e)return e[r]||e["@@iterator"]||a[i(e)]}},function(e,t,n){n(157);for(var i=n(8),r=n(16),a=n(19),o=n(4)("toStringTag"),s=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],l=0;l<5;l++){var u=s[l],c=i[u],d=c&&c.prototype;d&&!d[o]&&r(d,o,u),a[u]=a.Array}},function(e,t,n){var i=n(0)(n(79),null,null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(94),n(215),null,null,null);e.exports=i.exports},function(e,t){var n;n=function(){return this}();try{n=n||Function("return this")()||(0,eval)("this")}catch(e){"object"==typeof window&&(n=window)}e.exports=n},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(14),r=n.n(i),a=n(45),o=n(28),s=n(112),l=n(115),u=n(116),c=n(117),d=n(44),f=n(105),p=n(106),h=n(107),v=n(29),m=n(2),y=n(23),g=n(108),b=n(109),_=n(46),w=n(110),k=n(47),C=n(111),x=n(24),S=n(113),D=n(114),$=n(118),A=n(119),O=n(120),T=n(121),M=n(122),P=n(1);n.d(t,"Dialog",function(){return h.a}),n.d(t,"LoadingProgrammatic",function(){return g.b}),n.d(t,"ModalProgrammatic",function(){return _.b}),n.d(t,"Snackbar",function(){return S.a}),n.d(t,"Toast",function(){return O.a});var B={Autocomplete:d.a,Checkbox:a.a,CheckboxButton:a.b,Collapse:f.a,Datepicker:p.a,Dropdown:o.a,DropdownItem:o.b,Field:v.a,Icon:m.a,Input:y.a,Loading:g.a,Message:b.a,Modal:_.a,Notification:w.a,Pagination:k.a,Panel:C.a,Radio:s.a,RadioButton:s.b,Select:x.a,Switch:D.a,TabItem:u.a,Table:l.a,TableColumn:l.b,Tabs:u.b,Tag:c.a,Taglist:c.b,Taginput:$.a,Timepicker:A.a,Tooltip:T.a,Upload:M.a};B.install=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};n.i(P.a)(r()(P.b,t));for(var i in B){var a=B[i];a&&"install"!==i&&e.component(a.name,a)}e.prototype.$dialog=h.a,e.prototype.$loading=g.b,e.prototype.$modal=_.b,e.prototype.$snackbar=S.a,e.prototype.$toast=O.a},t.default=B},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(51),r=n.n(i),a=n(50),o=n.n(a),s=n(6),l=n.n(s),u=n(5),c=n(10),d=n(23);t.default={name:"BAutocomplete",components:l()({},d.a.name,d.a),mixins:[c.a],inheritAttrs:!1,props:{value:[Number,String],data:{type:Array,default:function(){return[]}},field:{type:String,default:"value"},keepFirst:Boolean,openOnFocus:Boolean},data:function(){return{selected:null,hovered:null,isActive:!1,newValue:this.value,isListInViewportVertically:!0,_isAutocomplete:!0,_elementRef:"input"}},computed:{whiteList:function(){var e=[];if(e.push(this.$refs.input.$el.querySelector("input")),e.push(this.$refs.dropdown),void 0!==this.$refs.dropdown){var t=this.$refs.dropdown.querySelectorAll("*"),n=!0,i=!1,r=void 0;try{for(var a,s=o()(t);!(n=(a=s.next()).done);n=!0){var l=a.value;e.push(l)}}catch(e){i=!0,r=e}finally{try{!n&&s.return&&s.return()}finally{if(i)throw r}}}return e},hasDefaultSlot:function(){return!!this.$scopedSlots.default},hasEmptySlot:function(){return!!this.$slots.empty}},watch:{isActive:function(e){var t=this;e?this.calcDropdownInViewportVertical():(this.$nextTick(function(){return t.setHovered(null)}),setTimeout(function(){t.calcDropdownInViewportVertical()},100))},newValue:function(e){this.$emit("input",e),this.getValue(this.selected)!==e&&this.setSelected(null,!1),this.openOnFocus&&!e||(this.isActive=!!e)},value:function(e){this.newValue=e,!this.isValid&&this.$refs.input.checkHtml5Validity()},data:function(e){this.keepFirst&&this.selectFirstOption(e)}},methods:{setHovered:function(e){void 0!==e&&(this.hovered=e)},setSelected:function(e){var t=this,n=!(arguments.length>1&&void 0!==arguments[1])||arguments[1];void 0!==e&&(this.selected=e,this.$emit("select",this.selected),null!==this.selected&&(this.newValue=this.getValue(this.selected)),n&&this.$nextTick(function(){t.isActive=!1}))},selectFirstOption:function(e){var t=this;this.$nextTick(function(){e.length?(t.openOnFocus||""!==t.newValue&&t.hovered!==e[0])&&t.setHovered(e[0]):t.setHovered(null)})},enterPressed:function(){null!==this.hovered&&this.setSelected(this.hovered)},tabPressed:function(){if(null===this.hovered)return void(this.isActive=!1);this.setSelected(this.hovered)},clickedOutside:function(e){this.whiteList.indexOf(e.target)<0&&(this.isActive=!1)},getValue:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1];if(e){var i="object"===(void 0===e?"undefined":r()(e))?n.i(u.c)(e,this.field):e,a=n.i(u.e)(this.newValue),o=new RegExp("("+a+")","gi");return t?i.replace(o,"<b>$1</b>"):i}},calcDropdownInViewportVertical:function(){var e=this;this.$nextTick(function(){if(void 0!==e.$refs.dropdown){var t=e.$refs.dropdown.getBoundingClientRect();e.isListInViewportVertically=t.top>=0&&t.bottom<=(window.innerHeight||document.documentElement.clientHeight)}})},keyArrows:function(e){var t="down"===e?1:-1;if(this.isActive){var n=this.data.indexOf(this.hovered)+t;n=n>this.data.length-1?this.data.length:n,n=n<0?0:n,this.setHovered(this.data[n]);var i=this.$refs.dropdown.querySelector(".dropdown-content"),r=i.querySelectorAll(".dropdown-item:not(.is-disabled)")[n];if(!r)return;var a=i.scrollTop,o=i.scrollTop+i.clientHeight-r.clientHeight;r.offsetTop<a?i.scrollTop=r.offsetTop:r.offsetTop>=o&&(i.scrollTop=r.offsetTop-i.clientHeight+r.clientHeight)}else this.isActive=!0},focused:function(e){this.getValue(this.selected)===this.newValue&&this.$el.querySelector("input").select(),this.openOnFocus&&(this.isActive=!0,this.keepFirst&&this.selectFirstOption(this.data)),this.$emit("focus",e)}},created:function(){"undefined"!=typeof window&&(document.addEventListener("click",this.clickedOutside),window.addEventListener("resize",this.calcDropdownInViewportVertical))},beforeDestroy:function(){"undefined"!=typeof window&&(document.removeEventListener("click",this.clickedOutside),window.removeEventListener("resize",this.calcDropdownInViewportVertical))}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BCheckbox",props:{value:[String,Number,Boolean,Function,Object,Array,r.a],nativeValue:[String,Number,Boolean,Function,Object,Array,r.a],disabled:Boolean,name:String,size:String,trueValue:{type:[String,Number,Boolean,Function,Object,Array,r.a],default:!0},falseValue:{type:[String,Number,Boolean,Function,Object,Array,r.a],default:!1}},data:function(){return{newValue:this.value}},watch:{value:function(e){this.newValue=e},newValue:function(e){this.$emit("input",e)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BCheckboxButton",props:{value:[String,Number,Boolean,Function,Object,Array,r.a],nativeValue:[String,Number,Boolean,Function,Object,Array,r.a],disabled:Boolean,name:String,size:String,type:{type:String,default:"is-primary"}},data:function(){return{newValue:this.value}},computed:{checked:function(){return Array.isArray(this.newValue)?this.newValue.indexOf(this.nativeValue)>=0:this.newValue===this.nativeValue}},watch:{value:function(e){this.newValue=e},newValue:function(e){this.$emit("input",e)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BCollapse",props:{open:{type:Boolean,default:!0},animation:{type:String,default:"fade"}},data:function(){return{isOpen:this.open}},watch:{open:function(e){this.isOpen=e}},methods:{toggle:function(){this.isOpen=!this.isOpen,this.$emit("update:open",this.isOpen),this.$emit(this.isOpen?"open":"close")}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i,r=n(6),a=n.n(r),o=n(10),s=n(5),l=n(1),u=n(28),c=n(23),d=n(29),f=n(24),p=n(2),h=n(172),v=n.n(h);t.default={name:"BDatepicker",components:(i={},a()(i,v.a.name,v.a),a()(i,c.a.name,c.a),a()(i,d.a.name,d.a),a()(i,f.a.name,f.a),a()(i,p.a.name,p.a),a()(i,u.a.name,u.a),a()(i,u.b.name,u.b),i),mixins:[o.a],inheritAttrs:!1,props:{value:Date,dayNames:{type:Array,default:function(){return Array.isArray(l.b.defaultDayNames)?l.b.defaultDayNames:["Su","M","Tu","W","Th","F","S"]}},monthNames:{type:Array,default:function(){return Array.isArray(l.b.defaultMonthNames)?l.b.defaultMonthNames:["January","February","March","April","May","June","July","August","September","October","November","December"]}},firstDayOfWeek:{type:Number,default:function(){return"number"==typeof l.b.defaultFirstDayOfWeek?l.b.defaultFirstDayOfWeek:0}},inline:Boolean,minDate:Date,maxDate:Date,focusedDate:Date,placeholder:String,readonly:{type:Boolean,default:!0},disabled:{type:Boolean,default:!1},unselectableDates:Array,unselectableDaysOfWeek:{type:Array,default:function(){return l.b.defaultUnselectableDaysOfWeek}},dateFormatter:{type:Function,default:function(e){return"function"==typeof l.b.defaultDateFormatter?l.b.defaultDateFormatter(e):e.toLocaleDateString()}},dateParser:{type:Function,default:function(e){return"function"==typeof l.b.defaultDateParser?l.b.defaultDateParser(e):new Date(Date.parse(e))}},mobileNative:{type:Boolean,default:function(){return l.b.defaultDatepickerMobileNative}},position:String,events:Array,indicators:{type:String,default:"dots"}},data:function(){var e=this.value||this.focusedDate||new Date;return{dateSelected:this.value,focusedDateData:{month:e.getMonth(),year:e.getFullYear()},_elementRef:"input",_isDatepicker:!0}},computed:{listOfYears:function(){for(var e=this.maxDate?this.maxDate.getFullYear():Math.max((new Date).getFullYear(),this.focusedDateData.year)+3,t=this.minDate?this.minDate.getFullYear():1900,n=[],i=t;i<=e;i++)n.push(i);return n.reverse()},isFirstMonth:function(){return!!this.minDate&&new Date(this.focusedDateData.year,this.focusedDateData.month)<=new Date(this.minDate.getFullYear(),this.minDate.getMonth())},isLastMonth:function(){return!!this.maxDate&&new Date(this.focusedDateData.year,this.focusedDateData.month)>=new Date(this.maxDate.getFullYear(),this.maxDate.getMonth())},isMobile:function(){return this.mobileNative&&s.b.any()}},watch:{dateSelected:function(e){var t=e||new Date;this.focusedDateData={month:t.getMonth(),year:t.getFullYear()},this.$emit("input",e),this.$refs.dropdown&&(this.$refs.dropdown.isActive=!1)},value:function(e){this.dateSelected=e,!this.isValid&&this.$refs.input.checkHtml5Validity()}},methods:{updateSelectedDate:function(e){this.dateSelected=e},onChange:function(e){var t=this.dateParser(e);t&&!isNaN(t)?this.dateSelected=t:(this.dateSelected=null,this.$refs.input.newValue=this.dateSelected)},formatValue:function(e){return e&&!isNaN(e)?this.dateFormatter(e):null},decrementMonth:function(){this.disabled||(this.focusedDateData.month>0?this.focusedDateData.month-=1:(this.focusedDateData.month=11,this.focusedDateData.year-=1))},incrementMonth:function(){this.disabled||(this.focusedDateData.month<11?this.focusedDateData.month+=1:(this.focusedDateData.month=0,this.focusedDateData.year+=1))},formatYYYYMMDD:function(e){var t=new Date(e);if(e&&!isNaN(t)){var n=t.getFullYear(),i=t.getMonth()+1,r=t.getDate();return n+"-"+(i<10?"0":"")+i+"-"+(r<10?"0":"")+r}return""},onChangeNativePicker:function(e){var t=e.target.value;this.dateSelected=t?new Date(t):null}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(173),r=n.n(i);t.default={name:"BDatepickerTable",components:{bDatepickerTableRow:r.a},props:{value:Date,dayNames:Array,monthNames:Array,firstDayOfWeek:Number,events:Array,indicators:String,minDate:Date,maxDate:Date,focused:Object,disabled:Boolean,unselectableDates:Array,unselectableDaysOfWeek:Array},computed:{visibleDayNames:function(){for(var e=[],t=this.firstDayOfWeek;e.length<this.dayNames.length;){var n=this.dayNames[t%this.dayNames.length];e.push(n),t++}return e},hasEvents:function(){return this.events&&this.events.length},eventsInThisMonth:function(){if(!this.events)return[];for(var e=[],t=0;t<this.events.length;t++){var n=this.events[t];n.hasOwnProperty("date")||(n={date:n}),n.hasOwnProperty("type")||(n.type="is-primary"),n.date.getMonth()===this.focused.month&&n.date.getFullYear()===this.focused.year&&e.push(n)}return e}},methods:{updateSelectedDate:function(e){this.$emit("input",e)},weekBuilder:function(e,t,n){for(var i=new Date(n,t),r=[],a=new Date(n,t,e).getDay(),o=a>=this.firstDayOfWeek?a-this.firstDayOfWeek:7-this.firstDayOfWeek+a,s=1,l=0;l<o;l++)r.unshift(new Date(i.getFullYear(),i.getMonth(),e-s)),s++;r.push(new Date(n,t,e));for(var u=1;r.length<7;)r.push(new Date(n,t,e+u)),u++;return r},weeksInThisMonth:function(e,t){for(var n=[],i=new Date(t,e+1,0).getDate(),r=1;r<=i+6;){var a=this.weekBuilder(r,e,t),o=!1;a.forEach(function(t){t.getMonth()===e&&(o=!0)}),o&&n.push(a),r+=7}return n},eventsInThisWeek:function(e,t){if(!this.eventsInThisMonth.length)return[];var n=[],i=[];i=this.weeksInThisMonth(this.focused.month,this.focused.year);for(var r=0;r<i[t].length;r++)for(var a=0;a<this.eventsInThisMonth.length;a++){var o=this.eventsInThisMonth[a].date.getTime();o===i[t][r].getTime()&&n.push(this.eventsInThisMonth[a])}return n}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BDatepickerTableRow",props:{selectedDate:Date,week:{type:Array,required:!0},month:{type:Number,required:!0},minDate:Date,maxDate:Date,disabled:Boolean,unselectableDates:Array,unselectableDaysOfWeek:Array,events:Array,indicators:String},methods:{selectableDate:function(e){var t=[];if(this.minDate&&t.push(e>=this.minDate),this.maxDate&&t.push(e<=this.maxDate),t.push(e.getMonth()===this.month),this.unselectableDates)for(var n=0;n<this.unselectableDates.length;n++){var i=this.unselectableDates[n];t.push(e.getDate()!==i.getDate()||e.getFullYear()!==i.getFullYear()||e.getMonth()!==i.getMonth())}if(this.unselectableDaysOfWeek)for(var r=0;r<this.unselectableDaysOfWeek.length;r++){var a=this.unselectableDaysOfWeek[r];t.push(e.getDay()!==a)}return t.indexOf(!1)<0},emitChosenDate:function(e){this.disabled||this.selectableDate(e)&&this.$emit("select",e)},eventsDateMatch:function(e){if(!this.events.length)return!1;for(var t=[],n=0;n<this.events.length;n++)this.events[n].date.getDay()===e.getDay()&&t.push(this.events[n]);return!!t.length&&t},classObject:function(e){function t(e,t){return!(!e||!t)&&(e.getDate()===t.getDate()&&e.getFullYear()===t.getFullYear()&&e.getMonth()===t.getMonth())}return{"is-selected":t(e,this.selectedDate),"is-today":t(e,new Date),"is-selectable":this.selectableDate(e)&&!this.disabled,"is-unselectable":!this.selectableDate(e)||this.disabled}}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(6),r=n.n(i),a=n(2),o=n(46),s=n(1),l=n(5);t.default={name:"BDialog",components:r()({},a.a.name,a.a),extends:o.a,props:{title:String,message:String,icon:String,iconPack:String,hasIcon:Boolean,type:{type:String,default:"is-primary"},size:String,confirmText:{type:String,default:function(){return s.b.defaultDialogConfirmText?s.b.defaultDialogConfirmText:"OK"}},cancelText:{type:String,default:function(){return s.b.defaultDialogCancelText?s.b.defaultDialogCancelText:"Cancel"}},hasInput:Boolean,inputAttrs:{type:Object,default:function(){}},onConfirm:{type:Function,default:function(){}}},data:function(){return{prompt:this.hasInput?this.inputAttrs.value||"":"",isActive:!1,validationMessage:""}},computed:{iconByType:function(){switch(this.type){case"is-info":return"information";case"is-success":return"check-circle";case"is-warning":return"alert";case"is-danger":return"alert-circle";default:return null}},showCancel:function(){return this.cancelOptions.indexOf("button")>=0}},methods:{confirm:function(){var e=this;if(void 0!==this.$refs.input&&!this.$refs.input.checkValidity())return this.validationMessage=this.$refs.input.validationMessage,void this.$nextTick(function(){return e.$refs.input.select()});this.onConfirm(this.prompt),this.close()},close:function(){var e=this;this.isActive=!1,this.onCancel.apply(null,arguments),setTimeout(function(){e.$destroy(),n.i(l.a)(e.$el)},150)}},beforeMount:function(){document.body.appendChild(this.$el)},mounted:function(){var e=this;this.isActive=!0,this.$nextTick(function(){e.hasInput?e.$refs.input.focus():e.$refs.confirmButton.focus()})}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(50),r=n.n(i),a=n(3),o=n.n(a);t.default={name:"BDropdown",props:{value:{type:[String,Number,Boolean,Object,Array,o.a,Function],default:null},disabled:Boolean,hoverable:Boolean,inline:Boolean,position:{type:String,validator:function(e){return["is-top-right","is-top-left","is-bottom-left"].indexOf(e)>-1}},mobileModal:{type:Boolean,default:!0}},data:function(){return{selected:this.value,isActive:!1,_isDropdown:!0}},computed:{rootClasses:function(){return[this.position,{"is-disabled":this.disabled,"is-hoverable":this.hoverable,"is-inline":this.inline,"is-active":this.isActive||this.inline,"is-mobile-modal":this.isMobileModal}]},isMobileModal:function(){return this.mobileModal&&!this.inline&&!this.hoverable}},watch:{value:function(e){this.selectItem(e)},isActive:function(e){this.$emit("active-change",e)}},methods:{selectItem:function(e){this.selected=e,this.$emit("input",e),this.$emit("change",e),this.isActive=!1},isInWhiteList:function(e){if(e===this.$refs.dropdownMenu)return!0;if(e===this.$refs.trigger)return!0;if(void 0!==this.$refs.dropdownMenu){var t=this.$refs.dropdownMenu.querySelectorAll("*"),n=!0,i=!1,a=void 0;try{for(var o,s=r()(t);!(n=(o=s.next()).done);n=!0){if(e===o.value)return!0}}catch(e){i=!0,a=e}finally{try{!n&&s.return&&s.return()}finally{if(i)throw a}}}if(void 0!==this.$refs.trigger){var l=this.$refs.trigger.querySelectorAll("*"),u=!0,c=!1,d=void 0;try{for(var f,p=r()(l);!(u=(f=p.next()).done);u=!0){if(e===f.value)return!0}}catch(e){c=!0,d=e}finally{try{!u&&p.return&&p.return()}finally{if(c)throw d}}}return!1},clickedOutside:function(e){this.inline||this.isInWhiteList(e.target)||(this.isActive=!1)},toggle:function(){var e=this;this.disabled||this.hoverable||(this.isActive?this.isActive=!this.isActive:this.$nextTick(function(){e.isActive=!e.isActive}))}},created:function(){"undefined"!=typeof window&&document.addEventListener("click",this.clickedOutside)},beforeDestroy:function(){"undefined"!=typeof window&&document.removeEventListener("click",this.clickedOutside)}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BDropdownItem",props:{value:{type:[String,Number,Boolean,Object,Array,r.a,Function],default:null},separator:Boolean,disabled:Boolean,custom:Boolean,paddingless:Boolean,hasLink:Boolean},computed:{anchorClasses:function(){return{"is-disabled":this.disabled,"is-paddingless":this.paddingless,"is-active":null!==this.value&&this.value===this.$parent.selected}},itemClasses:function(){return{"dropdown-item":!this.hasLink,"is-disabled":this.disabled,"is-paddingless":this.paddingless,"is-active":null!==this.value&&this.value===this.$parent.selected,"has-link":this.hasLink}},isClickable:function(){return!this.separator&&!this.disabled&&!this.custom}},methods:{selectItem:function(){this.isClickable&&(this.$parent.selectItem(this.value),this.$emit("click"))}},created:function(){if(!this.$parent.$data._isDropdown)throw this.$destroy(),new Error("You should wrap bDropdownItem on a bDropdown")}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(64),r=n.n(i);t.default={name:"BField",components:{"b-field-body":r.a},props:{type:String,label:String,labelFor:String,message:[String,Array],grouped:Boolean,groupMultiline:Boolean,position:String,expanded:Boolean,horizontal:Boolean,addons:{type:Boolean,default:!0}},data:function(){return{newType:this.type,newMessage:this.message,_isField:!0}},computed:{rootClasses:function(){return[this.fieldType,this.newPosition,{"is-expanded":this.expanded,"is-grouped-multiline":this.groupMultiline,"is-horizontal":this.horizontal}]},newPosition:function(){if(void 0!==this.position){var e=this.position.split("-");if(!(e.length<1)){var t=this.grouped?"is-grouped-":"has-addons-";return this.position?t+e[1]:void 0}}},fieldType:function(){return this.grouped?"is-grouped":void 0!==this.$slots.default&&this.$slots.default.length>1&&this.addons&&!this.horizontal?"has-addons":void 0},formattedMessage:function(){return this.newMessage&&Array.isArray(this.newMessage)?this.newMessage.filter(function(e){if(e)return e}).join(" <br> "):this.newMessage}},watch:{type:function(e){this.newType=e},message:function(e){this.newMessage=e}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BFieldBody",props:{message:{type:[String]},type:{type:[String]}},render:function(e){var t=this;return e("div",{attrs:{class:"field-body"}},this.$slots.default.map(function(n){return n.tag?t.message?e("b-field",{attrs:{message:t.message,type:t.type}},[n]):e("b-field",{},[n]):n}))}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(1);t.default={name:"BIcon",props:{type:String,pack:String,icon:String,size:String,customSize:String,customClass:String,both:Boolean},data:function(){return{newPack:this.pack||i.b.defaultIconPack}},computed:{newIcon:function(){return this.both?"mdi"===this.newPack?this.newPack+"-"+this.icon:"fa-"+this.getEquivalentIconOf(this.icon):"mdi"===this.newPack?this.newPack+"-"+this.icon:"fa-"+this.icon},newType:function(){if(this.type){var e=this.type.split("-");if(e.length)return"has-text-"+e[1]}},newCustomSize:function(){return this.customSize||this.customSizeByPack},customSizeByPack:function(){var e="mdi"===this.newPack?"mdi-24px":"fa-lg",t="mdi"===this.newPack?"mdi-36px":"fa-2x",n="mdi"===this.newPack?"mdi-48px":"fa-3x";switch(this.size){case"is-small":return;case"is-medium":return t;case"is-large":return n;default:return e}}},methods:{getEquivalentIconOf:function(e){switch(e){case"check":return"check";case"information":return"info-circle";case"check-circle":return"check-circle";case"alert":return"exclamation-triangle";case"alert-circle":return"exclamation-circle";case"arrow-up":return"arrow-up";case"chevron-right":return"angle-right";case"chevron-left":return"angle-left";case"chevron-down":return"angle-down";case"eye":return"eye";case"eye-off":return"eye-slash";case"menu-down":return"caret-down";case"menu-up":return"caret-up";default:return null}}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(6),r=n.n(i),a=n(2),o=n(1),s=n(10);t.default={name:"BInput",components:r()({},a.a.name,a.a),mixins:[s.a],inheritAttrs:!1,props:{value:[Number,String],type:{type:String,default:"text"},passwordReveal:Boolean,hasCounter:{type:Boolean,default:!0}},data:function(){return{newValue:this.value,newType:this.type,newAutocomplete:this.autocomplete||o.b.defaultInputAutocomplete,isPasswordVisible:!1,_elementRef:"textarea"===this.type?"textarea":"input"}},computed:{rootClasses:function(){return[this.iconPosition,{"is-expanded":this.expanded,"is-loading":this.loading,"is-clearfix":!this.hasMessage}]},inputClasses:function(){return[this.statusType,this.size,{"is-rounded":this.rounded}]},hasIconRight:function(){return this.passwordReveal||this.loading||this.statusType},iconPosition:function(){return this.icon&&this.hasIconRight?"has-icons-left has-icons-right":!this.icon&&this.hasIconRight?"has-icons-right":this.icon?"has-icons-left":void 0},statusTypeIcon:function(){switch(this.statusType){case"is-success":return"check";case"is-danger":return"alert-circle";case"is-info":return"information";case"is-warning":return"alert"}},hasMessage:function(){return!!this.statusMessage},passwordVisibleIcon:function(){return this.isPasswordVisible?"eye-off":"eye"},valueLength:function(){return this.newValue?this.newValue.length:0}},watch:{value:function(e){this.newValue=e},newValue:function(e){this.$emit("input",e),!this.isValid&&this.checkHtml5Validity()}},methods:{togglePasswordVisibility:function(){var e=this;this.isPasswordVisible=!this.isPasswordVisible,this.newType=this.isPasswordVisible?"text":"password",this.$nextTick(function(){e.$refs.input.focus()})},onInput:function(e){var t=this;this.$nextTick(function(){t.newValue=e.target.value})}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(5);t.default={name:"BLoading",props:{active:Boolean,programmatic:Boolean,animation:{type:String,default:"fade"},canCancel:{type:Boolean,default:!1},onCancel:{type:Function,default:function(){}}},data:function(){return{isActive:this.active||!1}},watch:{active:function(e){this.isActive=e}},methods:{cancel:function(){this.canCancel&&this.close()},close:function(){var e=this;this.onCancel.apply(null,arguments),this.$emit("close"),this.$emit("update:active",!1),this.programmatic&&(this.isActive=!1,setTimeout(function(){e.$destroy(),n.i(i.a)(e.$el)},150))},keyPress:function(e){27===e.keyCode&&this.cancel()}},created:function(){"undefined"!=typeof window&&document.addEventListener("keyup",this.keyPress)},beforeMount:function(){this.programmatic&&document.body.appendChild(this.$el)},mounted:function(){this.programmatic&&(this.isActive=!0)},beforeDestroy:function(){"undefined"!=typeof window&&document.removeEventListener("keyup",this.keyPress)}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(48);t.default={name:"BMessage",mixins:[i.a],data:function(){return{newIconSize:this.iconSize||this.size||"is-large"}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(5),r=n(1);t.default={name:"BModal",props:{active:Boolean,component:[Object,Function],content:String,programmatic:Boolean,props:Object,events:Object,width:{type:[String,Number],default:960},hasModalCard:Boolean,animation:{type:String,default:"zoom-out"},canCancel:{type:[Array,Boolean],default:function(){return["escape","x","outside","button"]}},onCancel:{type:Function,default:function(){}},scroll:{type:String,default:function(){return r.b.defaultModalScroll?r.b.defaultModalScroll:"clip"},validator:function(e){return["clip","keep"].indexOf(e)>=0}}},data:function(){return{isActive:this.active||!1,savedScrollTop:null,newWidth:"number"==typeof this.width?this.width+"px":this.width}},computed:{cancelOptions:function(){return"boolean"==typeof this.canCancel?this.canCancel?["escape","x","outside","button"]:[]:this.canCancel},showX:function(){return this.cancelOptions.indexOf("x")>=0}},watch:{active:function(e){this.isActive=e},isActive:function(){this.handleScroll()}},methods:{handleScroll:function(){if("undefined"!=typeof window){if("clip"===this.scroll)return void document.documentElement.classList.toggle("is-clipped",this.isActive);if(this.savedScrollTop=this.savedScrollTop?this.savedScrollTop:document.documentElement.scrollTop,document.body.classList.toggle("is-noscroll",this.isActive),this.isActive)return void(document.body.style.top="-"+this.savedScrollTop+"px");document.documentElement.scrollTop=this.savedScrollTop,document.body.style.top=null,this.savedScrollTop=null}},cancel:function(e){this.cancelOptions.indexOf(e)<0||this.close()},close:function(){var e=this;this.onCancel.apply(null,arguments),this.$emit("close"),this.$emit("update:active",!1),this.programmatic&&(this.isActive=!1,setTimeout(function(){e.$destroy(),n.i(i.a)(e.$el)},150))},keyPress:function(e){27===e.keyCode&&this.cancel("escape")}},created:function(){"undefined"!=typeof window&&document.addEventListener("keyup",this.keyPress)},beforeMount:function(){this.programmatic&&document.body.appendChild(this.$el)},mounted:function(){this.programmatic?this.isActive=!0:this.isActive&&this.handleScroll()},beforeDestroy:function(){"undefined"!=typeof window&&document.removeEventListener("keyup",this.keyPress)}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(48);t.default={name:"BNotification",mixins:[i.a]}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(6),r=n.n(i),a=n(2);t.default={name:"BPagination",components:r()({},a.a.name,a.a),props:{total:[Number,String],perPage:{type:[Number,String],default:20},current:{type:[Number,String],default:1},size:String,simple:Boolean,rounded:Boolean,order:String},computed:{rootClasses:function(){return[this.order,this.size,{"is-simple":this.simple,"is-rounded":this.rounded}]},pageCount:function(){return Math.ceil(this.total/this.perPage)},firstItem:function(){var e=this.current*this.perPage-this.perPage+1;return e>=0?e:0},hasPrev:function(){return this.current>1},hasFirst:function(){return this.current>=3},hasFirstEllipsis:function(){return this.current>=4},hasLast:function(){return this.current<=this.pageCount-2},hasLastEllipsis:function(){return this.current<this.pageCount-2&&this.current<=this.pageCount-3},hasNext:function(){return this.current<this.pageCount},pagesInRange:function(){var e=this;if(!this.simple){for(var t=Math.max(1,this.current-1),n=Math.min(this.current+1,this.pageCount),i=[],r=t;r<=n;r++)(function(t){i.push({number:t,isCurrent:e.current===t,click:function(n){e.current!==t&&(e.$emit("change",t),e.$emit("update:current",t),e.$nextTick(function(){return n.target.focus()}))}})})(r);return i}}},watch:{pageCount:function(e){this.current>e&&this.last()}},methods:{prev:function(){this.hasPrev&&(this.$emit("change",this.current-1),this.$emit("update:current",this.current-1))},first:function(){this.$emit("change",1),this.$emit("update:current",1)},last:function(){this.$emit("change",this.pageCount),this.$emit("update:current",this.pageCount)},next:function(){this.hasNext&&(this.$emit("change",this.current+1),this.$emit("update:current",this.current+1))}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BPanel",props:{collapsible:{type:Boolean,default:!1},open:{type:Boolean,default:!0},hasCustomTemplate:{type:Boolean,default:!1},header:String,content:String,animation:{type:String,default:"fade"}},data:function(){return{isOpen:this.open}},watch:{open:function(e){this.isOpen=e}},methods:{toggle:function(){this.collapsible&&(this.isOpen=!this.isOpen,this.$emit("update:open",this.isOpen),this.isOpen?this.$emit("open"):this.$emit("close"))}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BRadio",props:{value:[String,Number,Boolean,Function,Object,Array,r.a],nativeValue:[String,Number,Boolean,Function,Object,Array,r.a],disabled:Boolean,name:String,size:String},data:function(){return{newValue:this.value}},watch:{value:function(e){this.newValue=e},newValue:function(e){e===this.nativeValue&&this.$emit("input",e)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BRadioButton",props:{value:[String,Number,Boolean,Function,Object,Array,r.a],nativeValue:[String,Number,Boolean,Function,Object,Array,r.a],type:{type:String,default:"is-primary"},disabled:Boolean,name:String,size:String},data:function(){return{newValue:this.value}},watch:{value:function(e){this.newValue=e},newValue:function(e){e===this.nativeValue&&this.$emit("input",e)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i),a=n(10);t.default={name:"BSelect",mixins:[a.a],inheritAttrs:!1,props:{value:{type:[String,Number,Boolean,Object,Array,r.a,Function],default:null},placeholder:String,multiple:Boolean,nativeSize:[String,Number]},data:function(){return{selected:this.value,_isSelect:!0,_elementRef:"select"}},computed:{spanClasses:function(){return[this.size,this.statusType,{"is-fullwidth":this.expanded,"is-loading":this.loading,"is-multiple":this.multiple,"is-rounded":this.rounded,"is-empty":null===this.selected}]}},watch:{value:function(e){this.selected=e,!this.isValid&&this.checkHtml5Validity()},selected:function(e){this.$emit("input",e),!this.isValid&&this.checkHtml5Validity()}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(1),r=n(49);t.default={mixins:[r.a],props:{actionText:{type:String,default:"OK"},onAction:{type:Function,default:function(){}}},data:function(){return{newDuration:this.duration||i.b.defaultSnackbarDuration}},methods:{action:function(){this.onAction(),this.close()}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BSwitch",props:{value:[String,Number,Boolean,Function,Object,Array,r.a],nativeValue:[String,Number,Boolean,Function,Object,Array,r.a],disabled:Boolean,type:String,name:String,size:String,trueValue:{type:[String,Number,Boolean,Function,Object,Array,r.a],default:!0},falseValue:{type:[String,Number,Boolean,Function,Object,Array,r.a],default:!1}},data:function(){return{newValue:this.value,isMouseDown:!1}},watch:{value:function(e){this.newValue=e},newValue:function(e){this.$emit("input",e)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(126),r=n.n(i),a=n(5),o=n(45),s=n(47),l=n(2),u=n(192),c=n.n(u),d=n(65),f=n.n(d);t.default={name:"BTable",components:{BPagination:s.a,BIcon:l.a,BCheckbox:o.a,BTableMobileSort:c.a,BTableColumn:f.a},props:{data:{type:Array,default:function(){return[]}},columns:{type:Array,default:function(){return[]}},bordered:Boolean,striped:Boolean,narrowed:Boolean,hoverable:Boolean,loading:Boolean,detailed:Boolean,checkable:Boolean,selected:Object,focusable:Boolean,customIsChecked:Function,checkedRows:{type:Array,default:function(){return[]}},mobileCards:{type:Boolean,default:!0},defaultSort:[String,Array],defaultSortDirection:{type:String,default:"asc"},paginated:Boolean,currentPage:{type:Number,default:1},perPage:{type:[Number,String],default:20},paginationSimple:Boolean,paginationSize:String,backendSorting:Boolean,rowClass:{type:Function,default:function(){return""}},openedDetailed:{type:Array,default:function(){return[]}},detailKey:{type:String,default:""},backendPagination:Boolean,total:{type:[Number,String],default:0}},data:function(){return{getValueByPath:a.c,newColumns:[].concat(r()(this.columns)),visibleDetailRows:this.openedDetailed,newData:this.data,newDataTotal:this.backendPagination?this.total:this.data.length,newCheckedRows:[].concat(r()(this.checkedRows)),newCurrentPage:this.currentPage,currentSortColumn:{},isAsc:!0,firstTimeSort:!0,_isTable:!0}},computed:{tableClasses:function(){return{"is-bordered":this.bordered,"is-striped":this.striped,"is-narrow":this.narrowed,"has-mobile-cards":this.mobileCards,"is-hoverable":(this.hoverable||this.focusable)&&this.visibleData.length}},visibleData:function(){if(!this.paginated)return this.newData;var e=this.newCurrentPage,t=this.perPage;if(this.newData.length<=t)return this.newData;var n=(e-1)*t,i=parseInt(n,10)+parseInt(t,10);return this.newData.slice(n,i)},isAllChecked:function(){var e=this;return!this.visibleData.some(function(t){return n.i(a.d)(e.checkedRows,t,e.customIsChecked)<0})},hasSortablenewColumns:function(){return this.newColumns.some(function(e){return e.sortable})},columnCount:function(){var e=this.newColumns.length;return e+=this.checkable?1:0,e+=this.detailed?1:0}},watch:{data:function(e){var t=this,n=this.newColumns;this.newColumns=[],this.newData=e,this.$nextTick(function(){t.newColumns.length||(t.newColumns=n)}),this.backendSorting||this.sort(this.currentSortColumn,!0),this.backendPagination||(this.newDataTotal=e.length)},total:function(e){this.backendPagination&&(this.newDataTotal=e)},checkedRows:function(e){this.newCheckedRows=[].concat(r()(e))},columns:function(e){this.newColumns=[].concat(r()(e))},newColumns:function(e){if(e.length&&this.firstTimeSort)this.initSort(),this.firstTimeSort=!1;else if(e.length)for(var t=0;t<e.length;t++)if(e[t].newKey===this.currentSortColumn.newKey){this.currentSortColumn=e[t];break}},openedDetailed:function(e){this.visibleDetailRows=e},currentPage:function(e){this.newCurrentPage=e}},methods:{sortBy:function(e,t,i,o){return i&&"function"==typeof i?[].concat(r()(e)).sort(function(e,t){return i(e,t,o)}):[].concat(r()(e)).sort(function(e,i){var r=n.i(a.c)(e,t),s=n.i(a.c)(i,t);return r||0===r?s||0===s?r===s?0:(r="string"==typeof r?r.toUpperCase():r,s="string"==typeof s?s.toUpperCase():s,o?r>s?1:-1:r>s?-1:1):-1:1})},sort:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1];e&&e.sortable&&(t||(this.isAsc=e===this.currentSortColumn?!this.isAsc:"desc"!==this.defaultSortDirection.toLowerCase()),this.firstTimeSort||this.$emit("sort",e.field,this.isAsc?"asc":"desc"),this.backendSorting||(this.newData=this.sortBy(this.newData,e.field,e.customSort,this.isAsc)),this.currentSortColumn=e)},isRowChecked:function(e){return n.i(a.d)(this.checkedRows,e,this.customIsChecked)>=0},removeCheckedRow:function(e){var t=n.i(a.d)(this.newCheckedRows,e,this.customIsChecked);t>=0&&this.newCheckedRows.splice(t,1)},checkAll:function(){var e=this,t=this.isAllChecked;this.visibleData.forEach(function(n){e.removeCheckedRow(n),t||e.newCheckedRows.push(n)}),this.$emit("check",this.newCheckedRows),this.$emit("check-all",this.newCheckedRows),this.$emit("update:checkedRows",this.newCheckedRows)},checkRow:function(e){this.isRowChecked(e)?this.removeCheckedRow(e):this.newCheckedRows.push(e),this.$emit("check",this.newCheckedRows,e),this.$emit("update:checkedRows",this.newCheckedRows)},selectRow:function(e,t){this.$emit("click",e),this.selected!==e&&(this.$emit("select",e,this.selected),this.$emit("update:selected",e))},pageChanged:function(e){this.newCurrentPage=e>0?e:1,this.$emit("page-change",this.newCurrentPage),this.$emit("update:currentPage",this.newCurrentPage)},toggleDetails:function(e){this.isVisibleDetailRow(e)?(this.closeDetailRow(e),this.$emit("details-close",e)):(this.openDetailRow(e),this.$emit("details-open",e)),this.$emit("update:openedDetailed",this.visibleDetailRows)},openDetailRow:function(e){var t=this.handleDetailKey(e);this.visibleDetailRows.push(t)},closeDetailRow:function(e){var t=this.handleDetailKey(e),n=this.visibleDetailRows.indexOf(t);this.visibleDetailRows.splice(n,1)},isVisibleDetailRow:function(e){var t=this.handleDetailKey(e);return this.visibleDetailRows.indexOf(t)>=0},handleDetailKey:function(e){var t=this.detailKey;return t.length?e[t]:e},checkPredefinedDetailedRows:function(){if(this.openedDetailed.length>0&&!this.detailKey.length)throw new Error('If you set a predefined opened-detailed, you must provide an unique key using the prop "detail-key"')},hasCustomFooterSlot:function(){if(this.$slots.footer.length>1)return!0;var e=this.$slots.footer[0].tag;return"th"===e||"td"===e},pressedArrow:function(e){if(this.visibleData.length){var t=this.visibleData.indexOf(this.selected)+e;t=t<0?0:t>this.visibleData.length-1?this.visibleData.length-1:t,this.selectRow(this.visibleData[t])}},focus:function(){this.focusable&&this.$el.querySelector("table").focus()},initSort:function(){var e=this;if(this.defaultSort){var t="",n=this.defaultSortDirection;Array.isArray(this.defaultSort)?(t=this.defaultSort[0],this.defaultSort[1]&&(n=this.defaultSort[1])):t=this.defaultSort,this.newColumns.forEach(function(i){i.field===t&&(e.isAsc="desc"!==n.toLowerCase(),e.sort(i,!0))})}}},mounted:function(){this.checkPredefinedDetailedRows()}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(3),r=n.n(i);t.default={name:"BTableColumn",props:{label:String,customKey:[String,Number],field:String,meta:[String,Number,Boolean,Function,Object,Array,r.a],width:[Number,String],numeric:Boolean,centered:Boolean,sortable:Boolean,visible:{type:Boolean,default:!0},customSort:Function,internal:Boolean},data:function(){return{newKey:this.customKey||this.label}},computed:{rootClasses:function(){return{"has-text-right":this.numeric&&!this.centered,"has-text-centered":this.centered}}},created:function(){var e=this;if(!this.$parent.$data._isTable)throw this.$destroy(),new Error("You should wrap bTableColumn on a bTable");if(!this.internal){!this.$parent.columns.some(function(t){return t.newKey===e.newKey})&&this.$parent.columns.push(this)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(24),r=n(2);t.default={name:"BTableMobileSort",components:{BSelect:i.a,BIcon:r.a},props:{currentSortColumn:Object,isAsc:Boolean,columns:Array},data:function(){return{mobileSort:this.currentSortColumn}},watch:{mobileSort:function(e){this.currentSortColumn!==e&&this.$emit("sort",e)},currentSortColumn:function(e){this.mobileSort=e}},methods:{sort:function(){this.$emit("sort",this.mobileSort)}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BTabItem",props:{label:String,icon:String,iconPack:String,disabled:Boolean},data:function(){return{isActive:!1,transitionName:null}},methods:{activate:function(e,t){this.$parent.animated?this.transitionName=t<e?"slide-next":"slide-prev":this.transitionName=null,this.isActive=!0},deactivate:function(e,t){this.$parent.animated?this.transitionName=t<e?"slide-next":"slide-prev":this.transitionName=null,this.isActive=!1}},created:function(){if(!this.$parent.$data._isTabs)throw this.$destroy(),new Error("You should wrap bTabItem on a bTabs");this.$parent.tabItems.push(this)},beforeDestroy:function(){var e=this.$parent.tabItems.indexOf(this);e>=0&&this.$parent.tabItems.splice(e,1)}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(6),r=n.n(i),a=n(2);t.default={name:"BTabs",components:r()({},a.a.name,a.a),props:{value:[String,Number],expanded:Boolean,type:String,size:String,position:String,animated:{type:Boolean,default:!0}},data:function(){return{newValue:this.value||0,tabItems:[],contentHeight:0,_isTabs:!0}},computed:{navClasses:function(){return[this.type,this.size,this.position,{"is-fullwidth":this.expanded,"is-toggle-rounded is-toggle":"is-toggle-rounded"===this.type}]}},watch:{value:function(e){this.changeTab(this.newValue,e),this.newValue=e},tabItems:function(){this.tabItems.length&&(this.tabItems[this.newValue].isActive=!0)}},methods:{changeTab:function(e,t){e!==t&&(this.tabItems[e].deactivate(e,t),this.tabItems[t].activate(e,t))},tabClick:function(e){this.$emit("input",e),this.$emit("change",e),this.changeTab(this.newValue,e),this.newValue=e}},mounted:function(){this.tabItems.length&&(this.tabItems[this.newValue].isActive=!0)}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BTag",props:{attached:Boolean,closable:Boolean,type:String,size:String,rounded:Boolean,disabled:Boolean,tabstop:{type:Boolean,default:!0}},methods:{close:function(){this.disabled||this.$emit("close")}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={name:"BTaglist",props:{attached:Boolean}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(51),r=n.n(i),a=n(6),o=n.n(a),s=n(5),l=n(44),u=n(10);t.default={name:"BTaginput",components:o()({},l.a.name,l.a),mixins:[u.a],inheritAttrs:!1,props:{value:{type:Array,default:function(){return[]}},data:{type:Array,default:function(){return[]}},type:String,rounded:{type:Boolean,default:!1},attached:{type:Boolean,default:!1},maxtags:{type:[Number,String],required:!1},field:{type:String,default:"value"},autocomplete:Boolean,disabled:Boolean,confirmKeyCodes:{type:Array,default:function(){return[13,188]}},allowNew:Boolean},data:function(){return{tags:this.value||[],newTag:"",_elementRef:"input",_isTaginput:!0}},computed:{rootClasses:function(){return{"is-expanded":this.expanded}},containerClasses:function(){return{"is-focused":this.isFocused,"is-focusable":this.hasInput}},valueLength:function(){return this.newTag.trim().length},hasInput:function(){return null==this.maxtags||this.tagsLength<this.maxtags},tagsLength:function(){return this.tags.length}},watch:{value:function(e){this.tags=e},newTag:function(e){this.$emit("typing",e.trim())},hasInput:function(){this.hasInput||this.onBlur()}},methods:{addTag:function(e){var t=e||this.newTag.trim();t&&-1===this.tags.indexOf(t)&&(this.tags.push(t),this.$emit("input",this.tags),this.$emit("add",t)),this.newTag=""},getNormalizedTagText:function(e){return"object"===(void 0===e?"undefined":r()(e))?n.i(s.c)(e,this.field):e},customOnBlur:function(e){this.onBlur(e),this.autocomplete||this.addTag()},onSelect:function(e){var t=this;e&&(this.addTag(e),this.$nextTick(function(){t.newTag=""}))},removeTag:function(e){var t=this.tags.splice(e,1)[0];return this.$emit("input",this.tags),this.$emit("remove",t),t},removeLastTag:function(){this.tagsLength>0&&(this.newTag=this.removeTag(this.tagsLength-1))},keydown:function(e){this.autocomplete&&!this.allowNew||this.confirmKeyCodes.indexOf(e.keyCode)>=0&&(e.preventDefault(),this.addTag())}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i,r=n(6),a=n.n(r),o=n(10),s=n(5),l=n(1),u=n(28),c=n(23),d=n(29),f=n(24),p=n(2),h="AM",v="PM",m=function(e){return(e<10?"0":"")+e},y=function(e,t){var n=e.getHours(),i=e.getMinutes(),r=!1;return"12"===t.hourFormat&&(r=n<12,n>12?n-=12:0===n&&(n=12)),m(n)+":"+m(i)+("12"===t.hourFormat?" "+(r?h:v):"")},g=function(e,t){if(e){var n=e,i=!1;if("12"===t.hourFormat){var r=e.split(" ");n=r[0],i=r[1]===h}var a=n.split(":"),o=parseInt(a[0],10),s=parseInt(a[1],10);if(isNaN(o)||o<0||o>23||"12"===t.hourFormat&&(o<1||o>12)||isNaN(s)||s<0||s>59)return null;var l=new Date;return l.setMilliseconds(0),l.setSeconds(0),l.setMinutes(s),"12"===t.hourFormat&&(i&&12===o?o=0:i||12===o||(o+=12)),l.setHours(o),l}return null};t.default={name:"BTimepicker",components:(i={},a()(i,c.a.name,c.a),a()(i,d.a.name,d.a),a()(i,f.a.name,f.a),a()(i,p.a.name,p.a),a()(i,u.a.name,u.a),a()(i,u.b.name,u.b),i),mixins:[o.a],inheritAttrs:!1,props:{value:Date,inline:Boolean,minTime:Date,maxTime:Date,placeholder:String,readonly:{type:Boolean,default:!0},disabled:{type:Boolean,default:!1},hourFormat:{type:String,default:"24",validator:function(e){return"24"===e||"12"===e}},incrementMinutes:{type:Number,default:1},timeFormatter:{type:Function,default:function(e,t){return"function"==typeof l.b.defaultTimeFormatter?l.b.defaultTimeFormatter(e):y(e,t)}},timeParser:{type:Function,default:function(e,t){return"function"==typeof l.b.defaultTimeParser?l.b.defaultTimeParser(e):g(e,t)}},mobileNative:{type:Boolean,default:function(){return l.b.defaultTimepickerMobileNative}},position:String,unselectableTimes:Array},data:function(){return{dateSelected:this.value,hoursSelected:null,minutesSelected:null,meridienSelected:null,_elementRef:"input",_isTimepicker:!0}},computed:{hours:function(){for(var e=[],t=this.isHourFormat24?24:12,n=0;n<t;n++){var i=n,r=i;this.isHourFormat24||(i=n+1,r=i,this.meridienSelected===h?12===i&&(i=0):this.meridienSelected===v&&12!==i&&(i+=12)),e.push({label:m(r),value:i})}return e},minutes:function(){for(var e=[],t=0;t<60;t+=this.incrementMinutes)e.push({label:m(t),value:t});return e},meridiens:function(){return[h,v]},isMobile:function(){return this.mobileNative&&s.b.any()},isHourFormat24:function(){return"24"===this.hourFormat}},watch:{hourFormat:function(e){null!==this.hoursSelected&&(this.meridienSelected=this.hoursSelected>=12?v:h)},dateSelected:function(e){this.$emit("input",e)},value:function(e){this.updateInternalState(e),this.dateSelected=e,!this.isValid&&this.$refs.input.checkHtml5Validity()}},methods:{onMeridienChange:function(e){null!==this.hoursSelected&&(e===v?0===this.hoursSelected?this.hoursSelected=12:this.hoursSelected+=12:e===h&&(12===this.hoursSelected?this.hoursSelected=0:this.hoursSelected-=12)),this.updateDateSelected(this.hoursSelected,this.minutesSelected,e)},onHoursChange:function(e){this.updateDateSelected(parseInt(e,10),this.minutesSelected,this.meridienSelected)},onMinutesChange:function(e){this.updateDateSelected(this.hoursSelected,parseInt(e,10),this.meridienSelected)},updateDateSelected:function(e,t,n){null!=e&&null!=t&&(!this.isHourFormat24&&null!==n||this.isHourFormat24)&&(this.dateSelected=new Date,this.dateSelected.setMilliseconds(0),this.dateSelected.setSeconds(0),this.dateSelected.setHours(e),this.dateSelected.setMinutes(t))},updateInternalState:function(e){e?(this.hoursSelected=e.getHours(),this.minutesSelected=e.getMinutes(),this.meridienSelected=e.getHours()>=12?v:h):(this.hoursSelected=null,this.minutesSelected=null,this.meridienSelected=h)},isHourDisabled:function(e){var t=this,n=!1;if(this.minTime){var i=this.minTime.getHours();n=e<i}if(this.maxTime&&!n){var r=this.maxTime.getHours();n=e>r}if(this.unselectableTimes&&!n)if(null!==this.minutesSelected){var a=this.unselectableTimes.filter(function(n){return n.getHours()===e&&n.getMinutes()===t.minutesSelected});n=a.length>0}else{var o=this.unselectableTimes.filter(function(t){return t.getHours()===e});n=o.length===this.minutes.length}return n},isMinuteDisabled:function(e){var t=this,n=!1;if(null!==this.hoursSelected){if(this.isHourDisabled(this.hoursSelected))n=!0;else{if(this.minTime){var i=this.minTime.getHours(),r=this.minTime.getMinutes();n=this.hoursSelected===i&&e<r}if(this.maxTime&&!n){var a=this.maxTime.getHours(),o=this.maxTime.getMinutes();n=this.hoursSelected===a&&e>o}}if(this.unselectableTimes&&!n){n=this.unselectableTimes.filter(function(n){return n.getHours()===t.hoursSelected&&n.getMinutes()===e}).length>0}}return n},onChange:function(e){var t=this.timeParser(e,this);this.updateInternalState(t),t&&!isNaN(t)?this.dateSelected=t:(this.dateSelected=null,this.$refs.input.newValue=this.dateSelected)},formatValue:function(e){return e&&!isNaN(e)?this.timeFormatter(e,this):null},close:function(){this.$refs.dropdown&&(this.$refs.dropdown.isActive=!1)},formatHHMMSS:function(e){var t=new Date(e);if(e&&!isNaN(t)){var n=t.getHours(),i=t.getMinutes();return m(n)+":"+m(i)+":00"}return""},onChangeNativePicker:function(e){var t=e.target.value;if(t){var n=(new Date).toLocaleDateString()+" "+t;this.dateSelected=new Date(Date.parse(n))}else this.dateSelected=null}},mounted:function(){this.updateInternalState(this.value)}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(1),r=n(49);t.default={mixins:[r.a],data:function(){return{newDuration:this.duration||i.b.defaultToastDuration}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(1);t.default={name:"BTooltip",props:{active:{type:Boolean,default:!0},type:String,label:String,position:{type:String,default:"is-top",validator:function(e){return["is-top","is-bottom","is-left","is-right"].indexOf(e)>-1}},always:Boolean,animated:Boolean,square:Boolean,dashed:Boolean,multilined:Boolean,size:{type:String,default:"is-medium"}},computed:{newType:function(){return this.type||i.b.defaultTooltipType},newAnimated:function(){return this.animated||i.b.defaultTooltipAnimated}}}},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(10);t.default={name:"BUpload",mixins:[i.a],inheritAttrs:!1,props:{value:{type:Array,default:function(){return[]}},multiple:Boolean,disabled:Boolean,accept:String,dragDrop:Boolean,type:{type:String,default:"is-primary"},native:{type:Boolean,default:!1}},data:function(){return{newValue:this.value||[],dragDropFocus:!1,_elementRef:"input"}},watch:{value:function(e){this.newValue=e,0===this.newValue.length&&(this.$refs.input.value=null),!this.isValid&&!this.dragDrop&&this.checkHtml5Validity()}},methods:{onFileChange:function(e){if(!this.disabled&&!this.loading){this.dragDrop&&this.updateDragDropFocus(!1);var t=e.target.files||e.dataTransfer.files;if(t&&t.length){if(this.multiple)this.native&&(this.newValue=[]);else if(this.dragDrop){if(1!==t.length)return!1;this.newValue=[]}else this.newValue=[];for(var n=0;n<t.length;n++){var i=t[n];this.checkType(i)&&this.newValue.push(i)}}this.$emit("input",this.newValue),!this.dragDrop&&this.checkHtml5Validity()}},updateDragDropFocus:function(e){this.disabled||this.loading||(this.dragDropFocus=e)},checkType:function(e){return!this.accept||this.accept&&e.type.match(this.accept)}}}},function(e,t,n){"use strict";var i=n(170),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(171),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";function i(e){return new(o.a.extend(l.a))({el:document.createElement("div"),propsData:e})}var r=n(14),a=n.n(r),o=n(22),s=n(174),l=n.n(s);t.a={alert:function(e){var t=void 0;"string"==typeof e&&(t=e);var n={canCancel:!1,message:t};return i(a()(n,e))},confirm:function(e){var t={};return i(a()(t,e))},prompt:function(e){var t={hasInput:!0,confirmText:"Done"};return i(a()(t,e))}}},function(e,t,n){"use strict";var i=n(14),r=n.n(i),a=n(22),o=n(180),s=n.n(o);n.d(t,"a",function(){return s.a}),t.b={open:function(e){var t={programmatic:!0},n=r()(t,e);return new(a.a.extend(s.a))({el:document.createElement("div"),propsData:n})}}},function(e,t,n){"use strict";var i=n(181),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(183),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(185),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(186),r=n.n(i),a=n(187),o=n.n(a);n.d(t,"a",function(){return r.a}),n.d(t,"b",function(){return o.a})},function(e,t,n){"use strict";var i=n(14),r=n.n(i),a=n(22),o=n(189),s=n.n(o);t.a={open:function(e){var t=void 0;"string"==typeof e&&(t=e);var n={type:"is-success",position:"is-bottom-right",message:t},i=r()(n,e);return new(a.a.extend(s.a))({el:document.createElement("div"),propsData:i})}}},function(e,t,n){"use strict";var i=n(190),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(191),r=n.n(i),a=n(65),o=n.n(a);n.d(t,"a",function(){return r.a}),n.d(t,"b",function(){return o.a})},function(e,t,n){"use strict";var i=n(194),r=n.n(i),a=n(193),o=n.n(a);n.d(t,"b",function(){return r.a}),n.d(t,"a",function(){return o.a})},function(e,t,n){"use strict";var i=n(195),r=n.n(i),a=n(196),o=n.n(a);n.d(t,"a",function(){return r.a}),n.d(t,"b",function(){return o.a})},function(e,t,n){"use strict";var i=n(197),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(198),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(14),r=n.n(i),a=n(22),o=n(199),s=n.n(o);t.a={open:function(e){var t=void 0;"string"==typeof e&&(t=e);var n={message:t},i=r()(n,e);return new(a.a.extend(s.a))({el:document.createElement("div"),propsData:i})}}},function(e,t,n){"use strict";var i=n(200),r=n.n(i);t.a=r.a},function(e,t,n){"use strict";var i=n(201),r=n.n(i);t.a=r.a},function(e,t,n){e.exports={default:n(127),__esModule:!0}},function(e,t,n){e.exports={default:n(130),__esModule:!0}},function(e,t,n){e.exports={default:n(132),__esModule:!0}},function(e,t,n){"use strict";t.__esModule=!0;var i=n(123),r=function(e){return e&&e.__esModule?e:{default:e}}(i);t.default=function(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return(0,r.default)(e)}},function(e,t,n){n(43),n(156),e.exports=n(7).Array.from},function(e,t,n){n(63),n(43),e.exports=n(155)},function(e,t,n){n(158),e.exports=n(7).Object.assign},function(e,t,n){n(159);var i=n(7).Object;e.exports=function(e,t,n){return i.defineProperty(e,t,n)}},function(e,t,n){n(161),n(160),n(162),n(163),e.exports=n(7).Symbol},function(e,t,n){n(43),n(63),e.exports=n(42).f("iterator")},function(e,t){e.exports=function(e){if("function"!=typeof e)throw TypeError(e+" is not a function!");return e}},function(e,t){e.exports=function(){}},function(e,t,n){var i=n(13),r=n(61),a=n(154);e.exports=function(e){return function(t,n,o){var s,l=i(t),u=r(l.length),c=a(o,u);if(e&&n!=n){for(;u>c;)if((s=l[c++])!=s)return!0}else for(;u>c;c++)if((e||c in l)&&l[c]===n)return e||c||0;return!e&&-1}}},function(e,t,n){var i=n(30),r=n(4)("toStringTag"),a="Arguments"==i(function(){return arguments}()),o=function(e,t){try{return e[t]}catch(e){}};e.exports=function(e){var t,n,s;return void 0===e?"Undefined":null===e?"Null":"string"==typeof(n=o(t=Object(e),r))?n:a?i(t):"Object"==(s=i(t))&&"function"==typeof t.callee?"Arguments":s}},function(e,t,n){"use strict";var i=n(9),r=n(21);e.exports=function(e,t,n){t in e?i.f(e,t,r(0,n)):e[t]=n}},function(e,t,n){var i=n(20),r=n(34),a=n(26);e.exports=function(e){var t=i(e),n=r.f;if(n)for(var o,s=n(e),l=a.f,u=0;s.length>u;)l.call(e,o=s[u++])&&t.push(o);return t}},function(e,t,n){e.exports=n(8).document&&document.documentElement},function(e,t,n){var i=n(19),r=n(4)("iterator"),a=Array.prototype;e.exports=function(e){return void 0!==e&&(i.Array===e||a[r]===e)}},function(e,t,n){var i=n(30);e.exports=Array.isArray||function(e){return"Array"==i(e)}},function(e,t,n){var i=n(15);e.exports=function(e,t,n,r){try{return r?t(i(n)[0],n[1]):t(n)}catch(t){var a=e.return;throw void 0!==a&&i(a.call(e)),t}}},function(e,t,n){"use strict";var i=n(57),r=n(21),a=n(35),o={};n(16)(o,n(4)("iterator"),function(){return this}),e.exports=function(e,t,n){e.prototype=i(o,{next:r(1,n)}),a(e,t+" Iterator")}},function(e,t,n){var i=n(4)("iterator"),r=!1;try{var a=[7][i]();a.return=function(){r=!0},Array.from(a,function(){throw 2})}catch(e){}e.exports=function(e,t){if(!t&&!r)return!1;var n=!1;try{var a=[7],o=a[i]();o.next=function(){return{done:n=!0}},a[i]=function(){return o},e(a)}catch(e){}return n}},function(e,t){e.exports=function(e,t){return{value:t,done:!!e}}},function(e,t,n){var i=n(20),r=n(13);e.exports=function(e,t){for(var n,a=r(e),o=i(a),s=o.length,l=0;s>l;)if(a[n=o[l++]]===t)return n}},function(e,t,n){var i=n(27)("meta"),r=n(25),a=n(12),o=n(9).f,s=0,l=Object.isExtensible||function(){return!0},u=!n(18)(function(){return l(Object.preventExtensions({}))}),c=function(e){o(e,i,{value:{i:"O"+ ++s,w:{}}})},d=function(e,t){if(!r(e))return"symbol"==typeof e?e:("string"==typeof e?"S":"P")+e;if(!a(e,i)){if(!l(e))return"F";if(!t)return"E";c(e)}return e[i].i},f=function(e,t){if(!a(e,i)){if(!l(e))return!0;if(!t)return!1;c(e)}return e[i].w},p=function(e){return u&&h.NEED&&l(e)&&!a(e,i)&&c(e),e},h=e.exports={KEY:i,NEED:!1,fastKey:d,getWeak:f,onFreeze:p}},function(e,t,n){"use strict";var i=n(20),r=n(34),a=n(26),o=n(39),s=n(55),l=Object.assign;e.exports=!l||n(18)(function(){var e={},t={},n=Symbol(),i="abcdefghijklmnopqrst";return e[n]=7,i.split("").forEach(function(e){t[e]=e}),7!=l({},e)[n]||Object.keys(l({},t)).join("")!=i})?function(e,t){for(var n=o(e),l=arguments.length,u=1,c=r.f,d=a.f;l>u;)for(var f,p=s(arguments[u++]),h=c?i(p).concat(c(p)):i(p),v=h.length,m=0;v>m;)d.call(p,f=h[m++])&&(n[f]=p[f]);return n}:l},function(e,t,n){var i=n(9),r=n(15),a=n(20);e.exports=n(11)?Object.defineProperties:function(e,t){r(e);for(var n,o=a(t),s=o.length,l=0;s>l;)i.f(e,n=o[l++],t[n]);return e}},function(e,t,n){var i=n(26),r=n(21),a=n(13),o=n(40),s=n(12),l=n(54),u=Object.getOwnPropertyDescriptor;t.f=n(11)?u:function(e,t){if(e=a(e),t=o(t,!0),l)try{return u(e,t)}catch(e){}if(s(e,t))return r(!i.f.call(e,t),e[t])}},function(e,t,n){var i=n(13),r=n(58).f,a={}.toString,o="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],s=function(e){try{return r(e)}catch(e){return o.slice()}};e.exports.f=function(e){return o&&"[object Window]"==a.call(e)?s(e):r(i(e))}},function(e,t,n){var i=n(12),r=n(39),a=n(36)("IE_PROTO"),o=Object.prototype;e.exports=Object.getPrototypeOf||function(e){return e=r(e),i(e,a)?e[a]:"function"==typeof e.constructor&&e instanceof e.constructor?e.constructor.prototype:e instanceof Object?o:null}},function(e,t,n){var i=n(38),r=n(31);e.exports=function(e){return function(t,n){var a,o,s=String(r(t)),l=i(n),u=s.length;return l<0||l>=u?e?"":void 0:(a=s.charCodeAt(l),a<55296||a>56319||l+1===u||(o=s.charCodeAt(l+1))<56320||o>57343?e?s.charAt(l):a:e?s.slice(l,l+2):o-56320+(a-55296<<10)+65536)}}},function(e,t,n){var i=n(38),r=Math.max,a=Math.min;e.exports=function(e,t){return e=i(e),e<0?r(e+t,0):a(e,t)}},function(e,t,n){var i=n(15),r=n(62);e.exports=n(7).getIterator=function(e){var t=r(e);if("function"!=typeof t)throw TypeError(e+" is not iterable!");return i(t.call(e))}},function(e,t,n){"use strict";var i=n(52),r=n(17),a=n(39),o=n(142),s=n(140),l=n(61),u=n(137),c=n(62);r(r.S+r.F*!n(144)(function(e){Array.from(e)}),"Array",{from:function(e){var t,n,r,d,f=a(e),p="function"==typeof this?this:Array,h=arguments.length,v=h>1?arguments[1]:void 0,m=void 0!==v,y=0,g=c(f);if(m&&(v=i(v,h>2?arguments[2]:void 0,2)),void 0==g||p==Array&&s(g))for(t=l(f.length),n=new p(t);t>y;y++)u(n,y,m?v(f[y],y):f[y]);else for(d=g.call(f),n=new p;!(r=d.next()).done;y++)u(n,y,m?o(d,v,[r.value,y],!0):r.value);return n.length=y,n}})},function(e,t,n){"use strict";var i=n(134),r=n(145),a=n(19),o=n(13);e.exports=n(56)(Array,"Array",function(e,t){this._t=o(e),this._i=0,this._k=t},function(){var e=this._t,t=this._k,n=this._i++;return!e||n>=e.length?(this._t=void 0,r(1)):"keys"==t?r(0,n):"values"==t?r(0,e[n]):r(0,[n,e[n]])},"values"),a.Arguments=a.Array,i("keys"),i("values"),i("entries")},function(e,t,n){var i=n(17);i(i.S+i.F,"Object",{assign:n(148)})},function(e,t,n){var i=n(17);i(i.S+i.F*!n(11),"Object",{defineProperty:n(9).f})},function(e,t){},function(e,t,n){"use strict";var i=n(8),r=n(12),a=n(11),o=n(17),s=n(60),l=n(147).KEY,u=n(18),c=n(37),d=n(35),f=n(27),p=n(4),h=n(42),v=n(41),m=n(146),y=n(138),g=n(141),b=n(15),_=n(13),w=n(40),k=n(21),C=n(57),x=n(151),S=n(150),D=n(9),$=n(20),A=S.f,O=D.f,T=x.f,M=i.Symbol,P=i.JSON,B=P&&P.stringify,V=p("_hidden"),I=p("toPrimitive"),F={}.propertyIsEnumerable,E=c("symbol-registry"),j=c("symbols"),N=c("op-symbols"),R=Object.prototype,L="function"==typeof M,z=i.QObject,H=!z||!z.prototype||!z.prototype.findChild,W=a&&u(function(){return 7!=C(O({},"a",{get:function(){return O(this,"a",{value:7}).a}})).a})?function(e,t,n){var i=A(R,t);i&&delete R[t],O(e,t,n),i&&e!==R&&O(R,t,i)}:O,q=function(e){var t=j[e]=C(M.prototype);return t._k=e,t},Y=L&&"symbol"==typeof M.iterator?function(e){return"symbol"==typeof e}:function(e){return e instanceof M},U=function(e,t,n){return e===R&&U(N,t,n),b(e),t=w(t,!0),b(n),r(j,t)?(n.enumerable?(r(e,V)&&e[V][t]&&(e[V][t]=!1),n=C(n,{enumerable:k(0,!1)})):(r(e,V)||O(e,V,k(1,{})),e[V][t]=!0),W(e,t,n)):O(e,t,n)},K=function(e,t){b(e);for(var n,i=y(t=_(t)),r=0,a=i.length;a>r;)U(e,n=i[r++],t[n]);return e},J=function(e,t){return void 0===t?C(e):K(C(e),t)},X=function(e){var t=F.call(this,e=w(e,!0));return!(this===R&&r(j,e)&&!r(N,e))&&(!(t||!r(this,e)||!r(j,e)||r(this,V)&&this[V][e])||t)},G=function(e,t){if(e=_(e),t=w(t,!0),e!==R||!r(j,t)||r(N,t)){var n=A(e,t);return!n||!r(j,t)||r(e,V)&&e[V][t]||(n.enumerable=!0),n}},Q=function(e){for(var t,n=T(_(e)),i=[],a=0;n.length>a;)r(j,t=n[a++])||t==V||t==l||i.push(t);return i},Z=function(e){for(var t,n=e===R,i=T(n?N:_(e)),a=[],o=0;i.length>o;)!r(j,t=i[o++])||n&&!r(R,t)||a.push(j[t]);return a};L||(M=function(){if(this instanceof M)throw TypeError("Symbol is not a constructor!");var e=f(arguments.length>0?arguments[0]:void 0),t=function(n){this===R&&t.call(N,n),r(this,V)&&r(this[V],e)&&(this[V][e]=!1),W(this,e,k(1,n))};return a&&H&&W(R,e,{configurable:!0,set:t}),q(e)},s(M.prototype,"toString",function(){return this._k}),S.f=G,D.f=U,n(58).f=x.f=Q,n(26).f=X,n(34).f=Z,a&&!n(33)&&s(R,"propertyIsEnumerable",X,!0),h.f=function(e){return q(p(e))}),o(o.G+o.W+o.F*!L,{Symbol:M});for(var ee="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),te=0;ee.length>te;)p(ee[te++]);for(var ee=$(p.store),te=0;ee.length>te;)v(ee[te++]);o(o.S+o.F*!L,"Symbol",{for:function(e){return r(E,e+="")?E[e]:E[e]=M(e)},keyFor:function(e){if(Y(e))return m(E,e);throw TypeError(e+" is not a symbol!")},useSetter:function(){H=!0},useSimple:function(){H=!1}}),o(o.S+o.F*!L,"Object",{create:J,defineProperty:U,defineProperties:K,getOwnPropertyDescriptor:G,getOwnPropertyNames:Q,getOwnPropertySymbols:Z}),P&&o(o.S+o.F*(!L||u(function(){var e=M();return"[null]"!=B([e])||"{}"!=B({a:e})||"{}"!=B(Object(e))})),"JSON",{stringify:function(e){if(void 0!==e&&!Y(e)){for(var t,n,i=[e],r=1;arguments.length>r;)i.push(arguments[r++]);return t=i[1],"function"==typeof t&&(n=t),!n&&g(t)||(t=function(e,t){if(n&&(t=n.call(this,e,t)),!Y(t))return t}),i[1]=t,B.apply(P,i)}}}),M.prototype[I]||n(16)(M.prototype,I,M.prototype.valueOf),d(M,"Symbol"),d(Math,"Math",!0),d(i.JSON,"JSON",!0)},function(e,t,n){n(41)("asyncIterator")},function(e,t,n){n(41)("observable")},function(e,t){function n(){throw new Error("setTimeout has not been defined")}function i(){throw new Error("clearTimeout has not been defined")}function r(e){if(c===setTimeout)return setTimeout(e,0);if((c===n||!c)&&setTimeout)return c=setTimeout,setTimeout(e,0);try{return c(e,0)}catch(t){try{return c.call(null,e,0)}catch(t){return c.call(this,e,0)}}}function a(e){if(d===clearTimeout)return clearTimeout(e);if((d===i||!d)&&clearTimeout)return d=clearTimeout,clearTimeout(e);try{return d(e)}catch(t){try{return d.call(null,e)}catch(t){return d.call(this,e)}}}function o(){v&&p&&(v=!1,p.length?h=p.concat(h):m=-1,h.length&&s())}function s(){if(!v){var e=r(o);v=!0;for(var t=h.length;t;){for(p=h,h=[];++m<t;)p&&p[m].run();m=-1,t=h.length}p=null,v=!1,a(e)}}function l(e,t){this.fun=e,this.array=t}function u(){}var c,d,f=e.exports={};(function(){try{c="function"==typeof setTimeout?setTimeout:n}catch(e){c=n}try{d="function"==typeof clearTimeout?clearTimeout:i}catch(e){d=i}})();var p,h=[],v=!1,m=-1;f.nextTick=function(e){var t=new Array(arguments.length-1);if(arguments.length>1)for(var n=1;n<arguments.length;n++)t[n-1]=arguments[n];h.push(new l(e,t)),1!==h.length||v||r(s)},l.prototype.run=function(){this.fun.apply(null,this.array)},f.title="browser",f.browser=!0,f.env={},f.argv=[],f.version="",f.versions={},f.on=u,f.addListener=u,f.once=u,f.off=u,f.removeListener=u,f.removeAllListeners=u,f.emit=u,f.prependListener=u,f.prependOnceListener=u,f.listeners=function(e){return[]},f.binding=function(e){throw new Error("process.binding is not supported")},f.cwd=function(){return"/"},f.chdir=function(e){throw new Error("process.chdir is not supported")},f.umask=function(){return 0}},function(e,t,n){(function(e,t){(function(e,n){"use strict";function i(e){"function"!=typeof e&&(e=new Function(""+e));for(var t=new Array(arguments.length-1),n=0;n<t.length;n++)t[n]=arguments[n+1];var i={callback:e,args:t};return u[l]=i,s(l),l++}function r(e){delete u[e]}function a(e){var t=e.callback,i=e.args;switch(i.length){case 0:t();break;case 1:t(i[0]);break;case 2:t(i[0],i[1]);break;case 3:t(i[0],i[1],i[2]);break;default:t.apply(n,i)}}function o(e){if(c)setTimeout(o,0,e);else{var t=u[e];if(t){c=!0;try{a(t)}finally{r(e),c=!1}}}}if(!e.setImmediate){var s,l=1,u={},c=!1,d=e.document,f=Object.getPrototypeOf&&Object.getPrototypeOf(e);f=f&&f.setTimeout?f:e,"[object process]"==={}.toString.call(e.process)?function(){s=function(e){t.nextTick(function(){o(e)})}}():!function(){if(e.postMessage&&!e.importScripts){var t=!0,n=e.onmessage;return e.onmessage=function(){t=!1},e.postMessage("","*"),e.onmessage=n,t}}()?e.MessageChannel?function(){var e=new MessageChannel;e.port1.onmessage=function(e){o(e.data)},s=function(t){e.port2.postMessage(t)}}():d&&"onreadystatechange"in d.createElement("script")?function(){var e=d.documentElement;s=function(t){var n=d.createElement("script");n.onreadystatechange=function(){o(t),n.onreadystatechange=null,e.removeChild(n),n=null},e.appendChild(n)}}():function(){s=function(e){setTimeout(o,0,e)}}():function(){var t="setImmediate$"+Math.random()+"$",n=function(n){n.source===e&&"string"==typeof n.data&&0===n.data.indexOf(t)&&o(+n.data.slice(t.length))};e.addEventListener?e.addEventListener("message",n,!1):e.attachEvent("onmessage",n),s=function(n){e.postMessage(t+n,"*")}}(),f.setImmediate=i,f.clearImmediate=r}})("undefined"==typeof self?void 0===e?this:e:self)}).call(t,n(66),n(164))},function(e,t,n){function i(e,t){this._id=e,this._clearFn=t}var r=Function.prototype.apply;t.setTimeout=function(){return new i(r.call(setTimeout,window,arguments),clearTimeout)},t.setInterval=function(){return new i(r.call(setInterval,window,arguments),clearInterval)},t.clearTimeout=t.clearInterval=function(e){e&&e.close()},i.prototype.unref=i.prototype.ref=function(){},i.prototype.close=function(){this._clearFn.call(window,this._id)},t.enroll=function(e,t){clearTimeout(e._idleTimeoutId),e._idleTimeout=t},t.unenroll=function(e){clearTimeout(e._idleTimeoutId),e._idleTimeout=-1},t._unrefActive=t.active=function(e){clearTimeout(e._idleTimeoutId);var t=e._idleTimeout;t>=0&&(e._idleTimeoutId=setTimeout(function(){e._onTimeout&&e._onTimeout()},t))},n(165),t.setImmediate=setImmediate,t.clearImmediate=clearImmediate},function(e,t,n){var i=n(0)(n(68),n(231),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(69),n(219),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(70),n(225),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(71),n(226),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(72),n(236),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(73),n(228),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(74),n(233),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(75),n(217),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(76),n(207),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(77),n(211),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(78),n(221),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(80),n(220),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(81),n(232),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(82),n(212),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(83),n(214),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(84),n(235),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(85),n(224),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(86),n(204),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(87),n(216),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(88),n(222),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(89),n(206),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(90),n(210),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(91),n(229),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(92),n(213),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(93),n(218),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(95),n(223),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(96),n(205),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(97),n(234),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(98),n(237),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(99),n(227),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(100),n(230),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(101),n(202),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(102),n(203),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(103),n(208),null,null,null);e.exports=i.exports},function(e,t,n){var i=n(0)(n(104),n(209),null,null,null);e.exports=i.exports},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"timepicker control",class:[e.size,{"is-expanded":e.expanded}]},[!e.isMobile||e.inline?n("b-dropdown",{ref:"dropdown",attrs:{position:e.position,disabled:e.disabled,inline:e.inline}},[e.inline?e._e():n("b-input",e._b({ref:"input",attrs:{slot:"trigger",autocomplete:"off",value:e.formatValue(e.dateSelected),placeholder:e.placeholder,size:e.size,icon:e.icon,"icon-pack":e.iconPack,loading:e.loading,disabled:e.disabled,readonly:e.readonly,rounded:e.rounded},on:{focus:function(t){e.$emit("focus",t)},blur:function(t){e.$emit("blur",t)&&e.checkHtml5Validity()}},nativeOn:{change:function(t){e.onChange(t.target.value)}},slot:"trigger"},"b-input",e.$attrs,!1)),e._v(" "),n("b-dropdown-item",{attrs:{disabled:e.disabled,custom:""}},[n("div",{staticClass:"pagination-list"},[n("b-field",[n("b-select",{attrs:{disabled:e.disabled,placeholder:"00"},nativeOn:{change:function(t){e.onHoursChange(t.target.value)}},model:{value:e.hoursSelected,callback:function(t){e.hoursSelected=t},expression:"hoursSelected"}},e._l(e.hours,function(t){return n("option",{key:t.value,attrs:{disabled:e.isHourDisabled(t.value)},domProps:{value:t.value}},[e._v("\n                            "+e._s(t.label)+"\n                        ")])})),e._v(" "),n("b-select",{attrs:{disabled:e.disabled,placeholder:"00"},nativeOn:{change:function(t){e.onMinutesChange(t.target.value)}},model:{value:e.minutesSelected,callback:function(t){e.minutesSelected=t},expression:"minutesSelected"}},e._l(e.minutes,function(t){return n("option",{key:t.value,attrs:{disabled:e.isMinuteDisabled(t.value)},domProps:{value:t.value}},[e._v("\n                            "+e._s(t.label)+"\n                        ")])})),e._v(" "),e.isHourFormat24?e._e():n("b-select",{attrs:{disabled:e.disabled},nativeOn:{change:function(t){e.onMeridienChange(t.target.value)}},model:{value:e.meridienSelected,callback:function(t){e.meridienSelected=t},expression:"meridienSelected"}},e._l(e.meridiens,function(t){return n("option",{key:t,domProps:{value:t}},[e._v("\n                            "+e._s(t)+"\n                        ")])}))],1)],1),e._v(" "),void 0!==e.$slots.default&&e.$slots.default.length?n("footer",{staticClass:"timepicker-footer"},[e._t("default")],2):e._e()])],1):n("b-input",e._b({ref:"input",attrs:{type:"time",autocomplete:"off",value:e.formatHHMMSS(e.value),placeholder:e.placeholder,size:e.size,icon:e.icon,"icon-pack":e.iconPack,loading:e.loading,max:e.formatHHMMSS(e.maxTime),min:e.formatHHMMSS(e.minTime),disabled:e.disabled,readonly:!1},on:{focus:function(t){e.$emit("focus",t)},blur:function(t){e.$emit("blur",t)&&e.checkHtml5Validity()}},nativeOn:{change:function(t){e.onChangeNativePicker(t)}}},"b-input",e.$attrs,!1))],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{"enter-active-class":e.transition.enter,"leave-active-class":e.transition.leave}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isActive,expression:"isActive"}],staticClass:"toast",class:[e.type,e.position]},[n("div",{domProps:{innerHTML:e._s(e.message)}})])])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"pagination",class:e.rootClasses},[n("a",{staticClass:"pagination-previous",attrs:{role:"button",href:"#",disabled:!e.hasPrev},on:{click:function(t){t.preventDefault(),e.prev(t)}}},[n("b-icon",{attrs:{icon:"chevron-left",both:""}})],1),e._v(" "),n("a",{staticClass:"pagination-next",attrs:{role:"button",href:"#",disabled:!e.hasNext},on:{click:function(t){t.preventDefault(),e.next(t)}}},[n("b-icon",{attrs:{icon:"chevron-right",both:""}})],1),e._v(" "),e.simple?e._e():n("ul",{staticClass:"pagination-list"},[e.hasFirst?n("li",[n("a",{staticClass:"pagination-link",attrs:{role:"button",href:"#"},on:{click:function(t){t.preventDefault(),e.first(t)}}},[e._v("\n                1\n            ")])]):e._e(),e._v(" "),e.hasFirstEllipsis?n("li",[n("span",{staticClass:"pagination-ellipsis"},[e._v("…")])]):e._e(),e._v(" "),e._l(e.pagesInRange,function(t){return n("li",{key:t.number},[n("a",{staticClass:"pagination-link",class:{"is-current":t.isCurrent},attrs:{role:"button",href:"#"},on:{click:function(e){e.preventDefault(),t.click(e)}}},[e._v("\n                "+e._s(t.number)+"\n            ")])])}),e._v(" "),e.hasLastEllipsis?n("li",[n("span",{staticClass:"pagination-ellipsis"},[e._v("…")])]):e._e(),e._v(" "),e.hasLast?n("li",[n("a",{staticClass:"pagination-link",attrs:{role:"button",href:"#"},on:{click:function(t){t.preventDefault(),e.last(t)}}},[e._v("\n                "+e._s(e.pageCount)+"\n            ")])]):e._e()],2),e._v(" "),e.simple?n("small",{staticClass:"info"},[e._v("\n        "+e._s(e.firstItem)+"-"+e._s(e.current*e.perPage)+" / "+e._s(e.total)+"\n    ")]):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{name:e.transitionName}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isActive,expression:"isActive"}],staticClass:"tab-item"},[e._t("default")],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"control"},[n("label",{ref:"label",staticClass:"b-radio radio button",class:[e.newValue===e.nativeValue?e.type:null,e.size],attrs:{disabled:e.disabled,tabindex:!e.disabled&&0},on:{keydown:function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.$refs.label.click()}}},[e._t("default"),e._v(" "),n("input",{directives:[{name:"model",rawName:"v-model",value:e.newValue,expression:"newValue"}],attrs:{type:"radio",disabled:e.disabled,name:e.name},domProps:{value:e.nativeValue,checked:e._q(e.newValue,e.nativeValue)},on:{change:function(t){e.newValue=e.nativeValue}}})],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"dropdown",class:e.rootClasses},[e.inline?e._e():n("div",{ref:"trigger",staticClass:"dropdown-trigger",attrs:{role:"button"},on:{click:e.toggle}},[e._t("trigger")],2),e._v(" "),n("transition",{attrs:{name:"fade"}},[e.isMobileModal?n("div",{directives:[{name:"show",rawName:"v-show",value:e.isActive,expression:"isActive"}],staticClass:"background"}):e._e()]),e._v(" "),n("transition",{attrs:{name:"fade"}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isActive||e.hoverable||e.inline,expression:"isActive || hoverable || inline"}],ref:"dropdownMenu",staticClass:"dropdown-menu"},[n("div",{staticClass:"dropdown-content"},[e._t("default")],2)])])],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement;return(e._self._c||t)("span",{class:[e.newType,e.position,e.size,{tooltip:e.active,"is-square":e.square,"is-animated":e.newAnimated,"is-always":e.always,"is-multiline":e.multilined,"is-dashed":e.dashed}],attrs:{"data-label":e.label}},[e._t("default")],2)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("label",{staticClass:"upload control"},[e.dragDrop?n("div",{staticClass:"upload-draggable",class:[e.type,{"is-loading":e.loading,"is-disabled":e.disabled,"is-hovered":e.dragDropFocus}],on:{dragover:function(t){t.preventDefault(),e.updateDragDropFocus(!0)},dragleave:function(t){t.preventDefault(),e.updateDragDropFocus(!1)},dragenter:function(t){t.preventDefault(),e.updateDragDropFocus(!0)},drop:function(t){t.preventDefault(),e.onFileChange(t)}}},[e._t("default")],2):[e._t("default")],e._v(" "),n("input",e._b({ref:"input",attrs:{type:"file",multiple:e.multiple,accept:e.accept,disabled:e.disabled},on:{change:e.onFileChange}},"input",e.$attrs,!1))],2)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"control",class:{"is-expanded":e.expanded,"has-icons-left":e.icon}},[n("span",{staticClass:"select",class:e.spanClasses},[n("select",e._b({directives:[{name:"model",rawName:"v-model",value:e.selected,expression:"selected"}],ref:"select",attrs:{multiple:e.multiple,size:e.nativeSize},on:{blur:function(t){e.$emit("blur",t)&&e.checkHtml5Validity()},focus:function(t){e.$emit("focus",t)},change:function(t){var n=Array.prototype.filter.call(t.target.options,function(e){return e.selected}).map(function(e){return"_value"in e?e._value:e.value});e.selected=t.target.multiple?n:n[0]}}},"select",e.$attrs,!1),[e.placeholder?n("option",{attrs:{selected:"",disabled:"",hidden:""},domProps:{value:null}},[e._v("\n                "+e._s(e.placeholder)+"\n            ")]):e._e(),e._v(" "),e._t("default")],2)]),e._v(" "),e.icon?n("b-icon",{staticClass:"is-left",attrs:{icon:e.icon,pack:e.iconPack,size:e.iconSize}}):e._e()],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return e.separator?n("hr",{staticClass:"dropdown-divider"}):e.custom||e.hasLink?n("div",{class:e.itemClasses,on:{click:e.selectItem}},[e._t("default")],2):n("a",{staticClass:"dropdown-item",class:e.anchorClasses,on:{click:e.selectItem}},[e._t("default")],2)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{name:e.animation}},[e.isActive?n("div",{staticClass:"loading-overlay is-active"},[n("div",{staticClass:"loading-background",on:{click:e.cancel}}),e._v(" "),n("div",{staticClass:"loading-icon"})]):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("label",{ref:"label",staticClass:"switch",class:[e.size,{"is-disabled":e.disabled}],attrs:{disabled:e.disabled,tabindex:!e.disabled&&0},on:{keydown:function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.$refs.label.click()},mousedown:function(t){e.isMouseDown=!0},mouseup:function(t){e.isMouseDown=!1},mouseout:function(t){e.isMouseDown=!1},blur:function(t){e.isMouseDown=!1}}},[n("input",{directives:[{name:"model",rawName:"v-model",value:e.newValue,expression:"newValue"}],attrs:{type:"checkbox",name:e.name,disabled:e.disabled,"true-value":e.trueValue,"false-value":e.falseValue},domProps:{checked:Array.isArray(e.newValue)?e._i(e.newValue,null)>-1:e._q(e.newValue,e.trueValue)},on:{change:function(t){var n=e.newValue,i=t.target,r=i.checked?e.trueValue:e.falseValue;if(Array.isArray(n)){var a=e._i(n,null);i.checked?a<0&&(e.newValue=n.concat([null])):a>-1&&(e.newValue=n.slice(0,a).concat(n.slice(a+1)))}else e.newValue=r}}}),e._v(" "),n("span",{staticClass:"check",class:[{"is-elastic":e.isMouseDown},e.type]}),e._v(" "),n("span",{staticClass:"control-label"},[e._t("default")],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{name:"fade"}},[e.isActive?n("article",{staticClass:"message",class:[e.type,e.size]},[e.title?n("header",{staticClass:"message-header"},[n("p",[e._v(e._s(e.title))]),e._v(" "),e.closable?n("button",{staticClass:"delete",attrs:{type:"button"},on:{click:e.close}}):e._e()]):e._e(),e._v(" "),n("section",{staticClass:"message-body"},[n("div",{staticClass:"media"},[e.icon&&e.hasIcon?n("div",{staticClass:"media-left"},[n("b-icon",{class:e.type,attrs:{icon:e.icon,both:"",size:e.newIconSize}})],1):e._e(),e._v(" "),n("div",{staticClass:"media-content"},[e._t("default")],2)])])]):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return e.visible?n("td",{class:e.rootClasses,attrs:{"data-label":e.label}},[n("span",[e._t("default")],2)]):e._e()},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("nav",{staticClass:"panel"},[n("div",{staticClass:"panel-heading",class:{"is-collapsible":e.collapsible},on:{click:e.toggle}},[e.header?n("span",{domProps:{innerHTML:e._s(e.header)}}):e._t("header"),e._v(" "),e.collapsible?n("b-icon",{staticClass:"is-pulled-right",attrs:{both:"",icon:e.isOpen?"menu-up":"menu-down"}}):e._e()],2),e._v(" "),n("transition",{attrs:{name:e.animation}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isOpen,expression:"isOpen"}],staticClass:"panel-content",class:{"panel-block":!e.hasCustomTemplate}},[e.content?n("div",{domProps:{innerHTML:e._s(e.content)}}):e._t("default")],2)])],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{name:e.animation}},[e.isActive?n("div",{staticClass:"dialog modal is-active",class:e.size},[n("div",{staticClass:"modal-background",on:{click:function(t){e.cancel("outside")}}}),e._v(" "),n("div",{staticClass:"modal-card animation-content"},[e.title?n("header",{staticClass:"modal-card-head"},[n("p",{staticClass:"modal-card-title"},[e._v(e._s(e.title))])]):e._e(),e._v(" "),n("section",{staticClass:"modal-card-body",class:{"is-titleless":!e.title,"is-flex":e.hasIcon}},[n("div",{staticClass:"media"},[e.hasIcon?n("div",{staticClass:"media-left"},[n("b-icon",{attrs:{icon:e.icon?e.icon:e.iconByType,pack:e.iconPack,type:e.type,both:!e.icon,size:"is-large"}})],1):e._e(),e._v(" "),n("div",{staticClass:"media-content"},[n("p",{domProps:{innerHTML:e._s(e.message)}}),e._v(" "),e.hasInput?n("div",{staticClass:"field"},[n("div",{staticClass:"control"},[n("input",e._b({directives:[{name:"model",rawName:"v-model",value:e.prompt,expression:"prompt"}],ref:"input",staticClass:"input",class:{"is-danger":e.validationMessage},attrs:{required:""},domProps:{value:e.prompt},on:{keyup:function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key))return null;e.confirm(t)},input:function(t){t.target.composing||(e.prompt=t.target.value)}}},"input",e.inputAttrs,!1))]),e._v(" "),n("p",{staticClass:"help is-danger"},[e._v(e._s(e.validationMessage))])]):e._e()])])]),e._v(" "),n("footer",{staticClass:"modal-card-foot"},[e.showCancel?n("button",{ref:"cancelButton",staticClass:"button is-light",on:{click:function(t){e.cancel("button")}}},[e._v("\n                    "+e._s(e.cancelText)+"\n                ")]):e._e(),e._v(" "),n("button",{ref:"confirmButton",staticClass:"button",class:e.type,on:{click:e.confirm}},[e._v("\n                    "+e._s(e.confirmText)+"\n                ")])])])]):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"b-table",class:{"is-loading":e.loading}},[e.mobileCards&&e.hasSortablenewColumns?n("b-table-mobile-sort",{attrs:{"current-sort-column":e.currentSortColumn,"is-asc":e.isAsc,columns:e.newColumns},on:{sort:function(t){return e.sort(t)}}}):e._e(),e._v(" "),n("div",{staticClass:"table-wrapper"},[n("table",{staticClass:"table",class:e.tableClasses,attrs:{tabindex:!!e.focusable&&0},on:{keydown:[function(t){if(!("button"in t)&&e._k(t.keyCode,"up",38,t.key))return null;t.preventDefault(),e.pressedArrow(-1)},function(t){if(!("button"in t)&&e._k(t.keyCode,"down",40,t.key))return null;t.preventDefault(),e.pressedArrow(1)}]}},[e.newColumns.length?n("thead",[n("tr",[e.detailed?n("th",{attrs:{width:"40px"}}):e._e(),e._v(" "),e.checkable?n("th",{staticClass:"checkbox-cell"},[n("b-checkbox",{attrs:{value:e.isAllChecked},nativeOn:{change:function(t){e.checkAll(t)}}})],1):e._e(),e._v(" "),e._l(e.newColumns,function(t,i){return t.visible||void 0===t.visible?n("th",{key:i,class:{"is-current-sort":e.currentSortColumn===t,"is-sortable":t.sortable},style:{width:t.width+"px"},on:{click:function(n){n.stopPropagation(),e.sort(t)}}},[n("div",{staticClass:"th-wrap",class:{"is-numeric":t.numeric,"is-centered":t.centered}},[e.$scopedSlots.header?e._t("header",null,{column:t,index:i}):[e._v(e._s(t.label))],e._v(" "),n("b-icon",{directives:[{name:"show",rawName:"v-show",value:e.currentSortColumn===t,expression:"currentSortColumn === column"}],class:{"is-desc":!e.isAsc},attrs:{icon:"arrow-up",both:"",size:"is-small"}})],2)]):e._e()})],2)]):e._e(),e._v(" "),e.visibleData.length?n("tbody",[e._l(e.visibleData,function(t,i){return[n("tr",{key:i,class:[e.rowClass(t,i),{"is-selected":t===e.selected,"is-checked":e.isRowChecked(t)}],on:{click:function(n){e.selectRow(t)},dblclick:function(n){e.$emit("dblclick",t)}}},[e.detailed?n("td",[n("a",{attrs:{role:"button"},on:{click:function(n){n.stopPropagation(),e.toggleDetails(t)}}},[n("b-icon",{class:{"is-expanded":e.isVisibleDetailRow(t)},attrs:{icon:"chevron-right",both:""}})],1)]):e._e(),e._v(" "),e.checkable?n("td",{staticClass:"checkbox-cell"},[n("b-checkbox",{attrs:{value:e.isRowChecked(t)},nativeOn:{change:function(n){e.checkRow(t)}}})],1):e._e(),e._v(" "),e.$scopedSlots.default?e._t("default",null,{row:t,index:i}):e._l(e.newColumns,function(i){return n("BTableColumn",e._b({key:i.field,attrs:{internal:""}},"BTableColumn",i,!1),[i.renderHtml?n("span",{domProps:{innerHTML:e._s(e.getValueByPath(t,i.field))}}):[e._v("\n                                    "+e._s(e.getValueByPath(t,i.field))+"\n                                ")]],2)})],2),e._v(" "),e.detailed&&e.isVisibleDetailRow(t)?n("tr",{staticClass:"detail"},[n("td",{attrs:{colspan:e.columnCount}},[n("div",{staticClass:"detail-container"},[e._t("detail",null,{row:t,index:i})],2)])]):e._e()]})],2):n("tbody",[n("tr",{staticClass:"is-empty"},[n("td",{attrs:{colspan:e.columnCount}},[e._t("empty")],2)])]),e._v(" "),void 0!==e.$slots.footer?n("tfoot",[n("tr",{staticClass:"table-footer"},[e.hasCustomFooterSlot()?e._t("footer"):n("th",{attrs:{colspan:e.columnCount}},[e._t("footer")],2)],2)]):e._e()])]),e._v(" "),e.checkable||e.paginated?n("div",{staticClass:"level"},[n("div",{staticClass:"level-left"},[e._t("bottom-left")],2),e._v(" "),n("div",{staticClass:"level-right"},[e.paginated?n("div",{staticClass:"level-item"},[n("b-pagination",{attrs:{total:e.newDataTotal,"per-page":e.perPage,simple:e.paginationSimple,size:e.paginationSize,current:e.newCurrentPage},on:{change:e.pageChanged}})],1):e._e()])]):e._e()],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("label",{ref:"label",staticClass:"b-checkbox checkbox",class:[e.size,{"is-disabled":e.disabled}],attrs:{disabled:e.disabled,tabindex:!e.disabled&&0},on:{keydown:function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.$refs.label.click()}}},[n("input",{directives:[{name:"model",rawName:"v-model",value:e.newValue,expression:"newValue"}],attrs:{type:"checkbox",disabled:e.disabled,name:e.name,"true-value":e.trueValue,"false-value":e.falseValue},domProps:{value:e.nativeValue,checked:Array.isArray(e.newValue)?e._i(e.newValue,e.nativeValue)>-1:e._q(e.newValue,e.trueValue)},on:{change:function(t){var n=e.newValue,i=t.target,r=i.checked?e.trueValue:e.falseValue;if(Array.isArray(n)){var a=e.nativeValue,o=e._i(n,a);i.checked?o<0&&(e.newValue=n.concat([a])):o>-1&&(e.newValue=n.slice(0,o).concat(n.slice(o+1)))}else e.newValue=r}}}),e._v(" "),n("span",{staticClass:"check"}),e._v(" "),n("span",{staticClass:"control-label"},[e._t("default")],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("span",{staticClass:"icon",class:[e.newType,e.size]},[n("i",{class:[e.newPack,e.newIcon,e.newCustomSize,e.customClass]})])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"field",class:e.rootClasses},[e.horizontal?n("div",{staticClass:"field-label is-normal"},[e.label?n("label",{staticClass:"label",attrs:{for:e.labelFor}},[e._v("\n            "+e._s(e.label)+"\n        ")]):e._e()]):[e.label?n("label",{staticClass:"label",attrs:{for:e.labelFor}},[e._v("\n            "+e._s(e.label)+"\n        ")]):e._e()],e._v(" "),e.horizontal?n("b-field-body",{attrs:{message:e.newMessage?e.formattedMessage:"",type:e.newMessage?e.newType:""}},[e._t("default")],2):[e._t("default")],e._v(" "),e.newMessage&&!e.horizontal?n("p",{staticClass:"help",class:e.newType,domProps:{innerHTML:e._s(e.formattedMessage)}}):e._e()],2)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("label",{ref:"label",staticClass:"b-radio radio",class:[e.size,{"is-disabled":e.disabled}],attrs:{disabled:e.disabled,tabindex:!e.disabled&&0},on:{keydown:function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.$refs.label.click()}}},[n("input",{directives:[{name:"model",rawName:"v-model",value:e.newValue,expression:"newValue"}],attrs:{type:"radio",disabled:e.disabled,name:e.name},domProps:{value:e.nativeValue,checked:e._q(e.newValue,e.nativeValue)},on:{change:function(t){e.newValue=e.nativeValue}}}),e._v(" "),n("span",{staticClass:"check"}),e._v(" "),n("span",{staticClass:"control-label"},[e._t("default")],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"field table-mobile-sort"},[n("div",{staticClass:"field has-addons"},[n("b-select",{attrs:{expanded:""},model:{value:e.mobileSort,callback:function(t){e.mobileSort=t},expression:"mobileSort"}},e._l(e.columns,function(t,i){return t.sortable?n("option",{key:i,domProps:{value:t}},[e._v("\n                "+e._s(t.label)+"\n            ")]):e._e()})),e._v(" "),n("div",{staticClass:"control"},[n("button",{staticClass:"button is-primary",on:{click:e.sort}},[n("b-icon",{directives:[{name:"show",rawName:"v-show",value:e.currentSortColumn===e.mobileSort,expression:"currentSortColumn === mobileSort"}],class:{"is-desc":!e.isAsc},attrs:{icon:"arrow-up",size:"is-small",both:""}})],1)])],1)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{name:"fade"}},[e.isActive?n("article",{staticClass:"notification",class:e.type},[e.closable?n("button",{staticClass:"delete",attrs:{type:"button"},on:{click:e.close}}):e._e(),e._v(" "),n("div",{staticClass:"media"},[e.icon&&e.hasIcon?n("div",{staticClass:"media-left"},[n("b-icon",{attrs:{icon:e.icon,both:"",size:"is-large"}})],1):e._e(),e._v(" "),n("div",{staticClass:"media-content"},[e._t("default")],2)])]):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"control"},[n("label",{ref:"label",staticClass:"b-checkbox checkbox button",class:[e.checked?e.type:null,e.size,{"is-disabled":e.disabled}],attrs:{disabled:e.disabled,tabindex:!e.disabled&&0},on:{keydown:function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.$refs.label.click()}}},[e._t("default"),e._v(" "),n("input",{directives:[{name:"model",rawName:"v-model",value:e.newValue,expression:"newValue"}],attrs:{type:"checkbox",disabled:e.disabled,name:e.name},domProps:{value:e.nativeValue,checked:Array.isArray(e.newValue)?e._i(e.newValue,e.nativeValue)>-1:e.newValue},on:{change:function(t){var n=e.newValue,i=t.target,r=!!i.checked;if(Array.isArray(n)){var a=e.nativeValue,o=e._i(n,a);i.checked?o<0&&(e.newValue=n.concat([a])):o>-1&&(e.newValue=n.slice(0,o).concat(n.slice(o+1)))}else e.newValue=r}}})],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"collapse"},[n("div",{staticClass:"collapse-trigger",on:{click:e.toggle}},[e._t("trigger",null,{open:e.isOpen})],2),e._v(" "),n("transition",{attrs:{name:e.animation}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isOpen,expression:"isOpen"}],staticClass:"collapse-content"},[e._t("default")],2)])],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement;return(e._self._c||t)("div",{staticClass:"tags",class:{"has-addons":e.attached}},[e._t("default")],2)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("section",{staticClass:"datepicker-table"},[n("header",{staticClass:"datepicker-header"},e._l(e.visibleDayNames,function(t){return n("div",{key:t,staticClass:"datepicker-cell"},[e._v("\n            "+e._s(t)+"\n        ")])})),e._v(" "),n("div",{staticClass:"datepicker-body",class:{"has-events":e.hasEvents}},e._l(e.weeksInThisMonth(e.focused.month,e.focused.year),function(t,i){return n("b-datepicker-table-row",{key:i,attrs:{"selected-date":e.value,week:t,month:e.focused.month,"min-date":e.minDate,"max-date":e.maxDate,disabled:e.disabled,"unselectable-dates":e.unselectableDates,"unselectable-days-of-week":e.unselectableDaysOfWeek,events:e.eventsInThisWeek(t,i),indicators:e.indicators},on:{select:e.updateSelectedDate}})}))])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{"enter-active-class":e.transition.enter,"leave-active-class":e.transition.leave}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isActive,expression:"isActive"}],staticClass:"snackbar",class:e.position},[n("p",{staticClass:"text"},[e._v(e._s(e.message))]),e._v(" "),e.actionText?n("div",{staticClass:"action",class:e.type,on:{click:e.action}},[n("button",{staticClass:"button is-dark"},[e._v(e._s(e.actionText))])]):e._e()])])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"taginput control",class:[e.size,e.rootClasses]},[n("div",{staticClass:"taginput-container",class:[e.statusType,e.size,e.containerClasses],attrs:{disabled:e.disabled},on:{click:function(t){e.hasInput&&e.focus(t)}}},[e._l(e.tags,function(t,i){return n("b-tag",{key:i,attrs:{type:e.type,size:e.size,rounded:e.rounded,attached:e.attached,tabstop:!1,disabled:e.disabled,closable:""},on:{close:function(t){e.removeTag(i)}}},[e._v("\n            "+e._s(e.getNormalizedTagText(t))+"\n        ")])}),e._v(" "),e.hasInput?n("b-autocomplete",e._b({ref:"autocomplete",attrs:{data:e.data,field:e.field,icon:e.icon,"icon-pack":e.iconPack,maxlength:e.maxlength,"has-counter":!1,size:e.size,disabled:e.disabled,loading:e.loading,"keep-first":""},on:{focus:e.onFocus,blur:e.customOnBlur,select:e.onSelect},nativeOn:{keydown:function(t){e.keydown(t)}},model:{value:e.newTag,callback:function(t){e.newTag=t},expression:"newTag"}},"b-autocomplete",e.$attrs,!1)):e._e()],2),e._v(" "),e.maxtags||e.maxlength?n("p",{staticClass:"help counter"},[e.maxlength&&e.valueLength>0?[e._v("\n            "+e._s(e.valueLength)+" / "+e._s(e.maxlength)+"\n        ")]:e.maxtags?[e._v("\n            "+e._s(e.tagsLength)+" / "+e._s(e.maxtags)+"\n        ")]:e._e()],2):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"autocomplete control",class:{size:e.size,"is-expanded":e.expanded}},[n("b-input",e._b({ref:"input",attrs:{size:e.size,loading:e.loading,rounded:e.rounded,icon:e.icon,"icon-pack":e.iconPack,maxlength:e.maxlength,autocomplete:"off"},on:{focus:e.focused,blur:function(t){e.$emit("blur",t)}},nativeOn:{keyup:function(t){if(!("button"in t)&&e._k(t.keyCode,"esc",27,t.key))return null;t.preventDefault(),e.isActive=!1},keydown:[function(t){if(!("button"in t)&&e._k(t.keyCode,"tab",9,t.key))return null;e.tabPressed(t)},function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key))return null;t.preventDefault(),e.enterPressed(t)},function(t){if(!("button"in t)&&e._k(t.keyCode,"up",38,t.key))return null;t.preventDefault(),e.keyArrows("up")},function(t){if(!("button"in t)&&e._k(t.keyCode,"down",40,t.key))return null;t.preventDefault(),e.keyArrows("down")}]},model:{value:e.newValue,callback:function(t){e.newValue=t},expression:"newValue"}},"b-input",e.$attrs,!1)),e._v(" "),n("transition",{attrs:{name:"fade"}},[n("div",{directives:[{name:"show",rawName:"v-show",value:e.isActive&&(e.data.length>0||e.hasEmptySlot),expression:"isActive && (data.length > 0 || hasEmptySlot)"}],ref:"dropdown",staticClass:"dropdown-menu",class:{"is-opened-top":!e.isListInViewportVertically}},[n("div",{staticClass:"dropdown-content"},[e._l(e.data,function(t,i){return n("a",{key:i,staticClass:"dropdown-item",class:{"is-hovered":t===e.hovered},on:{click:function(n){e.setSelected(t)}}},[e.hasDefaultSlot?e._t("default",null,{option:t,index:i}):n("span",{domProps:{innerHTML:e._s(e.getValue(t,!0))}})],2)}),e._v(" "),0===e.data.length?n("div",{staticClass:"dropdown-item is-disabled"},[e._t("empty")],2):e._e()],2)])])],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"control",class:e.rootClasses},["textarea"!==e.type?n("input",e._b({ref:"input",staticClass:"input",class:e.inputClasses,attrs:{type:e.newType,autocomplete:e.newAutocomplete,maxlength:e.maxlength},domProps:{value:e.newValue},on:{input:e.onInput,blur:e.onBlur,focus:e.onFocus}},"input",e.$attrs,!1)):n("textarea",e._b({ref:"textarea",staticClass:"textarea",class:e.inputClasses,attrs:{maxlength:e.maxlength},domProps:{value:e.newValue},on:{input:e.onInput,blur:e.onBlur,focus:e.onFocus}},"textarea",e.$attrs,!1)),e._v(" "),e.icon?n("b-icon",{staticClass:"is-left",attrs:{icon:e.icon,pack:e.iconPack,size:e.iconSize}}):e._e(),e._v(" "),e.loading||!e.passwordReveal&&!e.statusType?e._e():n("b-icon",{staticClass:"is-right",class:{"is-clickable":e.passwordReveal},attrs:{icon:e.passwordReveal?e.passwordVisibleIcon:e.statusTypeIcon,pack:e.iconPack,size:e.iconSize,type:e.passwordReveal?"is-primary":e.statusType,both:""},nativeOn:{click:function(t){e.togglePasswordVisibility(t)}}}),e._v(" "),e.maxlength&&e.hasCounter?n("small",{staticClass:"help counter",class:{"is-invisible":!e.isFocused}},[e._v("\n        "+e._s(e.valueLength)+" / "+e._s(e.maxlength)+"\n    ")]):e._e()],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"datepicker-row"},[e._l(e.week,function(t,i){return[e.selectableDate(t)&&!e.disabled?n("a",{key:i,staticClass:"datepicker-cell",class:[e.classObject(t),{"has-event":e.eventsDateMatch(t)},e.indicators],attrs:{role:"button",href:"#",disabled:e.disabled},on:{click:function(n){n.preventDefault(),e.emitChosenDate(t)},keydown:[function(n){if(!("button"in n)&&e._k(n.keyCode,"enter",13,n.key))return null;n.preventDefault(),e.emitChosenDate(t)},function(n){if(!("button"in n)&&e._k(n.keyCode,"space",32,n.key))return null;n.preventDefault(),e.emitChosenDate(t)}]}},[e._v("\n            "+e._s(t.getDate())+"\n\n            "),e.eventsDateMatch(t)?n("div",{staticClass:"events"},e._l(e.eventsDateMatch(t),function(e,t){return n("div",{key:t,staticClass:"event",class:e.type})})):e._e()]):n("div",{key:i,staticClass:"datepicker-cell",class:e.classObject(t)},[e._v("\n            "+e._s(t.getDate())+"\n        ")])]})],2)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"b-tabs",class:{"is-fullwidth":e.expanded}},[n("nav",{staticClass:"tabs",class:e.navClasses},[n("ul",e._l(e.tabItems,function(t,i){return n("li",{key:i,class:{"is-active":e.newValue===i,"is-disabled":t.disabled}},[n("a",{on:{click:function(t){e.tabClick(i)}}},[t.icon?n("b-icon",{attrs:{icon:t.icon,pack:t.iconPack,size:e.size}}):e._e(),e._v(" "),n("span",[e._v(e._s(t.label))])],1)])}))]),e._v(" "),n("section",{staticClass:"tab-content"},[e._t("default")],2)])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("transition",{attrs:{name:e.animation}},[e.isActive?n("div",{staticClass:"modal is-active"},[n("div",{staticClass:"modal-background",on:{click:function(t){e.cancel("outside")}}}),e._v(" "),n("div",{staticClass:"animation-content",class:{"modal-content":!e.hasModalCard},style:{maxWidth:e.newWidth}},[e.component?n(e.component,e._g(e._b({tag:"component",on:{close:e.close}},"component",e.props,!1),e.events)):e.content?n("div",{domProps:{innerHTML:e._s(e.content)}}):e._t("default")],2),e._v(" "),e.showX?n("button",{staticClass:"modal-close is-large",on:{click:function(t){e.cancel("x")}}}):e._e()]):e._e()])},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",{staticClass:"datepicker control",class:[e.size,{"is-expanded":e.expanded}]},[!e.isMobile||e.inline?n("b-dropdown",{ref:"dropdown",attrs:{position:e.position,disabled:e.disabled,inline:e.inline}},[e.inline?e._e():n("b-input",e._b({ref:"input",attrs:{slot:"trigger",autocomplete:"off",value:e.formatValue(e.dateSelected),placeholder:e.placeholder,size:e.size,icon:e.icon,"icon-pack":e.iconPack,rounded:e.rounded,loading:e.loading,disabled:e.disabled,readonly:e.readonly},on:{focus:function(t){e.$emit("focus",t)},blur:function(t){e.$emit("blur",t)&&e.checkHtml5Validity()}},nativeOn:{change:function(t){e.onChange(t.target.value)}},slot:"trigger"},"b-input",e.$attrs,!1)),e._v(" "),n("b-dropdown-item",{attrs:{disabled:e.disabled,custom:""}},[n("header",{staticClass:"datepicker-header"},[n("div",{staticClass:"pagination field is-centered"},[e.isFirstMonth||e.disabled?e._e():n("a",{staticClass:"pagination-previous",attrs:{role:"button",href:"#",disabled:e.disabled},on:{click:function(t){t.preventDefault(),e.decrementMonth(t)},keydown:[function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key))return null;t.preventDefault(),e.decrementMonth(t)},function(t){if(!("button"in t)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.decrementMonth(t)}]}},[n("b-icon",{attrs:{icon:"chevron-left",pack:e.iconPack,both:"",type:"is-primary is-clickable"}})],1),e._v(" "),n("a",{directives:[{name:"show",rawName:"v-show",value:!e.isLastMonth&&!e.disabled,expression:"!isLastMonth && !disabled"}],staticClass:"pagination-next",attrs:{role:"button",href:"#",disabled:e.disabled},on:{click:function(t){t.preventDefault(),e.incrementMonth(t)},keydown:[function(t){if(!("button"in t)&&e._k(t.keyCode,"enter",13,t.key))return null;t.preventDefault(),e.incrementMonth(t)},function(t){if(!("button"in t)&&e._k(t.keyCode,"space",32,t.key))return null;t.preventDefault(),e.incrementMonth(t)}]}},[n("b-icon",{attrs:{icon:"chevron-right",pack:e.iconPack,both:"",type:"is-primary is-clickable"}})],1),e._v(" "),n("div",{staticClass:"pagination-list"},[n("b-field",[n("b-select",{attrs:{disabled:e.disabled},model:{value:e.focusedDateData.month,callback:function(t){e.$set(e.focusedDateData,"month",t)},expression:"focusedDateData.month"}},e._l(e.monthNames,function(t,i){return n("option",{key:t,domProps:{value:i}},[e._v("\n                                    "+e._s(t)+"\n                                ")])})),e._v(" "),n("b-select",{attrs:{disabled:e.disabled},model:{value:e.focusedDateData.year,callback:function(t){e.$set(e.focusedDateData,"year",t)},expression:"focusedDateData.year"}},e._l(e.listOfYears,function(t){return n("option",{key:t,domProps:{value:t}},[e._v("\n                                    "+e._s(t)+"\n                                ")])}))],1)],1)])]),e._v(" "),n("b-datepicker-table",{attrs:{"day-names":e.dayNames,"month-names":e.monthNames,"first-day-of-week":e.firstDayOfWeek,"min-date":e.minDate,"max-date":e.maxDate,focused:e.focusedDateData,disabled:e.disabled,"unselectable-dates":e.unselectableDates,"unselectable-days-of-week":e.unselectableDaysOfWeek,events:e.events,indicators:e.indicators},on:{close:function(t){e.$refs.dropdown.isActive=!1}},model:{value:e.dateSelected,callback:function(t){e.dateSelected=t},expression:"dateSelected"}}),e._v(" "),void 0!==e.$slots.default&&e.$slots.default.length?n("footer",{staticClass:"datepicker-footer"},[e._t("default")],2):e._e()],1)],1):n("b-input",e._b({ref:"input",attrs:{type:"date",autocomplete:"off",value:e.formatYYYYMMDD(e.value),placeholder:e.placeholder,size:e.size,icon:e.icon,"icon-pack":e.iconPack,loading:e.loading,max:e.formatYYYYMMDD(e.maxDate),min:e.formatYYYYMMDD(e.minDate),disabled:e.disabled,readonly:!1},on:{focus:function(t){e.$emit("focus",t)},blur:function(t){e.$emit("blur",t)&&e.checkHtml5Validity()}},nativeOn:{change:function(t){e.onChangeNativePicker(t)}}},"b-input",e.$attrs,!1))],1)},staticRenderFns:[]}},function(e,t){e.exports={render:function(){var e=this,t=e.$createElement,n=e._self._c||t;return e.attached&&e.closable?n("div",{staticClass:"tags has-addons"},[n("span",{staticClass:"tag",class:[e.type,e.size,{"is-rounded":e.rounded}]},[e._t("default")],2),e._v(" "),n("a",{staticClass:"tag is-delete",class:[e.size,{"is-rounded":e.rounded}],attrs:{role:"button",tabindex:!!e.tabstop&&0,disabled:e.disabled},on:{click:function(t){e.close()},keyup:function(t){if(!("button"in t)&&e._k(t.keyCode,"delete",[8,46],t.key))return null;t.preventDefault(),e.close()}}})]):n("span",{staticClass:"tag",class:[e.type,e.size,{"is-rounded":e.rounded}]},[e._t("default"),e._v(" "),e.closable?n("a",{staticClass:"delete is-small",attrs:{role:"button",disabled:e.disabled,tabindex:!!e.tabstop&&0},on:{click:function(t){e.close()},keyup:function(t){if(!("button"in t)&&e._k(t.keyCode,"delete",[8,46],t.key))return null;t.preventDefault(),e.close()}}}):e._e()],2)},staticRenderFns:[]}},function(e,t,n){e.exports=n(67)}])});
 //# sourceMappingURL=index.js.map
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(94).setImmediate, __webpack_require__(94).clearImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(92).setImmediate, __webpack_require__(92).clearImmediate))
 
 /***/ }),
-/* 97 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
@@ -18692,7 +18664,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 98 */
+/* 96 */
 /***/ (function(module, exports) {
 
 // IE 8- don't enum bug keys
@@ -18702,7 +18674,7 @@ module.exports = (
 
 
 /***/ }),
-/* 99 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var document = __webpack_require__(10).document;
@@ -18710,7 +18682,7 @@ module.exports = document && document.documentElement;
 
 
 /***/ }),
-/* 100 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
@@ -18722,20 +18694,20 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
 
 
 /***/ }),
-/* 101 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(102);
+var LIBRARY = __webpack_require__(100);
 var $export = __webpack_require__(20);
-var redefine = __webpack_require__(319);
+var redefine = __webpack_require__(322);
 var hide = __webpack_require__(21);
 var has = __webpack_require__(44);
 var Iterators = __webpack_require__(32);
-var $iterCreate = __webpack_require__(306);
+var $iterCreate = __webpack_require__(309);
 var setToStringTag = __webpack_require__(54);
-var getPrototypeOf = __webpack_require__(314);
+var getPrototypeOf = __webpack_require__(317);
 var ITERATOR = __webpack_require__(11)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
 var FF_ITERATOR = '@@iterator';
@@ -18799,14 +18771,14 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
 
 
 /***/ }),
-/* 102 */
+/* 100 */
 /***/ (function(module, exports) {
 
 module.exports = true;
 
 
 /***/ }),
-/* 103 */
+/* 101 */
 /***/ (function(module, exports) {
 
 module.exports = function (exec) {
@@ -18819,7 +18791,7 @@ module.exports = function (exec) {
 
 
 /***/ }),
-/* 104 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(16);
@@ -18837,7 +18809,7 @@ module.exports = function (C, x) {
 
 
 /***/ }),
-/* 105 */
+/* 103 */
 /***/ (function(module, exports) {
 
 module.exports = function (bitmap, value) {
@@ -18851,7 +18823,7 @@ module.exports = function (bitmap, value) {
 
 
 /***/ }),
-/* 106 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(10);
@@ -18863,7 +18835,7 @@ module.exports = function (key) {
 
 
 /***/ }),
-/* 107 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
@@ -18878,12 +18850,12 @@ module.exports = function (O, D) {
 
 
 /***/ }),
-/* 108 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx = __webpack_require__(42);
-var invoke = __webpack_require__(303);
-var html = __webpack_require__(99);
+var invoke = __webpack_require__(306);
+var html = __webpack_require__(97);
 var cel = __webpack_require__(51);
 var global = __webpack_require__(10);
 var process = global.process;
@@ -18968,7 +18940,7 @@ module.exports = {
 
 
 /***/ }),
-/* 109 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
@@ -18980,7 +18952,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 110 */
+/* 108 */
 /***/ (function(module, exports) {
 
 var id = 0;
@@ -18991,7 +18963,7 @@ module.exports = function (key) {
 
 
 /***/ }),
-/* 111 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // false -> Array#indexOf
@@ -19020,7 +18992,7 @@ module.exports = function (IS_INCLUDES) {
 
 
 /***/ }),
-/* 112 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var aFunction = __webpack_require__(22);
@@ -19054,7 +19026,7 @@ module.exports = function (that, callbackfn, aLen, memo, isRight) {
 
 
 /***/ }),
-/* 113 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19069,7 +19041,7 @@ module.exports = function (object, index, value) {
 
 
 /***/ }),
-/* 114 */
+/* 112 */
 /***/ (function(module, exports) {
 
 // IE 8- don't enum bug keys
@@ -19079,7 +19051,7 @@ module.exports = (
 
 
 /***/ }),
-/* 115 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
@@ -19093,7 +19065,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 116 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.2 IsArray(argument)
@@ -19104,7 +19076,7 @@ module.exports = Array.isArray || function isArray(arg) {
 
 
 /***/ }),
-/* 117 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // call something on iterator step with safe closing on error
@@ -19122,20 +19094,20 @@ module.exports = function (iterator, fn, value, entries) {
 
 
 /***/ }),
-/* 118 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(120);
-var $export = __webpack_require__(6);
+var LIBRARY = __webpack_require__(118);
+var $export = __webpack_require__(5);
 var redefine = __webpack_require__(38);
 var hide = __webpack_require__(27);
 var has = __webpack_require__(35);
 var Iterators = __webpack_require__(36);
-var $iterCreate = __webpack_require__(342);
+var $iterCreate = __webpack_require__(345);
 var setToStringTag = __webpack_require__(64);
-var getPrototypeOf = __webpack_require__(347);
+var getPrototypeOf = __webpack_require__(350);
 var ITERATOR = __webpack_require__(9)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
 var FF_ITERATOR = '@@iterator';
@@ -19199,7 +19171,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
 
 
 /***/ }),
-/* 119 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ITERATOR = __webpack_require__(9)('iterator');
@@ -19227,14 +19199,14 @@ module.exports = function (exec, skipClosing) {
 
 
 /***/ }),
-/* 120 */
+/* 118 */
 /***/ (function(module, exports) {
 
 module.exports = false;
 
 
 /***/ }),
-/* 121 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19259,12 +19231,12 @@ module.exports.f = function (C) {
 
 
 /***/ }),
-/* 122 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys = __webpack_require__(348);
-var enumBugKeys = __webpack_require__(114);
+var $keys = __webpack_require__(351);
+var enumBugKeys = __webpack_require__(112);
 
 module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
@@ -19272,7 +19244,7 @@ module.exports = Object.keys || function keys(O) {
 
 
 /***/ }),
-/* 123 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19292,7 +19264,7 @@ module.exports = function (KEY) {
 
 
 /***/ }),
-/* 124 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(12);
@@ -19304,11 +19276,11 @@ module.exports = function (key) {
 
 
 /***/ }),
-/* 125 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx = __webpack_require__(25);
-var invoke = __webpack_require__(341);
+var invoke = __webpack_require__(344);
 var html = __webpack_require__(62);
 var cel = __webpack_require__(61);
 var global = __webpack_require__(12);
@@ -19394,7 +19366,7 @@ module.exports = {
 
 
 /***/ }),
-/* 126 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var classof = __webpack_require__(59);
@@ -19408,13 +19380,13 @@ module.exports = __webpack_require__(24).getIteratorMethod = function (it) {
 
 
 /***/ }),
-/* 127 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var addToUnscopables = __webpack_require__(33);
-var step = __webpack_require__(343);
+var step = __webpack_require__(346);
 var Iterators = __webpack_require__(36);
 var toIObject = __webpack_require__(39);
 
@@ -19422,7 +19394,7 @@ var toIObject = __webpack_require__(39);
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = __webpack_require__(118)(Array, 'Array', function (iterated, kind) {
+module.exports = __webpack_require__(116)(Array, 'Array', function (iterated, kind) {
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -19449,15 +19421,15 @@ addToUnscopables('entries');
 
 
 /***/ }),
-/* 128 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $at = __webpack_require__(353)(true);
+var $at = __webpack_require__(356)(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-__webpack_require__(118)(String, 'String', function (iterated) {
+__webpack_require__(116)(String, 'String', function (iterated) {
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
@@ -19473,7 +19445,7 @@ __webpack_require__(118)(String, 'String', function (iterated) {
 
 
 /***/ }),
-/* 129 */
+/* 127 */
 /***/ (function(module, exports) {
 
 var ENTITIES = [['Aacute', [193]], ['aacute', [225]], ['Abreve', [258]], ['abreve', [259]], ['ac', [8766]], ['acd', [8767]], ['acE', [8766, 819]], ['Acirc', [194]], ['acirc', [226]], ['acute', [180]], ['Acy', [1040]], ['acy', [1072]], ['AElig', [198]], ['aelig', [230]], ['af', [8289]], ['Afr', [120068]], ['afr', [120094]], ['Agrave', [192]], ['agrave', [224]], ['alefsym', [8501]], ['aleph', [8501]], ['Alpha', [913]], ['alpha', [945]], ['Amacr', [256]], ['amacr', [257]], ['amalg', [10815]], ['amp', [38]], ['AMP', [38]], ['andand', [10837]], ['And', [10835]], ['and', [8743]], ['andd', [10844]], ['andslope', [10840]], ['andv', [10842]], ['ang', [8736]], ['ange', [10660]], ['angle', [8736]], ['angmsdaa', [10664]], ['angmsdab', [10665]], ['angmsdac', [10666]], ['angmsdad', [10667]], ['angmsdae', [10668]], ['angmsdaf', [10669]], ['angmsdag', [10670]], ['angmsdah', [10671]], ['angmsd', [8737]], ['angrt', [8735]], ['angrtvb', [8894]], ['angrtvbd', [10653]], ['angsph', [8738]], ['angst', [197]], ['angzarr', [9084]], ['Aogon', [260]], ['aogon', [261]], ['Aopf', [120120]], ['aopf', [120146]], ['apacir', [10863]], ['ap', [8776]], ['apE', [10864]], ['ape', [8778]], ['apid', [8779]], ['apos', [39]], ['ApplyFunction', [8289]], ['approx', [8776]], ['approxeq', [8778]], ['Aring', [197]], ['aring', [229]], ['Ascr', [119964]], ['ascr', [119990]], ['Assign', [8788]], ['ast', [42]], ['asymp', [8776]], ['asympeq', [8781]], ['Atilde', [195]], ['atilde', [227]], ['Auml', [196]], ['auml', [228]], ['awconint', [8755]], ['awint', [10769]], ['backcong', [8780]], ['backepsilon', [1014]], ['backprime', [8245]], ['backsim', [8765]], ['backsimeq', [8909]], ['Backslash', [8726]], ['Barv', [10983]], ['barvee', [8893]], ['barwed', [8965]], ['Barwed', [8966]], ['barwedge', [8965]], ['bbrk', [9141]], ['bbrktbrk', [9142]], ['bcong', [8780]], ['Bcy', [1041]], ['bcy', [1073]], ['bdquo', [8222]], ['becaus', [8757]], ['because', [8757]], ['Because', [8757]], ['bemptyv', [10672]], ['bepsi', [1014]], ['bernou', [8492]], ['Bernoullis', [8492]], ['Beta', [914]], ['beta', [946]], ['beth', [8502]], ['between', [8812]], ['Bfr', [120069]], ['bfr', [120095]], ['bigcap', [8898]], ['bigcirc', [9711]], ['bigcup', [8899]], ['bigodot', [10752]], ['bigoplus', [10753]], ['bigotimes', [10754]], ['bigsqcup', [10758]], ['bigstar', [9733]], ['bigtriangledown', [9661]], ['bigtriangleup', [9651]], ['biguplus', [10756]], ['bigvee', [8897]], ['bigwedge', [8896]], ['bkarow', [10509]], ['blacklozenge', [10731]], ['blacksquare', [9642]], ['blacktriangle', [9652]], ['blacktriangledown', [9662]], ['blacktriangleleft', [9666]], ['blacktriangleright', [9656]], ['blank', [9251]], ['blk12', [9618]], ['blk14', [9617]], ['blk34', [9619]], ['block', [9608]], ['bne', [61, 8421]], ['bnequiv', [8801, 8421]], ['bNot', [10989]], ['bnot', [8976]], ['Bopf', [120121]], ['bopf', [120147]], ['bot', [8869]], ['bottom', [8869]], ['bowtie', [8904]], ['boxbox', [10697]], ['boxdl', [9488]], ['boxdL', [9557]], ['boxDl', [9558]], ['boxDL', [9559]], ['boxdr', [9484]], ['boxdR', [9554]], ['boxDr', [9555]], ['boxDR', [9556]], ['boxh', [9472]], ['boxH', [9552]], ['boxhd', [9516]], ['boxHd', [9572]], ['boxhD', [9573]], ['boxHD', [9574]], ['boxhu', [9524]], ['boxHu', [9575]], ['boxhU', [9576]], ['boxHU', [9577]], ['boxminus', [8863]], ['boxplus', [8862]], ['boxtimes', [8864]], ['boxul', [9496]], ['boxuL', [9563]], ['boxUl', [9564]], ['boxUL', [9565]], ['boxur', [9492]], ['boxuR', [9560]], ['boxUr', [9561]], ['boxUR', [9562]], ['boxv', [9474]], ['boxV', [9553]], ['boxvh', [9532]], ['boxvH', [9578]], ['boxVh', [9579]], ['boxVH', [9580]], ['boxvl', [9508]], ['boxvL', [9569]], ['boxVl', [9570]], ['boxVL', [9571]], ['boxvr', [9500]], ['boxvR', [9566]], ['boxVr', [9567]], ['boxVR', [9568]], ['bprime', [8245]], ['breve', [728]], ['Breve', [728]], ['brvbar', [166]], ['bscr', [119991]], ['Bscr', [8492]], ['bsemi', [8271]], ['bsim', [8765]], ['bsime', [8909]], ['bsolb', [10693]], ['bsol', [92]], ['bsolhsub', [10184]], ['bull', [8226]], ['bullet', [8226]], ['bump', [8782]], ['bumpE', [10926]], ['bumpe', [8783]], ['Bumpeq', [8782]], ['bumpeq', [8783]], ['Cacute', [262]], ['cacute', [263]], ['capand', [10820]], ['capbrcup', [10825]], ['capcap', [10827]], ['cap', [8745]], ['Cap', [8914]], ['capcup', [10823]], ['capdot', [10816]], ['CapitalDifferentialD', [8517]], ['caps', [8745, 65024]], ['caret', [8257]], ['caron', [711]], ['Cayleys', [8493]], ['ccaps', [10829]], ['Ccaron', [268]], ['ccaron', [269]], ['Ccedil', [199]], ['ccedil', [231]], ['Ccirc', [264]], ['ccirc', [265]], ['Cconint', [8752]], ['ccups', [10828]], ['ccupssm', [10832]], ['Cdot', [266]], ['cdot', [267]], ['cedil', [184]], ['Cedilla', [184]], ['cemptyv', [10674]], ['cent', [162]], ['centerdot', [183]], ['CenterDot', [183]], ['cfr', [120096]], ['Cfr', [8493]], ['CHcy', [1063]], ['chcy', [1095]], ['check', [10003]], ['checkmark', [10003]], ['Chi', [935]], ['chi', [967]], ['circ', [710]], ['circeq', [8791]], ['circlearrowleft', [8634]], ['circlearrowright', [8635]], ['circledast', [8859]], ['circledcirc', [8858]], ['circleddash', [8861]], ['CircleDot', [8857]], ['circledR', [174]], ['circledS', [9416]], ['CircleMinus', [8854]], ['CirclePlus', [8853]], ['CircleTimes', [8855]], ['cir', [9675]], ['cirE', [10691]], ['cire', [8791]], ['cirfnint', [10768]], ['cirmid', [10991]], ['cirscir', [10690]], ['ClockwiseContourIntegral', [8754]], ['clubs', [9827]], ['clubsuit', [9827]], ['colon', [58]], ['Colon', [8759]], ['Colone', [10868]], ['colone', [8788]], ['coloneq', [8788]], ['comma', [44]], ['commat', [64]], ['comp', [8705]], ['compfn', [8728]], ['complement', [8705]], ['complexes', [8450]], ['cong', [8773]], ['congdot', [10861]], ['Congruent', [8801]], ['conint', [8750]], ['Conint', [8751]], ['ContourIntegral', [8750]], ['copf', [120148]], ['Copf', [8450]], ['coprod', [8720]], ['Coproduct', [8720]], ['copy', [169]], ['COPY', [169]], ['copysr', [8471]], ['CounterClockwiseContourIntegral', [8755]], ['crarr', [8629]], ['cross', [10007]], ['Cross', [10799]], ['Cscr', [119966]], ['cscr', [119992]], ['csub', [10959]], ['csube', [10961]], ['csup', [10960]], ['csupe', [10962]], ['ctdot', [8943]], ['cudarrl', [10552]], ['cudarrr', [10549]], ['cuepr', [8926]], ['cuesc', [8927]], ['cularr', [8630]], ['cularrp', [10557]], ['cupbrcap', [10824]], ['cupcap', [10822]], ['CupCap', [8781]], ['cup', [8746]], ['Cup', [8915]], ['cupcup', [10826]], ['cupdot', [8845]], ['cupor', [10821]], ['cups', [8746, 65024]], ['curarr', [8631]], ['curarrm', [10556]], ['curlyeqprec', [8926]], ['curlyeqsucc', [8927]], ['curlyvee', [8910]], ['curlywedge', [8911]], ['curren', [164]], ['curvearrowleft', [8630]], ['curvearrowright', [8631]], ['cuvee', [8910]], ['cuwed', [8911]], ['cwconint', [8754]], ['cwint', [8753]], ['cylcty', [9005]], ['dagger', [8224]], ['Dagger', [8225]], ['daleth', [8504]], ['darr', [8595]], ['Darr', [8609]], ['dArr', [8659]], ['dash', [8208]], ['Dashv', [10980]], ['dashv', [8867]], ['dbkarow', [10511]], ['dblac', [733]], ['Dcaron', [270]], ['dcaron', [271]], ['Dcy', [1044]], ['dcy', [1076]], ['ddagger', [8225]], ['ddarr', [8650]], ['DD', [8517]], ['dd', [8518]], ['DDotrahd', [10513]], ['ddotseq', [10871]], ['deg', [176]], ['Del', [8711]], ['Delta', [916]], ['delta', [948]], ['demptyv', [10673]], ['dfisht', [10623]], ['Dfr', [120071]], ['dfr', [120097]], ['dHar', [10597]], ['dharl', [8643]], ['dharr', [8642]], ['DiacriticalAcute', [180]], ['DiacriticalDot', [729]], ['DiacriticalDoubleAcute', [733]], ['DiacriticalGrave', [96]], ['DiacriticalTilde', [732]], ['diam', [8900]], ['diamond', [8900]], ['Diamond', [8900]], ['diamondsuit', [9830]], ['diams', [9830]], ['die', [168]], ['DifferentialD', [8518]], ['digamma', [989]], ['disin', [8946]], ['div', [247]], ['divide', [247]], ['divideontimes', [8903]], ['divonx', [8903]], ['DJcy', [1026]], ['djcy', [1106]], ['dlcorn', [8990]], ['dlcrop', [8973]], ['dollar', [36]], ['Dopf', [120123]], ['dopf', [120149]], ['Dot', [168]], ['dot', [729]], ['DotDot', [8412]], ['doteq', [8784]], ['doteqdot', [8785]], ['DotEqual', [8784]], ['dotminus', [8760]], ['dotplus', [8724]], ['dotsquare', [8865]], ['doublebarwedge', [8966]], ['DoubleContourIntegral', [8751]], ['DoubleDot', [168]], ['DoubleDownArrow', [8659]], ['DoubleLeftArrow', [8656]], ['DoubleLeftRightArrow', [8660]], ['DoubleLeftTee', [10980]], ['DoubleLongLeftArrow', [10232]], ['DoubleLongLeftRightArrow', [10234]], ['DoubleLongRightArrow', [10233]], ['DoubleRightArrow', [8658]], ['DoubleRightTee', [8872]], ['DoubleUpArrow', [8657]], ['DoubleUpDownArrow', [8661]], ['DoubleVerticalBar', [8741]], ['DownArrowBar', [10515]], ['downarrow', [8595]], ['DownArrow', [8595]], ['Downarrow', [8659]], ['DownArrowUpArrow', [8693]], ['DownBreve', [785]], ['downdownarrows', [8650]], ['downharpoonleft', [8643]], ['downharpoonright', [8642]], ['DownLeftRightVector', [10576]], ['DownLeftTeeVector', [10590]], ['DownLeftVectorBar', [10582]], ['DownLeftVector', [8637]], ['DownRightTeeVector', [10591]], ['DownRightVectorBar', [10583]], ['DownRightVector', [8641]], ['DownTeeArrow', [8615]], ['DownTee', [8868]], ['drbkarow', [10512]], ['drcorn', [8991]], ['drcrop', [8972]], ['Dscr', [119967]], ['dscr', [119993]], ['DScy', [1029]], ['dscy', [1109]], ['dsol', [10742]], ['Dstrok', [272]], ['dstrok', [273]], ['dtdot', [8945]], ['dtri', [9663]], ['dtrif', [9662]], ['duarr', [8693]], ['duhar', [10607]], ['dwangle', [10662]], ['DZcy', [1039]], ['dzcy', [1119]], ['dzigrarr', [10239]], ['Eacute', [201]], ['eacute', [233]], ['easter', [10862]], ['Ecaron', [282]], ['ecaron', [283]], ['Ecirc', [202]], ['ecirc', [234]], ['ecir', [8790]], ['ecolon', [8789]], ['Ecy', [1069]], ['ecy', [1101]], ['eDDot', [10871]], ['Edot', [278]], ['edot', [279]], ['eDot', [8785]], ['ee', [8519]], ['efDot', [8786]], ['Efr', [120072]], ['efr', [120098]], ['eg', [10906]], ['Egrave', [200]], ['egrave', [232]], ['egs', [10902]], ['egsdot', [10904]], ['el', [10905]], ['Element', [8712]], ['elinters', [9191]], ['ell', [8467]], ['els', [10901]], ['elsdot', [10903]], ['Emacr', [274]], ['emacr', [275]], ['empty', [8709]], ['emptyset', [8709]], ['EmptySmallSquare', [9723]], ['emptyv', [8709]], ['EmptyVerySmallSquare', [9643]], ['emsp13', [8196]], ['emsp14', [8197]], ['emsp', [8195]], ['ENG', [330]], ['eng', [331]], ['ensp', [8194]], ['Eogon', [280]], ['eogon', [281]], ['Eopf', [120124]], ['eopf', [120150]], ['epar', [8917]], ['eparsl', [10723]], ['eplus', [10865]], ['epsi', [949]], ['Epsilon', [917]], ['epsilon', [949]], ['epsiv', [1013]], ['eqcirc', [8790]], ['eqcolon', [8789]], ['eqsim', [8770]], ['eqslantgtr', [10902]], ['eqslantless', [10901]], ['Equal', [10869]], ['equals', [61]], ['EqualTilde', [8770]], ['equest', [8799]], ['Equilibrium', [8652]], ['equiv', [8801]], ['equivDD', [10872]], ['eqvparsl', [10725]], ['erarr', [10609]], ['erDot', [8787]], ['escr', [8495]], ['Escr', [8496]], ['esdot', [8784]], ['Esim', [10867]], ['esim', [8770]], ['Eta', [919]], ['eta', [951]], ['ETH', [208]], ['eth', [240]], ['Euml', [203]], ['euml', [235]], ['euro', [8364]], ['excl', [33]], ['exist', [8707]], ['Exists', [8707]], ['expectation', [8496]], ['exponentiale', [8519]], ['ExponentialE', [8519]], ['fallingdotseq', [8786]], ['Fcy', [1060]], ['fcy', [1092]], ['female', [9792]], ['ffilig', [64259]], ['fflig', [64256]], ['ffllig', [64260]], ['Ffr', [120073]], ['ffr', [120099]], ['filig', [64257]], ['FilledSmallSquare', [9724]], ['FilledVerySmallSquare', [9642]], ['fjlig', [102, 106]], ['flat', [9837]], ['fllig', [64258]], ['fltns', [9649]], ['fnof', [402]], ['Fopf', [120125]], ['fopf', [120151]], ['forall', [8704]], ['ForAll', [8704]], ['fork', [8916]], ['forkv', [10969]], ['Fouriertrf', [8497]], ['fpartint', [10765]], ['frac12', [189]], ['frac13', [8531]], ['frac14', [188]], ['frac15', [8533]], ['frac16', [8537]], ['frac18', [8539]], ['frac23', [8532]], ['frac25', [8534]], ['frac34', [190]], ['frac35', [8535]], ['frac38', [8540]], ['frac45', [8536]], ['frac56', [8538]], ['frac58', [8541]], ['frac78', [8542]], ['frasl', [8260]], ['frown', [8994]], ['fscr', [119995]], ['Fscr', [8497]], ['gacute', [501]], ['Gamma', [915]], ['gamma', [947]], ['Gammad', [988]], ['gammad', [989]], ['gap', [10886]], ['Gbreve', [286]], ['gbreve', [287]], ['Gcedil', [290]], ['Gcirc', [284]], ['gcirc', [285]], ['Gcy', [1043]], ['gcy', [1075]], ['Gdot', [288]], ['gdot', [289]], ['ge', [8805]], ['gE', [8807]], ['gEl', [10892]], ['gel', [8923]], ['geq', [8805]], ['geqq', [8807]], ['geqslant', [10878]], ['gescc', [10921]], ['ges', [10878]], ['gesdot', [10880]], ['gesdoto', [10882]], ['gesdotol', [10884]], ['gesl', [8923, 65024]], ['gesles', [10900]], ['Gfr', [120074]], ['gfr', [120100]], ['gg', [8811]], ['Gg', [8921]], ['ggg', [8921]], ['gimel', [8503]], ['GJcy', [1027]], ['gjcy', [1107]], ['gla', [10917]], ['gl', [8823]], ['glE', [10898]], ['glj', [10916]], ['gnap', [10890]], ['gnapprox', [10890]], ['gne', [10888]], ['gnE', [8809]], ['gneq', [10888]], ['gneqq', [8809]], ['gnsim', [8935]], ['Gopf', [120126]], ['gopf', [120152]], ['grave', [96]], ['GreaterEqual', [8805]], ['GreaterEqualLess', [8923]], ['GreaterFullEqual', [8807]], ['GreaterGreater', [10914]], ['GreaterLess', [8823]], ['GreaterSlantEqual', [10878]], ['GreaterTilde', [8819]], ['Gscr', [119970]], ['gscr', [8458]], ['gsim', [8819]], ['gsime', [10894]], ['gsiml', [10896]], ['gtcc', [10919]], ['gtcir', [10874]], ['gt', [62]], ['GT', [62]], ['Gt', [8811]], ['gtdot', [8919]], ['gtlPar', [10645]], ['gtquest', [10876]], ['gtrapprox', [10886]], ['gtrarr', [10616]], ['gtrdot', [8919]], ['gtreqless', [8923]], ['gtreqqless', [10892]], ['gtrless', [8823]], ['gtrsim', [8819]], ['gvertneqq', [8809, 65024]], ['gvnE', [8809, 65024]], ['Hacek', [711]], ['hairsp', [8202]], ['half', [189]], ['hamilt', [8459]], ['HARDcy', [1066]], ['hardcy', [1098]], ['harrcir', [10568]], ['harr', [8596]], ['hArr', [8660]], ['harrw', [8621]], ['Hat', [94]], ['hbar', [8463]], ['Hcirc', [292]], ['hcirc', [293]], ['hearts', [9829]], ['heartsuit', [9829]], ['hellip', [8230]], ['hercon', [8889]], ['hfr', [120101]], ['Hfr', [8460]], ['HilbertSpace', [8459]], ['hksearow', [10533]], ['hkswarow', [10534]], ['hoarr', [8703]], ['homtht', [8763]], ['hookleftarrow', [8617]], ['hookrightarrow', [8618]], ['hopf', [120153]], ['Hopf', [8461]], ['horbar', [8213]], ['HorizontalLine', [9472]], ['hscr', [119997]], ['Hscr', [8459]], ['hslash', [8463]], ['Hstrok', [294]], ['hstrok', [295]], ['HumpDownHump', [8782]], ['HumpEqual', [8783]], ['hybull', [8259]], ['hyphen', [8208]], ['Iacute', [205]], ['iacute', [237]], ['ic', [8291]], ['Icirc', [206]], ['icirc', [238]], ['Icy', [1048]], ['icy', [1080]], ['Idot', [304]], ['IEcy', [1045]], ['iecy', [1077]], ['iexcl', [161]], ['iff', [8660]], ['ifr', [120102]], ['Ifr', [8465]], ['Igrave', [204]], ['igrave', [236]], ['ii', [8520]], ['iiiint', [10764]], ['iiint', [8749]], ['iinfin', [10716]], ['iiota', [8489]], ['IJlig', [306]], ['ijlig', [307]], ['Imacr', [298]], ['imacr', [299]], ['image', [8465]], ['ImaginaryI', [8520]], ['imagline', [8464]], ['imagpart', [8465]], ['imath', [305]], ['Im', [8465]], ['imof', [8887]], ['imped', [437]], ['Implies', [8658]], ['incare', [8453]], ['in', [8712]], ['infin', [8734]], ['infintie', [10717]], ['inodot', [305]], ['intcal', [8890]], ['int', [8747]], ['Int', [8748]], ['integers', [8484]], ['Integral', [8747]], ['intercal', [8890]], ['Intersection', [8898]], ['intlarhk', [10775]], ['intprod', [10812]], ['InvisibleComma', [8291]], ['InvisibleTimes', [8290]], ['IOcy', [1025]], ['iocy', [1105]], ['Iogon', [302]], ['iogon', [303]], ['Iopf', [120128]], ['iopf', [120154]], ['Iota', [921]], ['iota', [953]], ['iprod', [10812]], ['iquest', [191]], ['iscr', [119998]], ['Iscr', [8464]], ['isin', [8712]], ['isindot', [8949]], ['isinE', [8953]], ['isins', [8948]], ['isinsv', [8947]], ['isinv', [8712]], ['it', [8290]], ['Itilde', [296]], ['itilde', [297]], ['Iukcy', [1030]], ['iukcy', [1110]], ['Iuml', [207]], ['iuml', [239]], ['Jcirc', [308]], ['jcirc', [309]], ['Jcy', [1049]], ['jcy', [1081]], ['Jfr', [120077]], ['jfr', [120103]], ['jmath', [567]], ['Jopf', [120129]], ['jopf', [120155]], ['Jscr', [119973]], ['jscr', [119999]], ['Jsercy', [1032]], ['jsercy', [1112]], ['Jukcy', [1028]], ['jukcy', [1108]], ['Kappa', [922]], ['kappa', [954]], ['kappav', [1008]], ['Kcedil', [310]], ['kcedil', [311]], ['Kcy', [1050]], ['kcy', [1082]], ['Kfr', [120078]], ['kfr', [120104]], ['kgreen', [312]], ['KHcy', [1061]], ['khcy', [1093]], ['KJcy', [1036]], ['kjcy', [1116]], ['Kopf', [120130]], ['kopf', [120156]], ['Kscr', [119974]], ['kscr', [120000]], ['lAarr', [8666]], ['Lacute', [313]], ['lacute', [314]], ['laemptyv', [10676]], ['lagran', [8466]], ['Lambda', [923]], ['lambda', [955]], ['lang', [10216]], ['Lang', [10218]], ['langd', [10641]], ['langle', [10216]], ['lap', [10885]], ['Laplacetrf', [8466]], ['laquo', [171]], ['larrb', [8676]], ['larrbfs', [10527]], ['larr', [8592]], ['Larr', [8606]], ['lArr', [8656]], ['larrfs', [10525]], ['larrhk', [8617]], ['larrlp', [8619]], ['larrpl', [10553]], ['larrsim', [10611]], ['larrtl', [8610]], ['latail', [10521]], ['lAtail', [10523]], ['lat', [10923]], ['late', [10925]], ['lates', [10925, 65024]], ['lbarr', [10508]], ['lBarr', [10510]], ['lbbrk', [10098]], ['lbrace', [123]], ['lbrack', [91]], ['lbrke', [10635]], ['lbrksld', [10639]], ['lbrkslu', [10637]], ['Lcaron', [317]], ['lcaron', [318]], ['Lcedil', [315]], ['lcedil', [316]], ['lceil', [8968]], ['lcub', [123]], ['Lcy', [1051]], ['lcy', [1083]], ['ldca', [10550]], ['ldquo', [8220]], ['ldquor', [8222]], ['ldrdhar', [10599]], ['ldrushar', [10571]], ['ldsh', [8626]], ['le', [8804]], ['lE', [8806]], ['LeftAngleBracket', [10216]], ['LeftArrowBar', [8676]], ['leftarrow', [8592]], ['LeftArrow', [8592]], ['Leftarrow', [8656]], ['LeftArrowRightArrow', [8646]], ['leftarrowtail', [8610]], ['LeftCeiling', [8968]], ['LeftDoubleBracket', [10214]], ['LeftDownTeeVector', [10593]], ['LeftDownVectorBar', [10585]], ['LeftDownVector', [8643]], ['LeftFloor', [8970]], ['leftharpoondown', [8637]], ['leftharpoonup', [8636]], ['leftleftarrows', [8647]], ['leftrightarrow', [8596]], ['LeftRightArrow', [8596]], ['Leftrightarrow', [8660]], ['leftrightarrows', [8646]], ['leftrightharpoons', [8651]], ['leftrightsquigarrow', [8621]], ['LeftRightVector', [10574]], ['LeftTeeArrow', [8612]], ['LeftTee', [8867]], ['LeftTeeVector', [10586]], ['leftthreetimes', [8907]], ['LeftTriangleBar', [10703]], ['LeftTriangle', [8882]], ['LeftTriangleEqual', [8884]], ['LeftUpDownVector', [10577]], ['LeftUpTeeVector', [10592]], ['LeftUpVectorBar', [10584]], ['LeftUpVector', [8639]], ['LeftVectorBar', [10578]], ['LeftVector', [8636]], ['lEg', [10891]], ['leg', [8922]], ['leq', [8804]], ['leqq', [8806]], ['leqslant', [10877]], ['lescc', [10920]], ['les', [10877]], ['lesdot', [10879]], ['lesdoto', [10881]], ['lesdotor', [10883]], ['lesg', [8922, 65024]], ['lesges', [10899]], ['lessapprox', [10885]], ['lessdot', [8918]], ['lesseqgtr', [8922]], ['lesseqqgtr', [10891]], ['LessEqualGreater', [8922]], ['LessFullEqual', [8806]], ['LessGreater', [8822]], ['lessgtr', [8822]], ['LessLess', [10913]], ['lesssim', [8818]], ['LessSlantEqual', [10877]], ['LessTilde', [8818]], ['lfisht', [10620]], ['lfloor', [8970]], ['Lfr', [120079]], ['lfr', [120105]], ['lg', [8822]], ['lgE', [10897]], ['lHar', [10594]], ['lhard', [8637]], ['lharu', [8636]], ['lharul', [10602]], ['lhblk', [9604]], ['LJcy', [1033]], ['ljcy', [1113]], ['llarr', [8647]], ['ll', [8810]], ['Ll', [8920]], ['llcorner', [8990]], ['Lleftarrow', [8666]], ['llhard', [10603]], ['lltri', [9722]], ['Lmidot', [319]], ['lmidot', [320]], ['lmoustache', [9136]], ['lmoust', [9136]], ['lnap', [10889]], ['lnapprox', [10889]], ['lne', [10887]], ['lnE', [8808]], ['lneq', [10887]], ['lneqq', [8808]], ['lnsim', [8934]], ['loang', [10220]], ['loarr', [8701]], ['lobrk', [10214]], ['longleftarrow', [10229]], ['LongLeftArrow', [10229]], ['Longleftarrow', [10232]], ['longleftrightarrow', [10231]], ['LongLeftRightArrow', [10231]], ['Longleftrightarrow', [10234]], ['longmapsto', [10236]], ['longrightarrow', [10230]], ['LongRightArrow', [10230]], ['Longrightarrow', [10233]], ['looparrowleft', [8619]], ['looparrowright', [8620]], ['lopar', [10629]], ['Lopf', [120131]], ['lopf', [120157]], ['loplus', [10797]], ['lotimes', [10804]], ['lowast', [8727]], ['lowbar', [95]], ['LowerLeftArrow', [8601]], ['LowerRightArrow', [8600]], ['loz', [9674]], ['lozenge', [9674]], ['lozf', [10731]], ['lpar', [40]], ['lparlt', [10643]], ['lrarr', [8646]], ['lrcorner', [8991]], ['lrhar', [8651]], ['lrhard', [10605]], ['lrm', [8206]], ['lrtri', [8895]], ['lsaquo', [8249]], ['lscr', [120001]], ['Lscr', [8466]], ['lsh', [8624]], ['Lsh', [8624]], ['lsim', [8818]], ['lsime', [10893]], ['lsimg', [10895]], ['lsqb', [91]], ['lsquo', [8216]], ['lsquor', [8218]], ['Lstrok', [321]], ['lstrok', [322]], ['ltcc', [10918]], ['ltcir', [10873]], ['lt', [60]], ['LT', [60]], ['Lt', [8810]], ['ltdot', [8918]], ['lthree', [8907]], ['ltimes', [8905]], ['ltlarr', [10614]], ['ltquest', [10875]], ['ltri', [9667]], ['ltrie', [8884]], ['ltrif', [9666]], ['ltrPar', [10646]], ['lurdshar', [10570]], ['luruhar', [10598]], ['lvertneqq', [8808, 65024]], ['lvnE', [8808, 65024]], ['macr', [175]], ['male', [9794]], ['malt', [10016]], ['maltese', [10016]], ['Map', [10501]], ['map', [8614]], ['mapsto', [8614]], ['mapstodown', [8615]], ['mapstoleft', [8612]], ['mapstoup', [8613]], ['marker', [9646]], ['mcomma', [10793]], ['Mcy', [1052]], ['mcy', [1084]], ['mdash', [8212]], ['mDDot', [8762]], ['measuredangle', [8737]], ['MediumSpace', [8287]], ['Mellintrf', [8499]], ['Mfr', [120080]], ['mfr', [120106]], ['mho', [8487]], ['micro', [181]], ['midast', [42]], ['midcir', [10992]], ['mid', [8739]], ['middot', [183]], ['minusb', [8863]], ['minus', [8722]], ['minusd', [8760]], ['minusdu', [10794]], ['MinusPlus', [8723]], ['mlcp', [10971]], ['mldr', [8230]], ['mnplus', [8723]], ['models', [8871]], ['Mopf', [120132]], ['mopf', [120158]], ['mp', [8723]], ['mscr', [120002]], ['Mscr', [8499]], ['mstpos', [8766]], ['Mu', [924]], ['mu', [956]], ['multimap', [8888]], ['mumap', [8888]], ['nabla', [8711]], ['Nacute', [323]], ['nacute', [324]], ['nang', [8736, 8402]], ['nap', [8777]], ['napE', [10864, 824]], ['napid', [8779, 824]], ['napos', [329]], ['napprox', [8777]], ['natural', [9838]], ['naturals', [8469]], ['natur', [9838]], ['nbsp', [160]], ['nbump', [8782, 824]], ['nbumpe', [8783, 824]], ['ncap', [10819]], ['Ncaron', [327]], ['ncaron', [328]], ['Ncedil', [325]], ['ncedil', [326]], ['ncong', [8775]], ['ncongdot', [10861, 824]], ['ncup', [10818]], ['Ncy', [1053]], ['ncy', [1085]], ['ndash', [8211]], ['nearhk', [10532]], ['nearr', [8599]], ['neArr', [8663]], ['nearrow', [8599]], ['ne', [8800]], ['nedot', [8784, 824]], ['NegativeMediumSpace', [8203]], ['NegativeThickSpace', [8203]], ['NegativeThinSpace', [8203]], ['NegativeVeryThinSpace', [8203]], ['nequiv', [8802]], ['nesear', [10536]], ['nesim', [8770, 824]], ['NestedGreaterGreater', [8811]], ['NestedLessLess', [8810]], ['nexist', [8708]], ['nexists', [8708]], ['Nfr', [120081]], ['nfr', [120107]], ['ngE', [8807, 824]], ['nge', [8817]], ['ngeq', [8817]], ['ngeqq', [8807, 824]], ['ngeqslant', [10878, 824]], ['nges', [10878, 824]], ['nGg', [8921, 824]], ['ngsim', [8821]], ['nGt', [8811, 8402]], ['ngt', [8815]], ['ngtr', [8815]], ['nGtv', [8811, 824]], ['nharr', [8622]], ['nhArr', [8654]], ['nhpar', [10994]], ['ni', [8715]], ['nis', [8956]], ['nisd', [8954]], ['niv', [8715]], ['NJcy', [1034]], ['njcy', [1114]], ['nlarr', [8602]], ['nlArr', [8653]], ['nldr', [8229]], ['nlE', [8806, 824]], ['nle', [8816]], ['nleftarrow', [8602]], ['nLeftarrow', [8653]], ['nleftrightarrow', [8622]], ['nLeftrightarrow', [8654]], ['nleq', [8816]], ['nleqq', [8806, 824]], ['nleqslant', [10877, 824]], ['nles', [10877, 824]], ['nless', [8814]], ['nLl', [8920, 824]], ['nlsim', [8820]], ['nLt', [8810, 8402]], ['nlt', [8814]], ['nltri', [8938]], ['nltrie', [8940]], ['nLtv', [8810, 824]], ['nmid', [8740]], ['NoBreak', [8288]], ['NonBreakingSpace', [160]], ['nopf', [120159]], ['Nopf', [8469]], ['Not', [10988]], ['not', [172]], ['NotCongruent', [8802]], ['NotCupCap', [8813]], ['NotDoubleVerticalBar', [8742]], ['NotElement', [8713]], ['NotEqual', [8800]], ['NotEqualTilde', [8770, 824]], ['NotExists', [8708]], ['NotGreater', [8815]], ['NotGreaterEqual', [8817]], ['NotGreaterFullEqual', [8807, 824]], ['NotGreaterGreater', [8811, 824]], ['NotGreaterLess', [8825]], ['NotGreaterSlantEqual', [10878, 824]], ['NotGreaterTilde', [8821]], ['NotHumpDownHump', [8782, 824]], ['NotHumpEqual', [8783, 824]], ['notin', [8713]], ['notindot', [8949, 824]], ['notinE', [8953, 824]], ['notinva', [8713]], ['notinvb', [8951]], ['notinvc', [8950]], ['NotLeftTriangleBar', [10703, 824]], ['NotLeftTriangle', [8938]], ['NotLeftTriangleEqual', [8940]], ['NotLess', [8814]], ['NotLessEqual', [8816]], ['NotLessGreater', [8824]], ['NotLessLess', [8810, 824]], ['NotLessSlantEqual', [10877, 824]], ['NotLessTilde', [8820]], ['NotNestedGreaterGreater', [10914, 824]], ['NotNestedLessLess', [10913, 824]], ['notni', [8716]], ['notniva', [8716]], ['notnivb', [8958]], ['notnivc', [8957]], ['NotPrecedes', [8832]], ['NotPrecedesEqual', [10927, 824]], ['NotPrecedesSlantEqual', [8928]], ['NotReverseElement', [8716]], ['NotRightTriangleBar', [10704, 824]], ['NotRightTriangle', [8939]], ['NotRightTriangleEqual', [8941]], ['NotSquareSubset', [8847, 824]], ['NotSquareSubsetEqual', [8930]], ['NotSquareSuperset', [8848, 824]], ['NotSquareSupersetEqual', [8931]], ['NotSubset', [8834, 8402]], ['NotSubsetEqual', [8840]], ['NotSucceeds', [8833]], ['NotSucceedsEqual', [10928, 824]], ['NotSucceedsSlantEqual', [8929]], ['NotSucceedsTilde', [8831, 824]], ['NotSuperset', [8835, 8402]], ['NotSupersetEqual', [8841]], ['NotTilde', [8769]], ['NotTildeEqual', [8772]], ['NotTildeFullEqual', [8775]], ['NotTildeTilde', [8777]], ['NotVerticalBar', [8740]], ['nparallel', [8742]], ['npar', [8742]], ['nparsl', [11005, 8421]], ['npart', [8706, 824]], ['npolint', [10772]], ['npr', [8832]], ['nprcue', [8928]], ['nprec', [8832]], ['npreceq', [10927, 824]], ['npre', [10927, 824]], ['nrarrc', [10547, 824]], ['nrarr', [8603]], ['nrArr', [8655]], ['nrarrw', [8605, 824]], ['nrightarrow', [8603]], ['nRightarrow', [8655]], ['nrtri', [8939]], ['nrtrie', [8941]], ['nsc', [8833]], ['nsccue', [8929]], ['nsce', [10928, 824]], ['Nscr', [119977]], ['nscr', [120003]], ['nshortmid', [8740]], ['nshortparallel', [8742]], ['nsim', [8769]], ['nsime', [8772]], ['nsimeq', [8772]], ['nsmid', [8740]], ['nspar', [8742]], ['nsqsube', [8930]], ['nsqsupe', [8931]], ['nsub', [8836]], ['nsubE', [10949, 824]], ['nsube', [8840]], ['nsubset', [8834, 8402]], ['nsubseteq', [8840]], ['nsubseteqq', [10949, 824]], ['nsucc', [8833]], ['nsucceq', [10928, 824]], ['nsup', [8837]], ['nsupE', [10950, 824]], ['nsupe', [8841]], ['nsupset', [8835, 8402]], ['nsupseteq', [8841]], ['nsupseteqq', [10950, 824]], ['ntgl', [8825]], ['Ntilde', [209]], ['ntilde', [241]], ['ntlg', [8824]], ['ntriangleleft', [8938]], ['ntrianglelefteq', [8940]], ['ntriangleright', [8939]], ['ntrianglerighteq', [8941]], ['Nu', [925]], ['nu', [957]], ['num', [35]], ['numero', [8470]], ['numsp', [8199]], ['nvap', [8781, 8402]], ['nvdash', [8876]], ['nvDash', [8877]], ['nVdash', [8878]], ['nVDash', [8879]], ['nvge', [8805, 8402]], ['nvgt', [62, 8402]], ['nvHarr', [10500]], ['nvinfin', [10718]], ['nvlArr', [10498]], ['nvle', [8804, 8402]], ['nvlt', [60, 8402]], ['nvltrie', [8884, 8402]], ['nvrArr', [10499]], ['nvrtrie', [8885, 8402]], ['nvsim', [8764, 8402]], ['nwarhk', [10531]], ['nwarr', [8598]], ['nwArr', [8662]], ['nwarrow', [8598]], ['nwnear', [10535]], ['Oacute', [211]], ['oacute', [243]], ['oast', [8859]], ['Ocirc', [212]], ['ocirc', [244]], ['ocir', [8858]], ['Ocy', [1054]], ['ocy', [1086]], ['odash', [8861]], ['Odblac', [336]], ['odblac', [337]], ['odiv', [10808]], ['odot', [8857]], ['odsold', [10684]], ['OElig', [338]], ['oelig', [339]], ['ofcir', [10687]], ['Ofr', [120082]], ['ofr', [120108]], ['ogon', [731]], ['Ograve', [210]], ['ograve', [242]], ['ogt', [10689]], ['ohbar', [10677]], ['ohm', [937]], ['oint', [8750]], ['olarr', [8634]], ['olcir', [10686]], ['olcross', [10683]], ['oline', [8254]], ['olt', [10688]], ['Omacr', [332]], ['omacr', [333]], ['Omega', [937]], ['omega', [969]], ['Omicron', [927]], ['omicron', [959]], ['omid', [10678]], ['ominus', [8854]], ['Oopf', [120134]], ['oopf', [120160]], ['opar', [10679]], ['OpenCurlyDoubleQuote', [8220]], ['OpenCurlyQuote', [8216]], ['operp', [10681]], ['oplus', [8853]], ['orarr', [8635]], ['Or', [10836]], ['or', [8744]], ['ord', [10845]], ['order', [8500]], ['orderof', [8500]], ['ordf', [170]], ['ordm', [186]], ['origof', [8886]], ['oror', [10838]], ['orslope', [10839]], ['orv', [10843]], ['oS', [9416]], ['Oscr', [119978]], ['oscr', [8500]], ['Oslash', [216]], ['oslash', [248]], ['osol', [8856]], ['Otilde', [213]], ['otilde', [245]], ['otimesas', [10806]], ['Otimes', [10807]], ['otimes', [8855]], ['Ouml', [214]], ['ouml', [246]], ['ovbar', [9021]], ['OverBar', [8254]], ['OverBrace', [9182]], ['OverBracket', [9140]], ['OverParenthesis', [9180]], ['para', [182]], ['parallel', [8741]], ['par', [8741]], ['parsim', [10995]], ['parsl', [11005]], ['part', [8706]], ['PartialD', [8706]], ['Pcy', [1055]], ['pcy', [1087]], ['percnt', [37]], ['period', [46]], ['permil', [8240]], ['perp', [8869]], ['pertenk', [8241]], ['Pfr', [120083]], ['pfr', [120109]], ['Phi', [934]], ['phi', [966]], ['phiv', [981]], ['phmmat', [8499]], ['phone', [9742]], ['Pi', [928]], ['pi', [960]], ['pitchfork', [8916]], ['piv', [982]], ['planck', [8463]], ['planckh', [8462]], ['plankv', [8463]], ['plusacir', [10787]], ['plusb', [8862]], ['pluscir', [10786]], ['plus', [43]], ['plusdo', [8724]], ['plusdu', [10789]], ['pluse', [10866]], ['PlusMinus', [177]], ['plusmn', [177]], ['plussim', [10790]], ['plustwo', [10791]], ['pm', [177]], ['Poincareplane', [8460]], ['pointint', [10773]], ['popf', [120161]], ['Popf', [8473]], ['pound', [163]], ['prap', [10935]], ['Pr', [10939]], ['pr', [8826]], ['prcue', [8828]], ['precapprox', [10935]], ['prec', [8826]], ['preccurlyeq', [8828]], ['Precedes', [8826]], ['PrecedesEqual', [10927]], ['PrecedesSlantEqual', [8828]], ['PrecedesTilde', [8830]], ['preceq', [10927]], ['precnapprox', [10937]], ['precneqq', [10933]], ['precnsim', [8936]], ['pre', [10927]], ['prE', [10931]], ['precsim', [8830]], ['prime', [8242]], ['Prime', [8243]], ['primes', [8473]], ['prnap', [10937]], ['prnE', [10933]], ['prnsim', [8936]], ['prod', [8719]], ['Product', [8719]], ['profalar', [9006]], ['profline', [8978]], ['profsurf', [8979]], ['prop', [8733]], ['Proportional', [8733]], ['Proportion', [8759]], ['propto', [8733]], ['prsim', [8830]], ['prurel', [8880]], ['Pscr', [119979]], ['pscr', [120005]], ['Psi', [936]], ['psi', [968]], ['puncsp', [8200]], ['Qfr', [120084]], ['qfr', [120110]], ['qint', [10764]], ['qopf', [120162]], ['Qopf', [8474]], ['qprime', [8279]], ['Qscr', [119980]], ['qscr', [120006]], ['quaternions', [8461]], ['quatint', [10774]], ['quest', [63]], ['questeq', [8799]], ['quot', [34]], ['QUOT', [34]], ['rAarr', [8667]], ['race', [8765, 817]], ['Racute', [340]], ['racute', [341]], ['radic', [8730]], ['raemptyv', [10675]], ['rang', [10217]], ['Rang', [10219]], ['rangd', [10642]], ['range', [10661]], ['rangle', [10217]], ['raquo', [187]], ['rarrap', [10613]], ['rarrb', [8677]], ['rarrbfs', [10528]], ['rarrc', [10547]], ['rarr', [8594]], ['Rarr', [8608]], ['rArr', [8658]], ['rarrfs', [10526]], ['rarrhk', [8618]], ['rarrlp', [8620]], ['rarrpl', [10565]], ['rarrsim', [10612]], ['Rarrtl', [10518]], ['rarrtl', [8611]], ['rarrw', [8605]], ['ratail', [10522]], ['rAtail', [10524]], ['ratio', [8758]], ['rationals', [8474]], ['rbarr', [10509]], ['rBarr', [10511]], ['RBarr', [10512]], ['rbbrk', [10099]], ['rbrace', [125]], ['rbrack', [93]], ['rbrke', [10636]], ['rbrksld', [10638]], ['rbrkslu', [10640]], ['Rcaron', [344]], ['rcaron', [345]], ['Rcedil', [342]], ['rcedil', [343]], ['rceil', [8969]], ['rcub', [125]], ['Rcy', [1056]], ['rcy', [1088]], ['rdca', [10551]], ['rdldhar', [10601]], ['rdquo', [8221]], ['rdquor', [8221]], ['CloseCurlyDoubleQuote', [8221]], ['rdsh', [8627]], ['real', [8476]], ['realine', [8475]], ['realpart', [8476]], ['reals', [8477]], ['Re', [8476]], ['rect', [9645]], ['reg', [174]], ['REG', [174]], ['ReverseElement', [8715]], ['ReverseEquilibrium', [8651]], ['ReverseUpEquilibrium', [10607]], ['rfisht', [10621]], ['rfloor', [8971]], ['rfr', [120111]], ['Rfr', [8476]], ['rHar', [10596]], ['rhard', [8641]], ['rharu', [8640]], ['rharul', [10604]], ['Rho', [929]], ['rho', [961]], ['rhov', [1009]], ['RightAngleBracket', [10217]], ['RightArrowBar', [8677]], ['rightarrow', [8594]], ['RightArrow', [8594]], ['Rightarrow', [8658]], ['RightArrowLeftArrow', [8644]], ['rightarrowtail', [8611]], ['RightCeiling', [8969]], ['RightDoubleBracket', [10215]], ['RightDownTeeVector', [10589]], ['RightDownVectorBar', [10581]], ['RightDownVector', [8642]], ['RightFloor', [8971]], ['rightharpoondown', [8641]], ['rightharpoonup', [8640]], ['rightleftarrows', [8644]], ['rightleftharpoons', [8652]], ['rightrightarrows', [8649]], ['rightsquigarrow', [8605]], ['RightTeeArrow', [8614]], ['RightTee', [8866]], ['RightTeeVector', [10587]], ['rightthreetimes', [8908]], ['RightTriangleBar', [10704]], ['RightTriangle', [8883]], ['RightTriangleEqual', [8885]], ['RightUpDownVector', [10575]], ['RightUpTeeVector', [10588]], ['RightUpVectorBar', [10580]], ['RightUpVector', [8638]], ['RightVectorBar', [10579]], ['RightVector', [8640]], ['ring', [730]], ['risingdotseq', [8787]], ['rlarr', [8644]], ['rlhar', [8652]], ['rlm', [8207]], ['rmoustache', [9137]], ['rmoust', [9137]], ['rnmid', [10990]], ['roang', [10221]], ['roarr', [8702]], ['robrk', [10215]], ['ropar', [10630]], ['ropf', [120163]], ['Ropf', [8477]], ['roplus', [10798]], ['rotimes', [10805]], ['RoundImplies', [10608]], ['rpar', [41]], ['rpargt', [10644]], ['rppolint', [10770]], ['rrarr', [8649]], ['Rrightarrow', [8667]], ['rsaquo', [8250]], ['rscr', [120007]], ['Rscr', [8475]], ['rsh', [8625]], ['Rsh', [8625]], ['rsqb', [93]], ['rsquo', [8217]], ['rsquor', [8217]], ['CloseCurlyQuote', [8217]], ['rthree', [8908]], ['rtimes', [8906]], ['rtri', [9657]], ['rtrie', [8885]], ['rtrif', [9656]], ['rtriltri', [10702]], ['RuleDelayed', [10740]], ['ruluhar', [10600]], ['rx', [8478]], ['Sacute', [346]], ['sacute', [347]], ['sbquo', [8218]], ['scap', [10936]], ['Scaron', [352]], ['scaron', [353]], ['Sc', [10940]], ['sc', [8827]], ['sccue', [8829]], ['sce', [10928]], ['scE', [10932]], ['Scedil', [350]], ['scedil', [351]], ['Scirc', [348]], ['scirc', [349]], ['scnap', [10938]], ['scnE', [10934]], ['scnsim', [8937]], ['scpolint', [10771]], ['scsim', [8831]], ['Scy', [1057]], ['scy', [1089]], ['sdotb', [8865]], ['sdot', [8901]], ['sdote', [10854]], ['searhk', [10533]], ['searr', [8600]], ['seArr', [8664]], ['searrow', [8600]], ['sect', [167]], ['semi', [59]], ['seswar', [10537]], ['setminus', [8726]], ['setmn', [8726]], ['sext', [10038]], ['Sfr', [120086]], ['sfr', [120112]], ['sfrown', [8994]], ['sharp', [9839]], ['SHCHcy', [1065]], ['shchcy', [1097]], ['SHcy', [1064]], ['shcy', [1096]], ['ShortDownArrow', [8595]], ['ShortLeftArrow', [8592]], ['shortmid', [8739]], ['shortparallel', [8741]], ['ShortRightArrow', [8594]], ['ShortUpArrow', [8593]], ['shy', [173]], ['Sigma', [931]], ['sigma', [963]], ['sigmaf', [962]], ['sigmav', [962]], ['sim', [8764]], ['simdot', [10858]], ['sime', [8771]], ['simeq', [8771]], ['simg', [10910]], ['simgE', [10912]], ['siml', [10909]], ['simlE', [10911]], ['simne', [8774]], ['simplus', [10788]], ['simrarr', [10610]], ['slarr', [8592]], ['SmallCircle', [8728]], ['smallsetminus', [8726]], ['smashp', [10803]], ['smeparsl', [10724]], ['smid', [8739]], ['smile', [8995]], ['smt', [10922]], ['smte', [10924]], ['smtes', [10924, 65024]], ['SOFTcy', [1068]], ['softcy', [1100]], ['solbar', [9023]], ['solb', [10692]], ['sol', [47]], ['Sopf', [120138]], ['sopf', [120164]], ['spades', [9824]], ['spadesuit', [9824]], ['spar', [8741]], ['sqcap', [8851]], ['sqcaps', [8851, 65024]], ['sqcup', [8852]], ['sqcups', [8852, 65024]], ['Sqrt', [8730]], ['sqsub', [8847]], ['sqsube', [8849]], ['sqsubset', [8847]], ['sqsubseteq', [8849]], ['sqsup', [8848]], ['sqsupe', [8850]], ['sqsupset', [8848]], ['sqsupseteq', [8850]], ['square', [9633]], ['Square', [9633]], ['SquareIntersection', [8851]], ['SquareSubset', [8847]], ['SquareSubsetEqual', [8849]], ['SquareSuperset', [8848]], ['SquareSupersetEqual', [8850]], ['SquareUnion', [8852]], ['squarf', [9642]], ['squ', [9633]], ['squf', [9642]], ['srarr', [8594]], ['Sscr', [119982]], ['sscr', [120008]], ['ssetmn', [8726]], ['ssmile', [8995]], ['sstarf', [8902]], ['Star', [8902]], ['star', [9734]], ['starf', [9733]], ['straightepsilon', [1013]], ['straightphi', [981]], ['strns', [175]], ['sub', [8834]], ['Sub', [8912]], ['subdot', [10941]], ['subE', [10949]], ['sube', [8838]], ['subedot', [10947]], ['submult', [10945]], ['subnE', [10955]], ['subne', [8842]], ['subplus', [10943]], ['subrarr', [10617]], ['subset', [8834]], ['Subset', [8912]], ['subseteq', [8838]], ['subseteqq', [10949]], ['SubsetEqual', [8838]], ['subsetneq', [8842]], ['subsetneqq', [10955]], ['subsim', [10951]], ['subsub', [10965]], ['subsup', [10963]], ['succapprox', [10936]], ['succ', [8827]], ['succcurlyeq', [8829]], ['Succeeds', [8827]], ['SucceedsEqual', [10928]], ['SucceedsSlantEqual', [8829]], ['SucceedsTilde', [8831]], ['succeq', [10928]], ['succnapprox', [10938]], ['succneqq', [10934]], ['succnsim', [8937]], ['succsim', [8831]], ['SuchThat', [8715]], ['sum', [8721]], ['Sum', [8721]], ['sung', [9834]], ['sup1', [185]], ['sup2', [178]], ['sup3', [179]], ['sup', [8835]], ['Sup', [8913]], ['supdot', [10942]], ['supdsub', [10968]], ['supE', [10950]], ['supe', [8839]], ['supedot', [10948]], ['Superset', [8835]], ['SupersetEqual', [8839]], ['suphsol', [10185]], ['suphsub', [10967]], ['suplarr', [10619]], ['supmult', [10946]], ['supnE', [10956]], ['supne', [8843]], ['supplus', [10944]], ['supset', [8835]], ['Supset', [8913]], ['supseteq', [8839]], ['supseteqq', [10950]], ['supsetneq', [8843]], ['supsetneqq', [10956]], ['supsim', [10952]], ['supsub', [10964]], ['supsup', [10966]], ['swarhk', [10534]], ['swarr', [8601]], ['swArr', [8665]], ['swarrow', [8601]], ['swnwar', [10538]], ['szlig', [223]], ['Tab', [9]], ['target', [8982]], ['Tau', [932]], ['tau', [964]], ['tbrk', [9140]], ['Tcaron', [356]], ['tcaron', [357]], ['Tcedil', [354]], ['tcedil', [355]], ['Tcy', [1058]], ['tcy', [1090]], ['tdot', [8411]], ['telrec', [8981]], ['Tfr', [120087]], ['tfr', [120113]], ['there4', [8756]], ['therefore', [8756]], ['Therefore', [8756]], ['Theta', [920]], ['theta', [952]], ['thetasym', [977]], ['thetav', [977]], ['thickapprox', [8776]], ['thicksim', [8764]], ['ThickSpace', [8287, 8202]], ['ThinSpace', [8201]], ['thinsp', [8201]], ['thkap', [8776]], ['thksim', [8764]], ['THORN', [222]], ['thorn', [254]], ['tilde', [732]], ['Tilde', [8764]], ['TildeEqual', [8771]], ['TildeFullEqual', [8773]], ['TildeTilde', [8776]], ['timesbar', [10801]], ['timesb', [8864]], ['times', [215]], ['timesd', [10800]], ['tint', [8749]], ['toea', [10536]], ['topbot', [9014]], ['topcir', [10993]], ['top', [8868]], ['Topf', [120139]], ['topf', [120165]], ['topfork', [10970]], ['tosa', [10537]], ['tprime', [8244]], ['trade', [8482]], ['TRADE', [8482]], ['triangle', [9653]], ['triangledown', [9663]], ['triangleleft', [9667]], ['trianglelefteq', [8884]], ['triangleq', [8796]], ['triangleright', [9657]], ['trianglerighteq', [8885]], ['tridot', [9708]], ['trie', [8796]], ['triminus', [10810]], ['TripleDot', [8411]], ['triplus', [10809]], ['trisb', [10701]], ['tritime', [10811]], ['trpezium', [9186]], ['Tscr', [119983]], ['tscr', [120009]], ['TScy', [1062]], ['tscy', [1094]], ['TSHcy', [1035]], ['tshcy', [1115]], ['Tstrok', [358]], ['tstrok', [359]], ['twixt', [8812]], ['twoheadleftarrow', [8606]], ['twoheadrightarrow', [8608]], ['Uacute', [218]], ['uacute', [250]], ['uarr', [8593]], ['Uarr', [8607]], ['uArr', [8657]], ['Uarrocir', [10569]], ['Ubrcy', [1038]], ['ubrcy', [1118]], ['Ubreve', [364]], ['ubreve', [365]], ['Ucirc', [219]], ['ucirc', [251]], ['Ucy', [1059]], ['ucy', [1091]], ['udarr', [8645]], ['Udblac', [368]], ['udblac', [369]], ['udhar', [10606]], ['ufisht', [10622]], ['Ufr', [120088]], ['ufr', [120114]], ['Ugrave', [217]], ['ugrave', [249]], ['uHar', [10595]], ['uharl', [8639]], ['uharr', [8638]], ['uhblk', [9600]], ['ulcorn', [8988]], ['ulcorner', [8988]], ['ulcrop', [8975]], ['ultri', [9720]], ['Umacr', [362]], ['umacr', [363]], ['uml', [168]], ['UnderBar', [95]], ['UnderBrace', [9183]], ['UnderBracket', [9141]], ['UnderParenthesis', [9181]], ['Union', [8899]], ['UnionPlus', [8846]], ['Uogon', [370]], ['uogon', [371]], ['Uopf', [120140]], ['uopf', [120166]], ['UpArrowBar', [10514]], ['uparrow', [8593]], ['UpArrow', [8593]], ['Uparrow', [8657]], ['UpArrowDownArrow', [8645]], ['updownarrow', [8597]], ['UpDownArrow', [8597]], ['Updownarrow', [8661]], ['UpEquilibrium', [10606]], ['upharpoonleft', [8639]], ['upharpoonright', [8638]], ['uplus', [8846]], ['UpperLeftArrow', [8598]], ['UpperRightArrow', [8599]], ['upsi', [965]], ['Upsi', [978]], ['upsih', [978]], ['Upsilon', [933]], ['upsilon', [965]], ['UpTeeArrow', [8613]], ['UpTee', [8869]], ['upuparrows', [8648]], ['urcorn', [8989]], ['urcorner', [8989]], ['urcrop', [8974]], ['Uring', [366]], ['uring', [367]], ['urtri', [9721]], ['Uscr', [119984]], ['uscr', [120010]], ['utdot', [8944]], ['Utilde', [360]], ['utilde', [361]], ['utri', [9653]], ['utrif', [9652]], ['uuarr', [8648]], ['Uuml', [220]], ['uuml', [252]], ['uwangle', [10663]], ['vangrt', [10652]], ['varepsilon', [1013]], ['varkappa', [1008]], ['varnothing', [8709]], ['varphi', [981]], ['varpi', [982]], ['varpropto', [8733]], ['varr', [8597]], ['vArr', [8661]], ['varrho', [1009]], ['varsigma', [962]], ['varsubsetneq', [8842, 65024]], ['varsubsetneqq', [10955, 65024]], ['varsupsetneq', [8843, 65024]], ['varsupsetneqq', [10956, 65024]], ['vartheta', [977]], ['vartriangleleft', [8882]], ['vartriangleright', [8883]], ['vBar', [10984]], ['Vbar', [10987]], ['vBarv', [10985]], ['Vcy', [1042]], ['vcy', [1074]], ['vdash', [8866]], ['vDash', [8872]], ['Vdash', [8873]], ['VDash', [8875]], ['Vdashl', [10982]], ['veebar', [8891]], ['vee', [8744]], ['Vee', [8897]], ['veeeq', [8794]], ['vellip', [8942]], ['verbar', [124]], ['Verbar', [8214]], ['vert', [124]], ['Vert', [8214]], ['VerticalBar', [8739]], ['VerticalLine', [124]], ['VerticalSeparator', [10072]], ['VerticalTilde', [8768]], ['VeryThinSpace', [8202]], ['Vfr', [120089]], ['vfr', [120115]], ['vltri', [8882]], ['vnsub', [8834, 8402]], ['vnsup', [8835, 8402]], ['Vopf', [120141]], ['vopf', [120167]], ['vprop', [8733]], ['vrtri', [8883]], ['Vscr', [119985]], ['vscr', [120011]], ['vsubnE', [10955, 65024]], ['vsubne', [8842, 65024]], ['vsupnE', [10956, 65024]], ['vsupne', [8843, 65024]], ['Vvdash', [8874]], ['vzigzag', [10650]], ['Wcirc', [372]], ['wcirc', [373]], ['wedbar', [10847]], ['wedge', [8743]], ['Wedge', [8896]], ['wedgeq', [8793]], ['weierp', [8472]], ['Wfr', [120090]], ['wfr', [120116]], ['Wopf', [120142]], ['wopf', [120168]], ['wp', [8472]], ['wr', [8768]], ['wreath', [8768]], ['Wscr', [119986]], ['wscr', [120012]], ['xcap', [8898]], ['xcirc', [9711]], ['xcup', [8899]], ['xdtri', [9661]], ['Xfr', [120091]], ['xfr', [120117]], ['xharr', [10231]], ['xhArr', [10234]], ['Xi', [926]], ['xi', [958]], ['xlarr', [10229]], ['xlArr', [10232]], ['xmap', [10236]], ['xnis', [8955]], ['xodot', [10752]], ['Xopf', [120143]], ['xopf', [120169]], ['xoplus', [10753]], ['xotime', [10754]], ['xrarr', [10230]], ['xrArr', [10233]], ['Xscr', [119987]], ['xscr', [120013]], ['xsqcup', [10758]], ['xuplus', [10756]], ['xutri', [9651]], ['xvee', [8897]], ['xwedge', [8896]], ['Yacute', [221]], ['yacute', [253]], ['YAcy', [1071]], ['yacy', [1103]], ['Ycirc', [374]], ['ycirc', [375]], ['Ycy', [1067]], ['ycy', [1099]], ['yen', [165]], ['Yfr', [120092]], ['yfr', [120118]], ['YIcy', [1031]], ['yicy', [1111]], ['Yopf', [120144]], ['yopf', [120170]], ['Yscr', [119988]], ['yscr', [120014]], ['YUcy', [1070]], ['yucy', [1102]], ['yuml', [255]], ['Yuml', [376]], ['Zacute', [377]], ['zacute', [378]], ['Zcaron', [381]], ['zcaron', [382]], ['Zcy', [1047]], ['zcy', [1079]], ['Zdot', [379]], ['zdot', [380]], ['zeetrf', [8488]], ['ZeroWidthSpace', [8203]], ['Zeta', [918]], ['zeta', [950]], ['zfr', [120119]], ['Zfr', [8488]], ['ZHcy', [1046]], ['zhcy', [1078]], ['zigrarr', [8669]], ['zopf', [120171]], ['Zopf', [8484]], ['Zscr', [119989]], ['zscr', [120015]], ['zwj', [8205]], ['zwnj', [8204]]];
@@ -19669,7 +19641,7 @@ module.exports = Html5Entities;
 
 
 /***/ }),
-/* 130 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19748,7 +19720,7 @@ return af;
 
 
 /***/ }),
-/* 131 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19813,7 +19785,7 @@ return arDz;
 
 
 /***/ }),
-/* 132 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19878,7 +19850,7 @@ return arKw;
 
 
 /***/ }),
-/* 133 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20010,7 +19982,7 @@ return arLy;
 
 
 /***/ }),
-/* 134 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20076,7 +20048,7 @@ return arMa;
 
 
 /***/ }),
-/* 135 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20187,7 +20159,7 @@ return arSa;
 
 
 /***/ }),
-/* 136 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20252,7 +20224,7 @@ return arTn;
 
 
 /***/ }),
-/* 137 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20400,7 +20372,7 @@ return ar;
 
 
 /***/ }),
-/* 138 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20511,7 +20483,7 @@ return az;
 
 
 /***/ }),
-/* 139 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20651,7 +20623,7 @@ return be;
 
 
 /***/ }),
-/* 140 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20747,7 +20719,7 @@ return bg;
 
 
 /***/ }),
-/* 141 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20812,7 +20784,7 @@ return bm;
 
 
 /***/ }),
-/* 142 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20937,7 +20909,7 @@ return bn;
 
 
 /***/ }),
-/* 143 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21062,7 +21034,7 @@ return bo;
 
 
 /***/ }),
-/* 144 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21176,7 +21148,7 @@ return br;
 
 
 /***/ }),
-/* 145 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21334,7 +21306,7 @@ return bs;
 
 
 /***/ }),
-/* 146 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21428,7 +21400,7 @@ return ca;
 
 
 /***/ }),
-/* 147 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21613,7 +21585,7 @@ return cs;
 
 
 /***/ }),
-/* 148 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21682,7 +21654,7 @@ return cv;
 
 
 /***/ }),
-/* 149 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21769,7 +21741,7 @@ return cy;
 
 
 /***/ }),
-/* 150 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21835,7 +21807,7 @@ return da;
 
 
 /***/ }),
-/* 151 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21920,7 +21892,7 @@ return deAt;
 
 
 /***/ }),
-/* 152 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22004,7 +21976,7 @@ return deCh;
 
 
 /***/ }),
-/* 153 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22088,7 +22060,7 @@ return de;
 
 
 /***/ }),
-/* 154 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22194,7 +22166,7 @@ return dv;
 
 
 /***/ }),
-/* 155 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22300,7 +22272,7 @@ return el;
 
 
 /***/ }),
-/* 156 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22373,7 +22345,7 @@ return enAu;
 
 
 /***/ }),
-/* 157 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22442,7 +22414,7 @@ return enCa;
 
 
 /***/ }),
-/* 158 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22515,7 +22487,7 @@ return enGb;
 
 
 /***/ }),
-/* 159 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22588,7 +22560,7 @@ return enIe;
 
 
 /***/ }),
-/* 160 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22661,7 +22633,7 @@ return enNz;
 
 
 /***/ }),
-/* 161 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22740,7 +22712,7 @@ return eo;
 
 
 /***/ }),
-/* 162 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22837,7 +22809,7 @@ return esDo;
 
 
 /***/ }),
-/* 163 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22926,7 +22898,7 @@ return esUs;
 
 
 /***/ }),
-/* 164 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23024,7 +22996,7 @@ return es;
 
 
 /***/ }),
-/* 165 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23111,7 +23083,7 @@ return et;
 
 
 /***/ }),
-/* 166 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23183,7 +23155,7 @@ return eu;
 
 
 /***/ }),
-/* 167 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23296,7 +23268,7 @@ return fa;
 
 
 /***/ }),
-/* 168 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23411,7 +23383,7 @@ return fi;
 
 
 /***/ }),
-/* 169 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23477,7 +23449,7 @@ return fo;
 
 
 /***/ }),
-/* 170 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23557,7 +23529,7 @@ return frCa;
 
 
 /***/ }),
-/* 171 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23641,7 +23613,7 @@ return frCh;
 
 
 /***/ }),
-/* 172 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23730,7 +23702,7 @@ return fr;
 
 
 /***/ }),
-/* 173 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23811,7 +23783,7 @@ return fy;
 
 
 /***/ }),
-/* 174 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23893,7 +23865,7 @@ return gd;
 
 
 /***/ }),
-/* 175 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23976,7 +23948,7 @@ return gl;
 
 
 /***/ }),
-/* 176 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24105,7 +24077,7 @@ return gomLatn;
 
 
 /***/ }),
-/* 177 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24235,7 +24207,7 @@ return gu;
 
 
 /***/ }),
-/* 178 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24340,7 +24312,7 @@ return he;
 
 
 /***/ }),
-/* 179 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24470,7 +24442,7 @@ return hi;
 
 
 /***/ }),
-/* 180 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24630,7 +24602,7 @@ return hr;
 
 
 /***/ }),
-/* 181 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24746,7 +24718,7 @@ return hu;
 
 
 /***/ }),
-/* 182 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24847,7 +24819,7 @@ return hyAm;
 
 
 /***/ }),
-/* 183 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24936,7 +24908,7 @@ return id;
 
 
 /***/ }),
-/* 184 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25074,7 +25046,7 @@ return is;
 
 
 /***/ }),
-/* 185 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25150,7 +25122,7 @@ return it;
 
 
 /***/ }),
-/* 186 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25236,7 +25208,7 @@ return ja;
 
 
 /***/ }),
-/* 187 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25325,7 +25297,7 @@ return jv;
 
 
 /***/ }),
-/* 188 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25420,7 +25392,7 @@ return ka;
 
 
 /***/ }),
-/* 189 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25513,7 +25485,7 @@ return kk;
 
 
 /***/ }),
-/* 190 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25577,7 +25549,7 @@ return km;
 
 
 /***/ }),
-/* 191 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25709,7 +25681,7 @@ return kn;
 
 
 /***/ }),
-/* 192 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25797,7 +25769,7 @@ return ko;
 
 
 /***/ }),
-/* 193 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25891,7 +25863,7 @@ return ky;
 
 
 /***/ }),
-/* 194 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26034,7 +26006,7 @@ return lb;
 
 
 /***/ }),
-/* 195 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26110,7 +26082,7 @@ return lo;
 
 
 /***/ }),
-/* 196 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26234,7 +26206,7 @@ return lt;
 
 
 /***/ }),
-/* 197 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26338,7 +26310,7 @@ return lv;
 
 
 /***/ }),
-/* 198 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26456,7 +26428,7 @@ return me;
 
 
 /***/ }),
-/* 199 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26526,7 +26498,7 @@ return mi;
 
 
 /***/ }),
-/* 200 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26622,7 +26594,7 @@ return mk;
 
 
 /***/ }),
-/* 201 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26709,7 +26681,7 @@ return ml;
 
 
 /***/ }),
-/* 202 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26876,7 +26848,7 @@ return mr;
 
 
 /***/ }),
-/* 203 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26965,7 +26937,7 @@ return msMy;
 
 
 /***/ }),
-/* 204 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27053,7 +27025,7 @@ return ms;
 
 
 /***/ }),
-/* 205 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27119,7 +27091,7 @@ return mt;
 
 
 /***/ }),
-/* 206 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27221,7 +27193,7 @@ return my;
 
 
 /***/ }),
-/* 207 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27290,7 +27262,7 @@ return nb;
 
 
 /***/ }),
-/* 208 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27419,7 +27391,7 @@ return ne;
 
 
 /***/ }),
-/* 209 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27513,7 +27485,7 @@ return nlBe;
 
 
 /***/ }),
-/* 210 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27607,7 +27579,7 @@ return nl;
 
 
 /***/ }),
-/* 211 */
+/* 209 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27673,7 +27645,7 @@ return nn;
 
 
 /***/ }),
-/* 212 */
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27803,7 +27775,7 @@ return paIn;
 
 
 /***/ }),
-/* 213 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27935,7 +27907,7 @@ return pl;
 
 
 /***/ }),
-/* 214 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28002,7 +27974,7 @@ return ptBr;
 
 
 /***/ }),
-/* 215 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28073,7 +28045,7 @@ return pt;
 
 
 /***/ }),
-/* 216 */
+/* 214 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28155,7 +28127,7 @@ return ro;
 
 
 /***/ }),
-/* 217 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28345,7 +28317,7 @@ return ru;
 
 
 /***/ }),
-/* 218 */
+/* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28449,7 +28421,7 @@ return sd;
 
 
 /***/ }),
-/* 219 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28516,7 +28488,7 @@ return se;
 
 
 /***/ }),
-/* 220 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28593,7 +28565,7 @@ return si;
 
 
 /***/ }),
-/* 221 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28756,7 +28728,7 @@ return sk;
 
 
 /***/ }),
-/* 222 */
+/* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28935,7 +28907,7 @@ return sl;
 
 
 /***/ }),
-/* 223 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29011,7 +28983,7 @@ return sq;
 
 
 /***/ }),
-/* 224 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29128,7 +29100,7 @@ return srCyrl;
 
 
 /***/ }),
-/* 225 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29245,7 +29217,7 @@ return sr;
 
 
 /***/ }),
-/* 226 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29340,7 +29312,7 @@ return ss;
 
 
 /***/ }),
-/* 227 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29415,7 +29387,7 @@ return sv;
 
 
 /***/ }),
-/* 228 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29480,7 +29452,7 @@ return sw;
 
 
 /***/ }),
-/* 229 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29616,7 +29588,7 @@ return ta;
 
 
 /***/ }),
-/* 230 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29711,7 +29683,7 @@ return te;
 
 
 /***/ }),
-/* 231 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29785,7 +29757,7 @@ return tet;
 
 
 /***/ }),
-/* 232 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29858,7 +29830,7 @@ return th;
 
 
 /***/ }),
-/* 233 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29926,7 +29898,7 @@ return tlPh;
 
 
 /***/ }),
-/* 234 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30054,7 +30026,7 @@ return tlh;
 
 
 /***/ }),
-/* 235 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30150,7 +30122,7 @@ return tr;
 
 
 /***/ }),
-/* 236 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30248,7 +30220,7 @@ return tzl;
 
 
 /***/ }),
-/* 237 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30312,7 +30284,7 @@ return tzmLatn;
 
 
 /***/ }),
-/* 238 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30376,7 +30348,7 @@ return tzm;
 
 
 /***/ }),
-/* 239 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30534,7 +30506,7 @@ return uk;
 
 
 /***/ }),
-/* 240 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30639,7 +30611,7 @@ return ur;
 
 
 /***/ }),
-/* 241 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30703,7 +30675,7 @@ return uzLatn;
 
 
 /***/ }),
-/* 242 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30767,7 +30739,7 @@ return uz;
 
 
 /***/ }),
-/* 243 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30852,7 +30824,7 @@ return vi;
 
 
 /***/ }),
-/* 244 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30926,7 +30898,7 @@ return xPseudo;
 
 
 /***/ }),
-/* 245 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30992,7 +30964,7 @@ return yo;
 
 
 /***/ }),
-/* 246 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31109,7 +31081,7 @@ return zhCn;
 
 
 /***/ }),
-/* 247 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31220,7 +31192,7 @@ return zhHk;
 
 
 /***/ }),
-/* 248 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31330,7 +31302,7 @@ return zhTw;
 
 
 /***/ }),
-/* 249 */
+/* 247 */
 /***/ (function(module, exports) {
 
 /*
@@ -31582,18 +31554,94 @@ function updateLink(linkElement, obj) {
 
 
 /***/ }),
+/* 248 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(428)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(269),
+  /* template */
+  __webpack_require__(405),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Calendar\\MonthlyCalendar.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] MonthlyCalendar.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-005a603f", Component.options)
+  } else {
+    hotAPI.reload("data-v-005a603f", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 249 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(434)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(273),
+  /* template */
+  __webpack_require__(411),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Calendar\\TheShift.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] TheShift.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2111a126", Component.options)
+  } else {
+    hotAPI.reload("data-v-2111a126", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
 /* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(440)
+__webpack_require__(432)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(268),
+  __webpack_require__(274),
   /* template */
-  __webpack_require__(415),
+  __webpack_require__(409),
   /* scopeId */
   "data-v-13e0a9bb",
   /* cssModules */
@@ -31623,23 +31671,20 @@ module.exports = Component.exports
 /* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-/* styles */
-__webpack_require__(439)
-
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(269),
+  __webpack_require__(276),
   /* template */
-  __webpack_require__(414),
+  __webpack_require__(420),
   /* scopeId */
-  "data-v-13975d2c",
+  null,
   /* cssModules */
   null
 )
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\DailyShiftRequirements.vue"
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\GmPage.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] DailyShiftRequirements.vue: functional components are not supported with templates, they should use render functions.")}
+if (Component.options.functional) {console.error("[vue-loader] GmPage.vue: functional components are not supported with templates, they should use render functions.")}
+
 
 /* hot reload */
 if (true) {(function () {
@@ -31648,9 +31693,9 @@ if (true) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-13975d2c", Component.options)
+    hotAPI.createRecord("data-v-73a05634", Component.options)
   } else {
-    hotAPI.reload("data-v-13975d2c", Component.options)
+    hotAPI.reload("data-v-73a05634", Component.options)
   }
 })()}
 
@@ -31663,21 +31708,21 @@ module.exports = Component.exports
 
 
 /* styles */
-__webpack_require__(449)
+__webpack_require__(441)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(283),
+  __webpack_require__(277),
   /* template */
-  __webpack_require__(424),
+  __webpack_require__(418),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\calendar\\monthly-calendar.vue"
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\ShiftRequirementsModal.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] monthly-calendar.vue: functional components are not supported with templates, they should use render functions.")}
+if (Component.options.functional) {console.error("[vue-loader] ShiftRequirementsModal.vue: functional components are not supported with templates, they should use render functions.")}
 
 /* hot reload */
 if (true) {(function () {
@@ -31686,9 +31731,9 @@ if (true) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5f29db5a", Component.options)
+    hotAPI.createRecord("data-v-6849a228", Component.options)
   } else {
-    hotAPI.reload("data-v-5f29db5a", Component.options)
+    hotAPI.reload("data-v-6849a228", Component.options)
   }
 })()}
 
@@ -31701,13 +31746,203 @@ module.exports = Component.exports
 
 
 /* styles */
-__webpack_require__(453)
+__webpack_require__(429)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(278),
+  /* template */
+  __webpack_require__(406),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\ShiftRequirementsWeek.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ShiftRequirementsWeek.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-037510f6", Component.options)
+  } else {
+    hotAPI.reload("data-v-037510f6", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 254 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(433)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(279),
+  /* template */
+  __webpack_require__(410),
+  /* scopeId */
+  "data-v-18d24ffb",
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\ShiftSelection.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ShiftSelection.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-18d24ffb", Component.options)
+  } else {
+    hotAPI.reload("data-v-18d24ffb", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 255 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(437)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(282),
+  /* template */
+  __webpack_require__(414),
+  /* scopeId */
+  "data-v-3aaf9f48",
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Scheduling\\GMApproveSchedule.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] GMApproveSchedule.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3aaf9f48", Component.options)
+  } else {
+    hotAPI.reload("data-v-3aaf9f48", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 256 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(436)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(283),
+  /* template */
+  __webpack_require__(413),
+  /* scopeId */
+  "data-v-297e35f2",
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Scheduling\\PayrollApproval.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] PayrollApproval.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-297e35f2", Component.options)
+  } else {
+    hotAPI.reload("data-v-297e35f2", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 257 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(442)
 
 var Component = __webpack_require__(4)(
   /* script */
   __webpack_require__(284),
   /* template */
-  __webpack_require__(429),
+  __webpack_require__(419),
+  /* scopeId */
+  "data-v-70d7f825",
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Scheduling\\ReviewScheduleChange.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ReviewScheduleChange.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (true) {(function () {
+  var hotAPI = __webpack_require__(1)
+  hotAPI.install(__webpack_require__(2), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-70d7f825", Component.options)
+  } else {
+    hotAPI.reload("data-v-70d7f825", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 258 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(443)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(287),
+  /* template */
+  __webpack_require__(421),
   /* scopeId */
   null,
   /* cssModules */
@@ -31734,18 +31969,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 254 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(446)
+__webpack_require__(438)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(285),
+  __webpack_require__(288),
   /* template */
-  __webpack_require__(421),
+  __webpack_require__(415),
   /* scopeId */
   null,
   /* cssModules */
@@ -31772,13 +32007,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 255 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function(t,e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var n=e();for(var r in n)("object"==typeof exports?exports:t)[r]=n[r]}}(this,function(){return function(t){function e(r){if(n[r])return n[r].exports;var i=n[r]={i:r,l:!1,exports:{}};return t[r].call(i.exports,i,i.exports,e),i.l=!0,i.exports}var n={};return e.m=t,e.c=n,e.i=function(t){return t},e.d=function(t,n,r){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:r})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="/dist/",e(e.s=24)}([function(t,e,n){"use strict";function r(){p=!1}function i(t){if(!t)return void(l!==d&&(l=d,r()));if(t!==l){if(t.length!==d.length)throw new Error("Custom alphabet for shortid must be "+d.length+" unique characters. You submitted "+t.length+" characters: "+t);var e=t.split("").filter(function(t,e,n){return e!==n.lastIndexOf(t)});if(e.length)throw new Error("Custom alphabet for shortid must be "+d.length+" unique characters. These characters were not unique: "+e.join(", "));l=t,r()}}function o(t){return i(t),l}function a(t){h.seed(t),f!==t&&(r(),f=t)}function s(){l||i(d);for(var t,e=l.split(""),n=[],r=h.nextValue();e.length>0;)r=h.nextValue(),t=Math.floor(r*e.length),n.push(e.splice(t,1)[0]);return n.join("")}function u(){return p?p:p=s()}function c(t){return u()[t]}var l,f,p,h=n(18),d="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";t.exports={characters:o,seed:a,lookup:c,shuffled:u}},function(t,e,n){"use strict";var r=n(6),i=n.n(r),o=300;e.a={animateIn:function(t){i()({targets:t,translateY:"-35px",opacity:1,duration:o,easing:"easeOutCubic"})},animateOut:function(t,e){i()({targets:t,opacity:0,marginTop:"-40px",duration:o,easing:"easeOutExpo",complete:e})},animateOutBottom:function(t,e){i()({targets:t,opacity:0,marginBottom:"-40px",duration:o,easing:"easeOutExpo",complete:e})},animateReset:function(t){i()({targets:t,left:0,opacity:1,duration:o,easing:"easeOutExpo"})},animatePanning:function(t,e,n){i()({targets:t,duration:10,easing:"easeOutQuad",left:e,opacity:n})},animatePanEnd:function(t,e){i()({targets:t,opacity:0,duration:o,easing:"easeOutExpo",complete:e})},clearAnimation:function(t){var e=i.a.timeline();t.forEach(function(t){e.add({targets:t.el,opacity:0,right:"-40px",duration:300,offset:"-=150",easing:"easeOutExpo",complete:function(){t.remove()}})})}}},function(t,e,n){"use strict";t.exports=n(15)},function(t,e,n){"use strict";function r(t,e){for(var n,r=0,o="";!n;)o+=t(e>>4*r&15|i()),n=e<Math.pow(16,r+1),r++;return o}var i=n(17);t.exports=r},function(t,e,n){"use strict";var r=n(8),i=n(1);n.d(e,"a",function(){return s});var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},a=n(2);n(11).polyfill();var s=function t(e){var n=this;return this.id=a.generate(),this.options=e,this.cached_options={},this.global={},this.groups=[],this.toasts=[],c(this),this.group=function(e){e||(e={}),e.globalToasts||(e.globalToasts={}),Object.assign(e.globalToasts,n.global);var r=new t(e);return n.groups.push(r),r},this.register=function(t,e,r){return r=r||{},l(n,t,e,r)},this.show=function(t,e){return u(n,t,e)},this.success=function(t,e){return e=e||{},e.type="success",u(n,t,e)},this.info=function(t,e){return e=e||{},e.type="info",u(n,t,e)},this.error=function(t,e){return e=e||{},e.type="error",u(n,t,e)},this.remove=function(t){n.toasts=n.toasts.filter(function(e){return e.el.hash!==t.hash}),t.parentNode&&t.parentNode.removeChild(t)},this.clear=function(t){return i.a.clearAnimation(n.toasts,function(){t&&t()}),n.toasts=[],!0},this},u=function(t,e,i){i=i||{};var a=null;if("object"!==(void 0===i?"undefined":o(i)))return console.error("Options should be a type of object. given : "+i),null;t.options.singleton&&t.toasts.length>0&&(t.cached_options=i,t.toasts[t.toasts.length-1].goAway(0));var s=Object.assign({},t.options);return Object.assign(s,i),a=n.i(r.a)(t,e,s),t.toasts.push(a),a},c=function(t){var e=t.options.globalToasts,n=function(e,n){return"string"==typeof n&&t[n]?t[n].apply(t,[e,{}]):u(t,e,n)};e&&(t.global={},Object.keys(e).forEach(function(r){t.global[r]=function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return e[r].apply(null,[t,n])}}))},l=function(t,e,n,r){t.options.globalToasts||(t.options.globalToasts={}),t.options.globalToasts[e]=function(t,e){var i=null;return"string"==typeof n&&(i=n),"function"==typeof n&&(i=n(t)),e(i,r)},c(t)}},function(t,e,n){n(21);var r=n(20)(null,null,null,null);t.exports=r.exports},function(t,e,n){var r,i,o,a=this;!function(n,a){i=[],r=a,o="function"==typeof r?r.apply(e,i):r,void 0!==o&&(t.exports=o)}(this,function(){function t(t){if(!D.col(t))try{return document.querySelectorAll(t)}catch(t){}}function e(t){return t.reduce(function(t,n){return t.concat(D.arr(n)?e(n):n)},[])}function n(e){return D.arr(e)?e:(D.str(e)&&(e=t(e)||e),e instanceof NodeList||e instanceof HTMLCollection?[].slice.call(e):[e])}function r(t,e){return t.some(function(t){return t===e})}function i(t){var e,n={};for(e in t)n[e]=t[e];return n}function o(t,e){var n,r=i(t);for(n in t)r[n]=e.hasOwnProperty(n)?e[n]:t[n];return r}function s(t,e){var n,r=i(t);for(n in e)r[n]=D.und(t[n])?e[n]:t[n];return r}function u(t){t=t.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,function(t,e,n,r){return e+e+n+n+r+r});var e=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(t);t=parseInt(e[1],16);var n=parseInt(e[2],16),e=parseInt(e[3],16);return"rgb("+t+","+n+","+e+")"}function c(t){function e(t,e,n){return 0>n&&(n+=1),1<n&&--n,n<1/6?t+6*(e-t)*n:.5>n?e:n<2/3?t+(e-t)*(2/3-n)*6:t}var n=/hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/g.exec(t);t=parseInt(n[1])/360;var r=parseInt(n[2])/100,n=parseInt(n[3])/100;if(0==r)r=n=t=n;else{var i=.5>n?n*(1+r):n+r-n*r,o=2*n-i,r=e(o,i,t+1/3),n=e(o,i,t);t=e(o,i,t-1/3)}return"rgb("+255*r+","+255*n+","+255*t+")"}function l(t){if(t=/([\+\-]?[0-9#\.]+)(%|px|pt|em|rem|in|cm|mm|ex|pc|vw|vh|deg|rad|turn)?/.exec(t))return t[2]}function f(t){return-1<t.indexOf("translate")?"px":-1<t.indexOf("rotate")||-1<t.indexOf("skew")?"deg":void 0}function p(t,e){return D.fnc(t)?t(e.target,e.id,e.total):t}function h(t,e){if(e in t.style)return getComputedStyle(t).getPropertyValue(e.replace(/([a-z])([A-Z])/g,"$1-$2").toLowerCase())||"0"}function d(t,e){return D.dom(t)&&r(_,e)?"transform":D.dom(t)&&(t.getAttribute(e)||D.svg(t)&&t[e])?"attribute":D.dom(t)&&"transform"!==e&&h(t,e)?"css":null!=t[e]?"object":void 0}function m(t,e){var n=f(e),n=-1<e.indexOf("scale")?1:0+n;if(t=t.style.transform,!t)return n;for(var r=[],i=[],o=[],a=/(\w+)\((.+?)\)/g;r=a.exec(t);)i.push(r[1]),o.push(r[2]);return t=o.filter(function(t,n){return i[n]===e}),t.length?t[0]:n}function v(t,e){switch(d(t,e)){case"transform":return m(t,e);case"css":return h(t,e);case"attribute":return t.getAttribute(e)}return t[e]||0}function g(t,e){var n=/^(\*=|\+=|-=)/.exec(t);if(!n)return t;switch(e=parseFloat(e),t=parseFloat(t.replace(n[0],"")),n[0][0]){case"+":return e+t;case"-":return e-t;case"*":return e*t}}function y(t){return D.obj(t)&&t.hasOwnProperty("totalLength")}function b(t,e){function n(n){return n=void 0===n?0:n,t.el.getPointAtLength(1<=e+n?e+n:0)}var r=n(),i=n(-1),o=n(1);switch(t.property){case"x":return r.x;case"y":return r.y;case"angle":return 180*Math.atan2(o.y-i.y,o.x-i.x)/Math.PI}}function x(t,e){var n=/-?\d*\.?\d+/g;if(t=y(t)?t.totalLength:t,D.col(t))e=D.rgb(t)?t:D.hex(t)?u(t):D.hsl(t)?c(t):void 0;else{var r=l(t);t=r?t.substr(0,t.length-r.length):t,e=e?t+e:t}return e+="",{original:e,numbers:e.match(n)?e.match(n).map(Number):[0],strings:e.split(n)}}function T(t,e){return e.reduce(function(e,n,r){return e+t[r-1]+n})}function w(t){return(t?e(D.arr(t)?t.map(n):n(t)):[]).filter(function(t,e,n){return n.indexOf(t)===e})}function E(t){var e=w(t);return e.map(function(t,n){return{target:t,id:n,total:e.length}})}function C(t,e){var r=i(e);if(D.arr(t)){var o=t.length;2!==o||D.obj(t[0])?D.fnc(e.duration)||(r.duration=e.duration/o):t={value:t}}return n(t).map(function(t,n){return n=n?0:e.delay,t=D.obj(t)&&!y(t)?t:{value:t},D.und(t.delay)&&(t.delay=n),t}).map(function(t){return s(t,r)})}function O(t,e){var n,r={};for(n in t){var i=p(t[n],e);D.arr(i)&&(i=i.map(function(t){return p(t,e)}),1===i.length&&(i=i[0])),r[n]=i}return r.duration=parseFloat(r.duration),r.delay=parseFloat(r.delay),r}function S(t){return D.arr(t)?X.apply(this,t):R[t]}function M(t,e){var n;return t.tweens.map(function(r){r=O(r,e);var i=r.value,o=v(e.target,t.name),a=n?n.to.original:o,a=D.arr(i)?i[0]:a,s=g(D.arr(i)?i[1]:i,a),o=l(s)||l(a)||l(o);return r.isPath=y(i),r.from=x(a,o),r.to=x(s,o),r.start=n?n.end:t.offset,r.end=r.start+r.delay+r.duration,r.easing=S(r.easing),r.elasticity=(1e3-Math.min(Math.max(r.elasticity,1),999))/1e3,D.col(r.from.original)&&(r.round=1),n=r})}function k(t,n){return e(t.map(function(t){return n.map(function(e){var n=d(t.target,e.name);if(n){var r=M(e,t);e={type:n,property:e.name,animatable:t,tweens:r,duration:r[r.length-1].end,delay:r[0].delay}}else e=void 0;return e})})).filter(function(t){return!D.und(t)})}function A(t,e,n){var r="delay"===t?Math.min:Math.max;return e.length?r.apply(Math,e.map(function(e){return e[t]})):n[t]}function P(t){var e,n=o(j,t),r=o(N,t),i=E(t.targets),a=[],u=s(n,r);for(e in t)u.hasOwnProperty(e)||"targets"===e||a.push({name:e,offset:u.offset,tweens:C(t[e],r)});return t=k(i,a),s(n,{children:[],animatables:i,animations:t,duration:A("duration",t,r),delay:A("delay",t,r)})}function I(t){function e(){return window.Promise&&new Promise(function(t){return l=t})}function n(t){return p.reversed?p.duration-t:t}function r(t){for(var e=0,n={},r=p.animations,i={};e<r.length;){var o=r[e],a=o.animatable,s=o.tweens;i.tween=s.filter(function(e){return t<e.end})[0]||s[s.length-1],i.isPath$1=i.tween.isPath,i.round=i.tween.round,i.eased=i.tween.easing(Math.min(Math.max(t-i.tween.start-i.tween.delay,0),i.tween.duration)/i.tween.duration,i.tween.elasticity),s=T(i.tween.to.numbers.map(function(t){return function(e,n){return n=t.isPath$1?0:t.tween.from.numbers[n],e=n+t.eased*(e-n),t.isPath$1&&(e=b(t.tween.value,e)),t.round&&(e=Math.round(e*t.round)/t.round),e}}(i)),i.tween.to.strings),z[o.type](a.target,o.property,s,n,a.id),o.currentValue=s,e++,i={isPath$1:i.isPath$1,tween:i.tween,eased:i.eased,round:i.round}}if(n)for(var u in n)L||(L=h(document.body,"transform")?"transform":"-webkit-transform"),p.animatables[u].target.style[L]=n[u].join(" ");p.currentTime=t,p.progress=t/p.duration*100}function i(t){p[t]&&p[t](p)}function o(){p.remaining&&!0!==p.remaining&&p.remaining--}function a(t){var a=p.duration,h=p.offset,d=p.delay,m=p.currentTime,v=p.reversed,g=n(t),g=Math.min(Math.max(g,0),a);if(p.children){var y=p.children;if(g>=p.currentTime)for(var b=0;b<y.length;b++)y[b].seek(g);else for(b=y.length;b--;)y[b].seek(g)}g>h&&g<a?(r(g),!p.began&&g>=d&&(p.began=!0,i("begin")),i("run")):(g<=h&&0!==m&&(r(0),v&&o()),g>=a&&m!==a&&(r(a),v||o())),t>=a&&(p.remaining?(u=s,"alternate"===p.direction&&(p.reversed=!p.reversed)):(p.pause(),"Promise"in window&&(l(),f=e()),p.completed||(p.completed=!0,i("complete"))),c=0),i("update")}t=void 0===t?{}:t;var s,u,c=0,l=null,f=e(),p=P(t);return p.reset=function(){var t=p.direction,e=p.loop;for(p.currentTime=0,p.progress=0,p.paused=!0,p.began=!1,p.completed=!1,p.reversed="reverse"===t,p.remaining="alternate"===t&&1===e?2:e,t=p.children.length;t--;)e=p.children[t],e.seek(e.offset),e.reset()},p.tick=function(t){s=t,u||(u=s),a((c+s-u)*I.speed)},p.seek=function(t){a(n(t))},p.pause=function(){var t=F.indexOf(p);-1<t&&F.splice(t,1),p.paused=!0},p.play=function(){p.paused&&(p.paused=!1,u=0,c=n(p.currentTime),F.push(p),Y||H())},p.reverse=function(){p.reversed=!p.reversed,u=0,c=n(p.currentTime)},p.restart=function(){p.pause(),p.reset(),p.play()},p.finished=f,p.reset(),p.autoplay&&p.play(),p}var L,j={update:void 0,begin:void 0,run:void 0,complete:void 0,loop:1,direction:"normal",autoplay:!0,offset:0},N={duration:1e3,delay:0,easing:"easeOutElastic",elasticity:500,round:0},_="translateX translateY translateZ rotate rotateX rotateY rotateZ scale scaleX scaleY scaleZ skewX skewY".split(" "),D={arr:function(t){return Array.isArray(t)},obj:function(t){return-1<Object.prototype.toString.call(t).indexOf("Object")},svg:function(t){return t instanceof SVGElement},dom:function(t){return t.nodeType||D.svg(t)},str:function(t){return"string"==typeof t},fnc:function(t){return"function"==typeof t},und:function(t){return void 0===t},hex:function(t){return/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(t)},rgb:function(t){return/^rgb/.test(t)},hsl:function(t){return/^hsl/.test(t)},col:function(t){return D.hex(t)||D.rgb(t)||D.hsl(t)}},X=function(){function t(t,e,n){return(((1-3*n+3*e)*t+(3*n-6*e))*t+3*e)*t}return function(e,n,r,i){if(0<=e&&1>=e&&0<=r&&1>=r){var o=new Float32Array(11);if(e!==n||r!==i)for(var a=0;11>a;++a)o[a]=t(.1*a,e,r);return function(a){if(e===n&&r===i)return a;if(0===a)return 0;if(1===a)return 1;for(var s=0,u=1;10!==u&&o[u]<=a;++u)s+=.1;--u;var u=s+(a-o[u])/(o[u+1]-o[u])*.1,c=3*(1-3*r+3*e)*u*u+2*(3*r-6*e)*u+3*e;if(.001<=c){for(s=0;4>s&&(c=3*(1-3*r+3*e)*u*u+2*(3*r-6*e)*u+3*e,0!==c);++s)var l=t(u,e,r)-a,u=u-l/c;a=u}else if(0===c)a=u;else{var u=s,s=s+.1,f=0;do l=u+(s-u)/2,c=t(l,e,r)-a,0<c?s=l:u=l;while(1e-7<Math.abs(c)&&10>++f);a=l}return t(a,n,i)}}}}(),R=function(){function t(t,e){return 0===t||1===t?t:-Math.pow(2,10*(t-1))*Math.sin(2*(t-1-e/(2*Math.PI)*Math.asin(1))*Math.PI/e)}var e,n="Quad Cubic Quart Quint Sine Expo Circ Back Elastic".split(" "),r={In:[[.55,.085,.68,.53],[.55,.055,.675,.19],[.895,.03,.685,.22],[.755,.05,.855,.06],[.47,0,.745,.715],[.95,.05,.795,.035],[.6,.04,.98,.335],[.6,-.28,.735,.045],t],Out:[[.25,.46,.45,.94],[.215,.61,.355,1],[.165,.84,.44,1],[.23,1,.32,1],[.39,.575,.565,1],[.19,1,.22,1],[.075,.82,.165,1],[.175,.885,.32,1.275],function(e,n){return 1-t(1-e,n)}],InOut:[[.455,.03,.515,.955],[.645,.045,.355,1],[.77,0,.175,1],[.86,0,.07,1],[.445,.05,.55,.95],[1,0,0,1],[.785,.135,.15,.86],[.68,-.55,.265,1.55],function(e,n){return.5>e?t(2*e,n)/2:1-t(-2*e+2,n)/2}]},i={linear:X(.25,.25,.75,.75)},o={};for(e in r)o.type=e,r[o.type].forEach(function(t){return function(e,r){i["ease"+t.type+n[r]]=D.fnc(e)?e:X.apply(a,e)}}(o)),o={type:o.type};return i}(),z={css:function(t,e,n){return t.style[e]=n},attribute:function(t,e,n){return t.setAttribute(e,n)},object:function(t,e,n){return t[e]=n},transform:function(t,e,n,r,i){r[i]||(r[i]=[]),r[i].push(e+"("+n+")")}},F=[],Y=0,H=function(){function t(){Y=requestAnimationFrame(e)}function e(e){var n=F.length;if(n){for(var r=0;r<n;)F[r]&&F[r].tick(e),r++;t()}else cancelAnimationFrame(Y),Y=0}return t}();return I.version="2.0.2",I.speed=1,I.running=F,I.remove=function(t){t=w(t);for(var e=F.length;e--;)for(var n=F[e],i=n.animations,o=i.length;o--;)r(t,i[o].animatable.target)&&(i.splice(o,1),i.length||n.pause())},I.getValue=v,I.path=function(e,n){var r=D.str(e)?t(e)[0]:e,i=n||100;return function(t){return{el:r,property:t,totalLength:r.getTotalLength()*(i/100)}}},I.setDashoffset=function(t){var e=t.getTotalLength();return t.setAttribute("stroke-dasharray",e),e},I.bezier=X,I.easings=R,I.timeline=function(t){var e=I(t);return e.pause(),e.duration=0,e.add=function(t){return e.children.forEach(function(t){t.began=!0,t.completed=!0}),n(t).forEach(function(t){var n=e.duration,r=t.offset;t.autoplay=!1,t.offset=D.und(r)?n:g(r,n),e.seek(t.offset),t=I(t),t.duration>n&&(e.duration=t.duration),t.began=!0,e.children.push(t)}),e.reset(),e.seek(0),e.autoplay&&e.restart(),e},e},I.random=function(t,e){return Math.floor(Math.random()*(e-t+1))+t},I})},function(t,e,n){"use strict";var r=n(1);n.d(e,"a",function(){return u});var i=this,o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},a=function(t,e,n){return setTimeout(function(){if(n.cached_options.position&&n.cached_options.position.includes("bottom"))return void r.a.animateOutBottom(t,function(){n.remove(t)});r.a.animateOut(t,function(){n.remove(t)})},e),!0},s=function(t,e){return("object"===("undefined"==typeof HTMLElement?"undefined":o(HTMLElement))?e instanceof HTMLElement:e&&"object"===(void 0===e?"undefined":o(e))&&null!==e&&1===e.nodeType&&"string"==typeof e.nodeName)?t.appendChild(e):t.innerHTML=e,i},u=function(t,e){var n=!1;return{el:t,text:function(e){return s(t,e),this},goAway:function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:800;return n=!0,a(t,r,e)},remove:function(){e.remove(t)},disposed:function(){return n}}}},function(t,e,n){"use strict";var r=n(12),i=n.n(r),o=n(1),a=n(7),s="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},u=n(2),c={},l=null,f=function(t){return t.className=t.className||null,t.onComplete=t.onComplete||null,t.position=t.position||"top-right",t.duration=t.duration||null,t.theme=t.theme||"primary",t.type=t.type||"default",t.containerClass=t.containerClass||null,t.fullWidth=t.fullWidth||!1,t.icon=t.icon||null,t.action=t.action||null,t.fitToScreen=t.fitToScreen||null,t.closeOnSwipe=void 0===t.closeOnSwipe||t.closeOnSwipe,t.iconPack=t.iconPack||"material",t.className&&"string"==typeof t.className&&(t.className=t.className.split(" ")),t.className||(t.className=[]),t.theme&&t.className.push(t.theme.trim()),t.type&&t.className.push(t.type),t.containerClass&&"string"==typeof t.containerClass&&(t.containerClass=t.containerClass.split(" ")),t.containerClass||(t.containerClass=[]),t.position&&t.containerClass.push(t.position.trim()),t.fullWidth&&t.containerClass.push("full-width"),t.fitToScreen&&t.containerClass.push("fit-to-screen"),c=t,t},p=function(t,e){var r=document.createElement("div");if(r.classList.add("toasted"),r.hash=u.generate(),e.className&&e.className.forEach(function(t){r.classList.add(t)}),("object"===("undefined"==typeof HTMLElement?"undefined":s(HTMLElement))?t instanceof HTMLElement:t&&"object"===(void 0===t?"undefined":s(t))&&null!==t&&1===t.nodeType&&"string"==typeof t.nodeName)?r.appendChild(t):r.innerHTML=t,h(e,r),e.closeOnSwipe){var c=new i.a(r,{prevent_default:!1});c.on("pan",function(t){var e=t.deltaX,n=80;r.classList.contains("panning")||r.classList.add("panning");var i=1-Math.abs(e/n);i<0&&(i=0),o.a.animatePanning(r,e,i)}),c.on("panend",function(t){var n=t.deltaX;Math.abs(n)>80?o.a.animatePanEnd(r,function(){"function"==typeof e.onComplete&&e.onComplete(),r.parentNode&&l.remove(r)}):(r.classList.remove("panning"),o.a.animateReset(r))})}if(Array.isArray(e.action))e.action.forEach(function(t){var e=m(t,n.i(a.a)(r,l));e&&r.appendChild(e)});else if("object"===s(e.action)){var f=m(e.action,n.i(a.a)(r,l));f&&r.appendChild(f)}return r},h=function(t,e){if(t.icon){var n=document.createElement("i");switch(t.iconPack){case"fontawesome":n.classList.add("fa");var r=t.icon.name?t.icon.name:t.icon;r.includes("fa-")?n.classList.add(r.trim()):n.classList.add("fa-"+r.trim());break;default:n.classList.add("material-icons"),n.textContent=t.icon.name?t.icon.name:t.icon}t.icon.after&&n.classList.add("after"),d(t,n,e)}},d=function(t,e,n){t.icon&&(t.icon.after&&t.icon.name?n.appendChild(e):(t.icon.name,n.insertBefore(e,n.firstChild)))},m=function(t,e){if(!t)return null;var n=document.createElement("a");if(n.classList.add("action"),n.classList.add("ripple"),t.text&&(n.text=t.text),t.href&&(n.href=t.href),t.icon){n.classList.add("icon");var r=document.createElement("i");switch(c.iconPack){case"fontawesome":r.classList.add("fa"),t.icon.includes("fa-")?r.classList.add(t.icon.trim()):r.classList.add("fa-"+t.icon.trim());break;default:r.classList.add("material-icons"),r.textContent=t.icon}n.appendChild(r)}return t.class&&("string"==typeof t.class?t.class.split(" ").forEach(function(t){n.classList.add(t)}):Array.isArray(t.class)&&t.class.forEach(function(t){n.classList.add(t.trim())})),t.push&&n.addEventListener("click",function(n){if(n.preventDefault(),!c.router)return void console.warn("[vue-toasted] : Vue Router instance is not attached. please check the docs");c.router.push(t.push),t.push.dontClose||e.goAway(0)}),t.onClick&&"function"==typeof t.onClick&&n.addEventListener("click",function(n){t.onClick&&(n.preventDefault(),t.onClick(n,e))}),n};e.a=function(t,e,r){l=t,r=f(r);var i=document.getElementById(l.id);null===i&&(i=document.createElement("div"),i.id=l.id,document.body.appendChild(i)),r.containerClass.unshift("toasted-container"),i.className!==r.containerClass.join(" ")&&(i.className="",r.containerClass.forEach(function(t){i.classList.add(t)}));var s=p(e,r);e&&i.appendChild(s),s.style.opacity=0,o.a.animateIn(s);var u=r.duration,c=void 0;return null!==u&&(c=setInterval(function(){null===s.parentNode&&window.clearInterval(c),s.classList.contains("panning")||(u-=20),u<=0&&(o.a.animateOut(s,function(){"function"==typeof r.onComplete&&r.onComplete(),s.parentNode&&l.remove(s)}),window.clearInterval(c))},20)),n.i(a.a)(s,l)}},function(t,e,n){e=t.exports=n(10)(),e.push([t.i,".toasted{padding:0 20px}.toasted.rounded{border-radius:24px}.toasted.primary{border-radius:2px;min-height:38px;line-height:1.1em;background-color:#353535;padding:0 20px;font-size:15px;font-weight:300;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24)}.toasted.primary.success{background:#4caf50}.toasted.primary.error{background:#f44336}.toasted.primary.info{background:#3f51b5}.toasted.primary .action{color:#a1c2fa}.toasted.bubble{border-radius:30px;min-height:38px;line-height:1.1em;background-color:#ff7043;padding:0 20px;font-size:15px;font-weight:300;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24)}.toasted.bubble.success{background:#4caf50}.toasted.bubble.error{background:#f44336}.toasted.bubble.info{background:#3f51b5}.toasted.bubble .action{color:#8e2b0c}.toasted.outline{border-radius:30px;min-height:38px;line-height:1.1em;background-color:#fff;border:1px solid #676767;padding:0 20px;font-size:15px;color:#676767;box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);font-weight:700}.toasted.outline.success{color:#4caf50;border-color:#4caf50}.toasted.outline.error{color:#f44336;border-color:#f44336}.toasted.outline.info{color:#3f51b5;border-color:#3f51b5}.toasted.outline .action{color:#607d8b}.toasted-container{position:fixed;z-index:10000}.toasted-container,.toasted-container.full-width{display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column}.toasted-container.full-width{max-width:86%;width:100%}.toasted-container.full-width.fit-to-screen{min-width:100%}.toasted-container.full-width.fit-to-screen .toasted:first-child{margin-top:0}.toasted-container.full-width.fit-to-screen.top-right{top:0;right:0}.toasted-container.full-width.fit-to-screen.top-left{top:0;left:0}.toasted-container.full-width.fit-to-screen.top-center{top:0;left:0;-webkit-transform:translateX(0);transform:translateX(0)}.toasted-container.full-width.fit-to-screen.bottom-right{right:0;bottom:0}.toasted-container.full-width.fit-to-screen.bottom-left{left:0;bottom:0}.toasted-container.full-width.fit-to-screen.bottom-center{left:0;bottom:0;-webkit-transform:translateX(0);transform:translateX(0)}.toasted-container.top-right{top:10%;right:7%}.toasted-container.top-left{top:10%;left:7%}.toasted-container.top-center{top:10%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%)}.toasted-container.bottom-right{right:5%;bottom:7%}.toasted-container.bottom-left{left:5%;bottom:7%}.toasted-container.bottom-center{left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);bottom:7%}.toasted-container.bottom-left .toasted,.toasted-container.top-left .toasted{float:left}.toasted-container.bottom-right .toasted,.toasted-container.top-right .toasted{float:right}.toasted-container .toasted{top:35px;width:auto;clear:both;margin-top:10px;position:relative;max-width:100%;height:auto;word-break:normal;display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:justify;justify-content:space-between;box-sizing:inherit}.toasted-container .toasted .fa,.toasted-container .toasted .material-icons{margin-right:.5rem;margin-left:-.4rem}.toasted-container .toasted .fa.after,.toasted-container .toasted .material-icons.after{margin-left:.5rem;margin-right:-.4rem}.toasted-container .toasted .action{text-decoration:none;font-size:.8rem;padding:8px;margin:5px -7px 5px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.03em;font-weight:600;cursor:pointer}.toasted-container .toasted .action.icon{padding:4px;display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:center;justify-content:center}.toasted-container .toasted .action.icon .fa,.toasted-container .toasted .action.icon .material-icons{margin-right:0;margin-left:4px}.toasted-container .toasted .action.icon:hover{text-decoration:none}.toasted-container .toasted .action:hover{text-decoration:underline}@media only screen and (max-width:600px){#toasted-container{min-width:100%}#toasted-container .toasted:first-child{margin-top:0}#toasted-container.top-right{top:0;right:0}#toasted-container.top-left{top:0;left:0}#toasted-container.top-center{top:0;left:0;-webkit-transform:translateX(0);transform:translateX(0)}#toasted-container.bottom-right{right:0;bottom:0}#toasted-container.bottom-left{left:0;bottom:0}#toasted-container.bottom-center{left:0;bottom:0;-webkit-transform:translateX(0);transform:translateX(0)}#toasted-container.bottom-center,#toasted-container.top-center{-ms-flex-align:stretch!important;align-items:stretch!important}#toasted-container.bottom-left .toasted,#toasted-container.bottom-right .toasted,#toasted-container.top-left .toasted,#toasted-container.top-right .toasted{float:none}#toasted-container .toasted{border-radius:0}}",""])},function(t,e){t.exports=function(){var t=[];return t.toString=function(){for(var t=[],e=0;e<this.length;e++){var n=this[e];n[2]?t.push("@media "+n[2]+"{"+n[1]+"}"):t.push(n[1])}return t.join("")},t.i=function(e,n){"string"==typeof e&&(e=[[null,e,""]]);for(var r={},i=0;i<this.length;i++){var o=this[i][0];"number"==typeof o&&(r[o]=!0)}for(i=0;i<e.length;i++){var a=e[i];"number"==typeof a[0]&&r[a[0]]||(n&&!a[2]?a[2]=n:n&&(a[2]="("+a[2]+") and ("+n+")"),t.push(a))}},t}},function(t,e,n){"use strict";function r(t,e){if(void 0===t||null===t)throw new TypeError("Cannot convert first argument to object");for(var n=Object(t),r=1;r<arguments.length;r++){var i=arguments[r];if(void 0!==i&&null!==i)for(var o=Object.keys(Object(i)),a=0,s=o.length;a<s;a++){var u=o[a],c=Object.getOwnPropertyDescriptor(i,u);void 0!==c&&c.enumerable&&(n[u]=i[u])}}return n}function i(){Object.assign||Object.defineProperty(Object,"assign",{enumerable:!1,configurable:!0,writable:!0,value:r})}t.exports={assign:r,polyfill:i}},function(t,e,n){var r;!function(i,o,a,s){"use strict";function u(t,e,n){return setTimeout(h(t,n),e)}function c(t,e,n){return!!Array.isArray(t)&&(l(t,n[e],n),!0)}function l(t,e,n){var r;if(t)if(t.forEach)t.forEach(e,n);else if(t.length!==s)for(r=0;r<t.length;)e.call(n,t[r],r,t),r++;else for(r in t)t.hasOwnProperty(r)&&e.call(n,t[r],r,t)}function f(t,e,n){var r="DEPRECATED METHOD: "+e+"\n"+n+" AT \n";return function(){var e=new Error("get-stack-trace"),n=e&&e.stack?e.stack.replace(/^[^\(]+?[\n$]/gm,"").replace(/^\s+at\s+/gm,"").replace(/^Object.<anonymous>\s*\(/gm,"{anonymous}()@"):"Unknown Stack Trace",o=i.console&&(i.console.warn||i.console.log);return o&&o.call(i.console,r,n),t.apply(this,arguments)}}function p(t,e,n){var r,i=e.prototype;r=t.prototype=Object.create(i),r.constructor=t,r._super=i,n&&mt(r,n)}function h(t,e){return function(){return t.apply(e,arguments)}}function d(t,e){return typeof t==yt?t.apply(e?e[0]||s:s,e):t}function m(t,e){return t===s?e:t}function v(t,e,n){l(x(e),function(e){t.addEventListener(e,n,!1)})}function g(t,e,n){l(x(e),function(e){t.removeEventListener(e,n,!1)})}function y(t,e){for(;t;){if(t==e)return!0;t=t.parentNode}return!1}function b(t,e){return t.indexOf(e)>-1}function x(t){return t.trim().split(/\s+/g)}function T(t,e,n){if(t.indexOf&&!n)return t.indexOf(e);for(var r=0;r<t.length;){if(n&&t[r][n]==e||!n&&t[r]===e)return r;r++}return-1}function w(t){return Array.prototype.slice.call(t,0)}function E(t,e,n){for(var r=[],i=[],o=0;o<t.length;){var a=e?t[o][e]:t[o];T(i,a)<0&&r.push(t[o]),i[o]=a,o++}return n&&(r=e?r.sort(function(t,n){return t[e]>n[e]}):r.sort()),r}function C(t,e){for(var n,r,i=e[0].toUpperCase()+e.slice(1),o=0;o<vt.length;){if(n=vt[o],r=n?n+i:e,r in t)return r;o++}return s}function O(){return Ct++}function S(t){var e=t.ownerDocument||t;return e.defaultView||e.parentWindow||i}function M(t,e){var n=this;this.manager=t,this.callback=e,this.element=t.element,this.target=t.options.inputTarget,this.domHandler=function(e){d(t.options.enable,[t])&&n.handler(e)},this.init()}function k(t){var e=t.options.inputClass;return new(e?e:Mt?H:kt?W:St?B:Y)(t,A)}function A(t,e,n){var r=n.pointers.length,i=n.changedPointers.length,o=e&Nt&&r-i===0,a=e&(Dt|Xt)&&r-i===0;n.isFirst=!!o,n.isFinal=!!a,o&&(t.session={}),n.eventType=e,P(t,n),t.emit("hammer.input",n),t.recognize(n),t.session.prevInput=n}function P(t,e){var n=t.session,r=e.pointers,i=r.length;n.firstInput||(n.firstInput=j(e)),i>1&&!n.firstMultiple?n.firstMultiple=j(e):1===i&&(n.firstMultiple=!1);var o=n.firstInput,a=n.firstMultiple,s=a?a.center:o.center,u=e.center=N(r);e.timeStamp=Tt(),e.deltaTime=e.timeStamp-o.timeStamp,e.angle=R(s,u),e.distance=X(s,u),I(n,e),e.offsetDirection=D(e.deltaX,e.deltaY);var c=_(e.deltaTime,e.deltaX,e.deltaY);e.overallVelocityX=c.x,e.overallVelocityY=c.y,e.overallVelocity=xt(c.x)>xt(c.y)?c.x:c.y,e.scale=a?F(a.pointers,r):1,e.rotation=a?z(a.pointers,r):0,e.maxPointers=n.prevInput?e.pointers.length>n.prevInput.maxPointers?e.pointers.length:n.prevInput.maxPointers:e.pointers.length,L(n,e);var l=t.element;y(e.srcEvent.target,l)&&(l=e.srcEvent.target),e.target=l}function I(t,e){var n=e.center,r=t.offsetDelta||{},i=t.prevDelta||{},o=t.prevInput||{};e.eventType!==Nt&&o.eventType!==Dt||(i=t.prevDelta={x:o.deltaX||0,y:o.deltaY||0},r=t.offsetDelta={x:n.x,y:n.y}),e.deltaX=i.x+(n.x-r.x),e.deltaY=i.y+(n.y-r.y)}function L(t,e){var n,r,i,o,a=t.lastInterval||e,u=e.timeStamp-a.timeStamp;if(e.eventType!=Xt&&(u>jt||a.velocity===s)){var c=e.deltaX-a.deltaX,l=e.deltaY-a.deltaY,f=_(u,c,l);r=f.x,i=f.y,n=xt(f.x)>xt(f.y)?f.x:f.y,o=D(c,l),t.lastInterval=e}else n=a.velocity,r=a.velocityX,i=a.velocityY,o=a.direction;e.velocity=n,e.velocityX=r,e.velocityY=i,e.direction=o}function j(t){for(var e=[],n=0;n<t.pointers.length;)e[n]={clientX:bt(t.pointers[n].clientX),clientY:bt(t.pointers[n].clientY)},n++;return{timeStamp:Tt(),pointers:e,center:N(e),deltaX:t.deltaX,deltaY:t.deltaY}}function N(t){var e=t.length;if(1===e)return{x:bt(t[0].clientX),y:bt(t[0].clientY)};for(var n=0,r=0,i=0;i<e;)n+=t[i].clientX,r+=t[i].clientY,i++;return{x:bt(n/e),y:bt(r/e)}}function _(t,e,n){return{x:e/t||0,y:n/t||0}}function D(t,e){return t===e?Rt:xt(t)>=xt(e)?t<0?zt:Ft:e<0?Yt:Ht}function X(t,e,n){n||(n=Ut);var r=e[n[0]]-t[n[0]],i=e[n[1]]-t[n[1]];return Math.sqrt(r*r+i*i)}function R(t,e,n){n||(n=Ut);var r=e[n[0]]-t[n[0]],i=e[n[1]]-t[n[1]];return 180*Math.atan2(i,r)/Math.PI}function z(t,e){return R(e[1],e[0],Bt)+R(t[1],t[0],Bt)}function F(t,e){return X(e[0],e[1],Bt)/X(t[0],t[1],Bt)}function Y(){this.evEl=Gt,this.evWin=Zt,this.pressed=!1,M.apply(this,arguments)}function H(){this.evEl=Kt,this.evWin=te,M.apply(this,arguments),this.store=this.manager.session.pointerEvents=[]}function q(){this.evTarget=ne,this.evWin=re,this.started=!1,M.apply(this,arguments)}function V(t,e){var n=w(t.touches),r=w(t.changedTouches);return e&(Dt|Xt)&&(n=E(n.concat(r),"identifier",!0)),[n,r]}function W(){this.evTarget=oe,this.targetIds={},M.apply(this,arguments)}function U(t,e){var n=w(t.touches),r=this.targetIds;if(e&(Nt|_t)&&1===n.length)return r[n[0].identifier]=!0,[n,n];var i,o,a=w(t.changedTouches),s=[],u=this.target;if(o=n.filter(function(t){return y(t.target,u)}),e===Nt)for(i=0;i<o.length;)r[o[i].identifier]=!0,i++;for(i=0;i<a.length;)r[a[i].identifier]&&s.push(a[i]),e&(Dt|Xt)&&delete r[a[i].identifier],i++;return s.length?[E(o.concat(s),"identifier",!0),s]:void 0}function B(){M.apply(this,arguments);var t=h(this.handler,this);this.touch=new W(this.manager,t),this.mouse=new Y(this.manager,t),this.primaryTouch=null,this.lastTouches=[]}function $(t,e){t&Nt?(this.primaryTouch=e.changedPointers[0].identifier,G.call(this,e)):t&(Dt|Xt)&&G.call(this,e)}function G(t){var e=t.changedPointers[0];if(e.identifier===this.primaryTouch){var n={x:e.clientX,y:e.clientY};this.lastTouches.push(n);var r=this.lastTouches,i=function(){var t=r.indexOf(n);t>-1&&r.splice(t,1)};setTimeout(i,ae)}}function Z(t){for(var e=t.srcEvent.clientX,n=t.srcEvent.clientY,r=0;r<this.lastTouches.length;r++){var i=this.lastTouches[r],o=Math.abs(e-i.x),a=Math.abs(n-i.y);if(o<=se&&a<=se)return!0}return!1}function Q(t,e){this.manager=t,this.set(e)}function J(t){if(b(t,he))return he;var e=b(t,de),n=b(t,me);return e&&n?he:e||n?e?de:me:b(t,pe)?pe:fe}function K(){if(!ce)return!1;var t={},e=i.CSS&&i.CSS.supports;return["auto","manipulation","pan-y","pan-x","pan-x pan-y","none"].forEach(function(n){t[n]=!e||i.CSS.supports("touch-action",n)}),t}function tt(t){this.options=mt({},this.defaults,t||{}),this.id=O(),this.manager=null,this.options.enable=m(this.options.enable,!0),this.state=ge,this.simultaneous={},this.requireFail=[]}function et(t){return t&we?"cancel":t&xe?"end":t&be?"move":t&ye?"start":""}function nt(t){return t==Ht?"down":t==Yt?"up":t==zt?"left":t==Ft?"right":""}function rt(t,e){var n=e.manager;return n?n.get(t):t}function it(){tt.apply(this,arguments)}function ot(){it.apply(this,arguments),this.pX=null,this.pY=null}function at(){it.apply(this,arguments)}function st(){tt.apply(this,arguments),this._timer=null,this._input=null}function ut(){it.apply(this,arguments)}function ct(){it.apply(this,arguments)}function lt(){tt.apply(this,arguments),this.pTime=!1,this.pCenter=!1,this._timer=null,this._input=null,this.count=0}function ft(t,e){return e=e||{},e.recognizers=m(e.recognizers,ft.defaults.preset),new pt(t,e)}function pt(t,e){this.options=mt({},ft.defaults,e||{}),this.options.inputTarget=this.options.inputTarget||t,this.handlers={},this.session={},this.recognizers=[],this.oldCssProps={},this.element=t,this.input=k(this),this.touchAction=new Q(this,this.options.touchAction),ht(this,!0),l(this.options.recognizers,function(t){var e=this.add(new t[0](t[1]));t[2]&&e.recognizeWith(t[2]),t[3]&&e.requireFailure(t[3])},this)}function ht(t,e){var n=t.element;if(n.style){var r;l(t.options.cssProps,function(i,o){r=C(n.style,o),e?(t.oldCssProps[r]=n.style[r],n.style[r]=i):n.style[r]=t.oldCssProps[r]||""}),e||(t.oldCssProps={})}}function dt(t,e){var n=o.createEvent("Event");n.initEvent(t,!0,!0),n.gesture=e,e.target.dispatchEvent(n)}var mt,vt=["","webkit","Moz","MS","ms","o"],gt=o.createElement("div"),yt="function",bt=Math.round,xt=Math.abs,Tt=Date.now;mt="function"!=typeof Object.assign?function(t){if(t===s||null===t)throw new TypeError("Cannot convert undefined or null to object");for(var e=Object(t),n=1;n<arguments.length;n++){var r=arguments[n];if(r!==s&&null!==r)for(var i in r)r.hasOwnProperty(i)&&(e[i]=r[i])}return e}:Object.assign;var wt=f(function(t,e,n){for(var r=Object.keys(e),i=0;i<r.length;)(!n||n&&t[r[i]]===s)&&(t[r[i]]=e[r[i]]),i++;return t},"extend","Use `assign`."),Et=f(function(t,e){return wt(t,e,!0)},"merge","Use `assign`."),Ct=1,Ot=/mobile|tablet|ip(ad|hone|od)|android/i,St="ontouchstart"in i,Mt=C(i,"PointerEvent")!==s,kt=St&&Ot.test(navigator.userAgent),At="touch",Pt="pen",It="mouse",Lt="kinect",jt=25,Nt=1,_t=2,Dt=4,Xt=8,Rt=1,zt=2,Ft=4,Yt=8,Ht=16,qt=zt|Ft,Vt=Yt|Ht,Wt=qt|Vt,Ut=["x","y"],Bt=["clientX","clientY"];M.prototype={handler:function(){},init:function(){this.evEl&&v(this.element,this.evEl,this.domHandler),this.evTarget&&v(this.target,this.evTarget,this.domHandler),this.evWin&&v(S(this.element),this.evWin,this.domHandler)},destroy:function(){this.evEl&&g(this.element,this.evEl,this.domHandler),this.evTarget&&g(this.target,this.evTarget,this.domHandler),this.evWin&&g(S(this.element),this.evWin,this.domHandler)}};var $t={mousedown:Nt,mousemove:_t,mouseup:Dt},Gt="mousedown",Zt="mousemove mouseup";p(Y,M,{handler:function(t){var e=$t[t.type];e&Nt&&0===t.button&&(this.pressed=!0),e&_t&&1!==t.which&&(e=Dt),this.pressed&&(e&Dt&&(this.pressed=!1),this.callback(this.manager,e,{pointers:[t],changedPointers:[t],pointerType:It,srcEvent:t}))}});var Qt={pointerdown:Nt,pointermove:_t,pointerup:Dt,pointercancel:Xt,pointerout:Xt},Jt={2:At,3:Pt,4:It,5:Lt},Kt="pointerdown",te="pointermove pointerup pointercancel";i.MSPointerEvent&&!i.PointerEvent&&(Kt="MSPointerDown",te="MSPointerMove MSPointerUp MSPointerCancel"),p(H,M,{handler:function(t){var e=this.store,n=!1,r=t.type.toLowerCase().replace("ms",""),i=Qt[r],o=Jt[t.pointerType]||t.pointerType,a=o==At,s=T(e,t.pointerId,"pointerId");i&Nt&&(0===t.button||a)?s<0&&(e.push(t),s=e.length-1):i&(Dt|Xt)&&(n=!0),s<0||(e[s]=t,this.callback(this.manager,i,{pointers:e,changedPointers:[t],pointerType:o,srcEvent:t}),n&&e.splice(s,1))}});var ee={touchstart:Nt,touchmove:_t,touchend:Dt,touchcancel:Xt},ne="touchstart",re="touchstart touchmove touchend touchcancel";p(q,M,{handler:function(t){var e=ee[t.type];if(e===Nt&&(this.started=!0),this.started){var n=V.call(this,t,e);e&(Dt|Xt)&&n[0].length-n[1].length===0&&(this.started=!1),this.callback(this.manager,e,{pointers:n[0],changedPointers:n[1],pointerType:At,srcEvent:t})}}});var ie={touchstart:Nt,touchmove:_t,touchend:Dt,touchcancel:Xt},oe="touchstart touchmove touchend touchcancel";p(W,M,{handler:function(t){var e=ie[t.type],n=U.call(this,t,e);n&&this.callback(this.manager,e,{pointers:n[0],changedPointers:n[1],pointerType:At,srcEvent:t})}});var ae=2500,se=25;p(B,M,{handler:function(t,e,n){var r=n.pointerType==At,i=n.pointerType==It;if(!(i&&n.sourceCapabilities&&n.sourceCapabilities.firesTouchEvents)){if(r)$.call(this,e,n);else if(i&&Z.call(this,n))return;this.callback(t,e,n)}},destroy:function(){this.touch.destroy(),this.mouse.destroy()}});var ue=C(gt.style,"touchAction"),ce=ue!==s,le="compute",fe="auto",pe="manipulation",he="none",de="pan-x",me="pan-y",ve=K();Q.prototype={set:function(t){t==le&&(t=this.compute()),ce&&this.manager.element.style&&ve[t]&&(this.manager.element.style[ue]=t),this.actions=t.toLowerCase().trim()},update:function(){this.set(this.manager.options.touchAction)},compute:function(){var t=[];return l(this.manager.recognizers,function(e){d(e.options.enable,[e])&&(t=t.concat(e.getTouchAction()))}),J(t.join(" "))},preventDefaults:function(t){var e=t.srcEvent,n=t.offsetDirection;if(this.manager.session.prevented)return void e.preventDefault();var r=this.actions,i=b(r,he)&&!ve[he],o=b(r,me)&&!ve[me],a=b(r,de)&&!ve[de];if(i){var s=1===t.pointers.length,u=t.distance<2,c=t.deltaTime<250;if(s&&u&&c)return}return a&&o?void 0:i||o&&n&qt||a&&n&Vt?this.preventSrc(e):void 0},preventSrc:function(t){this.manager.session.prevented=!0,t.preventDefault()}};var ge=1,ye=2,be=4,xe=8,Te=xe,we=16,Ee=32;tt.prototype={defaults:{},set:function(t){return mt(this.options,t),this.manager&&this.manager.touchAction.update(),this},recognizeWith:function(t){if(c(t,"recognizeWith",this))return this;var e=this.simultaneous;return t=rt(t,this),e[t.id]||(e[t.id]=t,t.recognizeWith(this)),this},dropRecognizeWith:function(t){return c(t,"dropRecognizeWith",this)?this:(t=rt(t,this),delete this.simultaneous[t.id],this)},requireFailure:function(t){if(c(t,"requireFailure",this))return this;var e=this.requireFail;return t=rt(t,this),T(e,t)===-1&&(e.push(t),t.requireFailure(this)),this},dropRequireFailure:function(t){if(c(t,"dropRequireFailure",this))return this;t=rt(t,this);var e=T(this.requireFail,t);return e>-1&&this.requireFail.splice(e,1),this},hasRequireFailures:function(){return this.requireFail.length>0},canRecognizeWith:function(t){return!!this.simultaneous[t.id]},emit:function(t){function e(e){n.manager.emit(e,t)}var n=this,r=this.state;r<xe&&e(n.options.event+et(r)),e(n.options.event),t.additionalEvent&&e(t.additionalEvent),r>=xe&&e(n.options.event+et(r))},tryEmit:function(t){if(this.canEmit())return this.emit(t);this.state=Ee},canEmit:function(){for(var t=0;t<this.requireFail.length;){if(!(this.requireFail[t].state&(Ee|ge)))return!1;t++}return!0},recognize:function(t){var e=mt({},t);if(!d(this.options.enable,[this,e]))return this.reset(),void(this.state=Ee);this.state&(Te|we|Ee)&&(this.state=ge),this.state=this.process(e),this.state&(ye|be|xe|we)&&this.tryEmit(e)},process:function(t){},getTouchAction:function(){},reset:function(){}},p(it,tt,{defaults:{pointers:1},attrTest:function(t){var e=this.options.pointers;return 0===e||t.pointers.length===e},process:function(t){var e=this.state,n=t.eventType,r=e&(ye|be),i=this.attrTest(t);return r&&(n&Xt||!i)?e|we:r||i?n&Dt?e|xe:e&ye?e|be:ye:Ee}}),p(ot,it,{defaults:{event:"pan",threshold:10,pointers:1,direction:Wt},getTouchAction:function(){var t=this.options.direction,e=[];return t&qt&&e.push(me),t&Vt&&e.push(de),e},directionTest:function(t){var e=this.options,n=!0,r=t.distance,i=t.direction,o=t.deltaX,a=t.deltaY;return i&e.direction||(e.direction&qt?(i=0===o?Rt:o<0?zt:Ft,n=o!=this.pX,r=Math.abs(t.deltaX)):(i=0===a?Rt:a<0?Yt:Ht,n=a!=this.pY,r=Math.abs(t.deltaY))),t.direction=i,n&&r>e.threshold&&i&e.direction},attrTest:function(t){return it.prototype.attrTest.call(this,t)&&(this.state&ye||!(this.state&ye)&&this.directionTest(t))},emit:function(t){this.pX=t.deltaX,this.pY=t.deltaY;var e=nt(t.direction);e&&(t.additionalEvent=this.options.event+e),this._super.emit.call(this,t)}}),p(at,it,{defaults:{event:"pinch",threshold:0,pointers:2},getTouchAction:function(){return[he]},attrTest:function(t){return this._super.attrTest.call(this,t)&&(Math.abs(t.scale-1)>this.options.threshold||this.state&ye)},emit:function(t){if(1!==t.scale){var e=t.scale<1?"in":"out";t.additionalEvent=this.options.event+e}this._super.emit.call(this,t)}}),p(st,tt,{defaults:{event:"press",pointers:1,time:251,threshold:9},getTouchAction:function(){return[fe]},process:function(t){var e=this.options,n=t.pointers.length===e.pointers,r=t.distance<e.threshold,i=t.deltaTime>e.time;if(this._input=t,!r||!n||t.eventType&(Dt|Xt)&&!i)this.reset();else if(t.eventType&Nt)this.reset(),this._timer=u(function(){this.state=Te,this.tryEmit()},e.time,this);else if(t.eventType&Dt)return Te;return Ee},reset:function(){clearTimeout(this._timer)},emit:function(t){this.state===Te&&(t&&t.eventType&Dt?this.manager.emit(this.options.event+"up",t):(this._input.timeStamp=Tt(),this.manager.emit(this.options.event,this._input)))}}),p(ut,it,{defaults:{event:"rotate",threshold:0,pointers:2},getTouchAction:function(){return[he]},attrTest:function(t){return this._super.attrTest.call(this,t)&&(Math.abs(t.rotation)>this.options.threshold||this.state&ye)}}),p(ct,it,{defaults:{event:"swipe",threshold:10,velocity:.3,direction:qt|Vt,pointers:1},getTouchAction:function(){return ot.prototype.getTouchAction.call(this)},attrTest:function(t){var e,n=this.options.direction;return n&(qt|Vt)?e=t.overallVelocity:n&qt?e=t.overallVelocityX:n&Vt&&(e=t.overallVelocityY),this._super.attrTest.call(this,t)&&n&t.offsetDirection&&t.distance>this.options.threshold&&t.maxPointers==this.options.pointers&&xt(e)>this.options.velocity&&t.eventType&Dt},emit:function(t){var e=nt(t.offsetDirection);e&&this.manager.emit(this.options.event+e,t),this.manager.emit(this.options.event,t)}}),p(lt,tt,{defaults:{event:"tap",pointers:1,taps:1,interval:300,time:250,threshold:9,posThreshold:10},getTouchAction:function(){return[pe]},process:function(t){var e=this.options,n=t.pointers.length===e.pointers,r=t.distance<e.threshold,i=t.deltaTime<e.time;if(this.reset(),t.eventType&Nt&&0===this.count)return this.failTimeout();if(r&&i&&n){if(t.eventType!=Dt)return this.failTimeout();var o=!this.pTime||t.timeStamp-this.pTime<e.interval,a=!this.pCenter||X(this.pCenter,t.center)<e.posThreshold;this.pTime=t.timeStamp,this.pCenter=t.center,a&&o?this.count+=1:this.count=1,this._input=t;if(0===this.count%e.taps)return this.hasRequireFailures()?(this._timer=u(function(){this.state=Te,this.tryEmit()},e.interval,this),ye):Te}return Ee},failTimeout:function(){return this._timer=u(function(){this.state=Ee},this.options.interval,this),Ee},reset:function(){clearTimeout(this._timer)},emit:function(){this.state==Te&&(this._input.tapCount=this.count,this.manager.emit(this.options.event,this._input))}}),ft.VERSION="2.0.7",ft.defaults={domEvents:!1,touchAction:le,enable:!0,inputTarget:null,inputClass:null,preset:[[ut,{enable:!1}],[at,{enable:!1},["rotate"]],[ct,{direction:qt}],[ot,{direction:qt},["swipe"]],[lt],[lt,{event:"doubletap",taps:2},["tap"]],[st]],cssProps:{userSelect:"none",touchSelect:"none",touchCallout:"none",contentZooming:"none",userDrag:"none",tapHighlightColor:"rgba(0,0,0,0)"}};var Ce=2;pt.prototype={set:function(t){return mt(this.options,t),t.touchAction&&this.touchAction.update(),t.inputTarget&&(this.input.destroy(),this.input.target=t.inputTarget,this.input.init()),this},stop:function(t){this.session.stopped=t?Ce:1},recognize:function(t){var e=this.session;if(!e.stopped){this.touchAction.preventDefaults(t);var n,r=this.recognizers,i=e.curRecognizer;(!i||i&&i.state&Te)&&(i=e.curRecognizer=null);for(var o=0;o<r.length;)n=r[o],e.stopped===Ce||i&&n!=i&&!n.canRecognizeWith(i)?n.reset():n.recognize(t),!i&&n.state&(ye|be|xe)&&(i=e.curRecognizer=n),o++}},get:function(t){if(t instanceof tt)return t;for(var e=this.recognizers,n=0;n<e.length;n++)if(e[n].options.event==t)return e[n];return null},add:function(t){if(c(t,"add",this))return this;var e=this.get(t.options.event);return e&&this.remove(e),this.recognizers.push(t),t.manager=this,this.touchAction.update(),t},remove:function(t){if(c(t,"remove",this))return this;if(t=this.get(t)){var e=this.recognizers,n=T(e,t);n!==-1&&(e.splice(n,1),this.touchAction.update())}return this},on:function(t,e){if(t!==s&&e!==s){var n=this.handlers;return l(x(t),function(t){n[t]=n[t]||[],n[t].push(e)}),this}},off:function(t,e){if(t!==s){var n=this.handlers;return l(x(t),function(t){e?n[t]&&n[t].splice(T(n[t],e),1):delete n[t]}),this}},emit:function(t,e){this.options.domEvents&&dt(t,e);var n=this.handlers[t]&&this.handlers[t].slice();if(n&&n.length){e.type=t,e.preventDefault=function(){e.srcEvent.preventDefault()};for(var r=0;r<n.length;)n[r](e),r++}},destroy:function(){this.element&&ht(this,!1),this.handlers={},this.session={},this.input.destroy(),this.element=null}},mt(ft,{INPUT_START:Nt,INPUT_MOVE:_t,INPUT_END:Dt,INPUT_CANCEL:Xt,STATE_POSSIBLE:ge,STATE_BEGAN:ye,STATE_CHANGED:be,STATE_ENDED:xe,STATE_RECOGNIZED:Te,STATE_CANCELLED:we,STATE_FAILED:Ee,DIRECTION_NONE:Rt,DIRECTION_LEFT:zt,DIRECTION_RIGHT:Ft,DIRECTION_UP:Yt,DIRECTION_DOWN:Ht,DIRECTION_HORIZONTAL:qt,DIRECTION_VERTICAL:Vt,DIRECTION_ALL:Wt,Manager:pt,Input:M,TouchAction:Q,TouchInput:W,MouseInput:Y,PointerEventInput:H,TouchMouseInput:B,SingleTouchInput:q,Recognizer:tt,AttrRecognizer:it,Tap:lt,Pan:ot,Swipe:ct,Pinch:at,Rotate:ut,Press:st,on:v,off:g,each:l,merge:Et,extend:wt,assign:mt,inherit:p,bindFn:h,prefixed:C}),(void 0!==i?i:"undefined"!=typeof self?self:{}).Hammer=ft,r=function(){return ft}.call(e,n,e,t),r!==s&&(t.exports=r)}(window,document,"Hammer")},function(t,e,n){"use strict";function r(t){var e="",n=Math.floor(.001*(Date.now()-u));return n===o?i++:(i=0,o=n),e+=a(s.lookup,c),e+=a(s.lookup,t),i>0&&(e+=a(s.lookup,i)),e+=a(s.lookup,n)}var i,o,a=n(3),s=n(0),u=1459707606518,c=6;t.exports=r},function(t,e,n){"use strict";function r(t){var e=i.shuffled();return{version:15&e.indexOf(t.substr(0,1)),worker:15&e.indexOf(t.substr(1,1))}}var i=n(0);t.exports=r},function(t,e,n){"use strict";function r(e){return s.seed(e),t.exports}function i(e){return f=e,t.exports}function o(t){return void 0!==t&&s.characters(t),s.shuffled()}function a(){return c(f)}var s=n(0),u=(n(3),n(14)),c=n(13),l=n(16),f=n(19)||0;t.exports=a,t.exports.generate=a,t.exports.seed=r,t.exports.worker=i,t.exports.characters=o,t.exports.decode=u,t.exports.isValid=l},function(t,e,n){"use strict";function r(t){if(!t||"string"!=typeof t||t.length<6)return!1;for(var e=i.characters(),n=t.length,r=0;r<n;r++)if(e.indexOf(t[r])===-1)return!1;return!0}var i=n(0);t.exports=r},function(t,e,n){"use strict";function r(){if(!i||!i.getRandomValues)return 48&Math.floor(256*Math.random());var t=new Uint8Array(1);return i.getRandomValues(t),48&t[0]}var i="object"==typeof window&&(window.crypto||window.msCrypto);t.exports=r},function(t,e,n){"use strict";function r(){return o=(9301*o+49297)%233280,o/233280}function i(t){o=t}var o=1;t.exports={nextValue:r,seed:i}},function(t,e,n){"use strict";t.exports=0},function(t,e){t.exports=function(t,e,n,r){var i,o=t=t||{},a=typeof t.default;"object"!==a&&"function"!==a||(i=t,o=t.default);var s="function"==typeof o?o.options:o;if(e&&(s.render=e.render,s.staticRenderFns=e.staticRenderFns),n&&(s._scopeId=n),r){var u=Object.create(s.computed||null);Object.keys(r).forEach(function(t){var e=r[t];u[t]=function(){return e}}),s.computed=u}return{esModule:i,exports:o,options:s}}},function(t,e,n){var r=n(9);"string"==typeof r&&(r=[[t.i,r,""]]),r.locals&&(t.exports=r.locals);n(22)("514c6ff8",r,!0)},function(t,e,n){function r(t){for(var e=0;e<t.length;e++){var n=t[e],r=l[n.id];if(r){r.refs++;for(var i=0;i<r.parts.length;i++)r.parts[i](n.parts[i]);for(;i<n.parts.length;i++)r.parts.push(o(n.parts[i]));r.parts.length>n.parts.length&&(r.parts.length=n.parts.length)}else{for(var a=[],i=0;i<n.parts.length;i++)a.push(o(n.parts[i]));l[n.id]={id:n.id,refs:1,parts:a}}}}function i(){var t=document.createElement("style");return t.type="text/css",f.appendChild(t),t}function o(t){var e,n,r=document.querySelector('style[data-vue-ssr-id~="'+t.id+'"]');if(r){if(d)return m;r.parentNode.removeChild(r)}if(v){var o=h++;r=p||(p=i()),e=a.bind(null,r,o,!1),n=a.bind(null,r,o,!0)}else r=i(),e=s.bind(null,r),n=function(){r.parentNode.removeChild(r)};return e(t),function(r){if(r){if(r.css===t.css&&r.media===t.media&&r.sourceMap===t.sourceMap)return;e(t=r)}else n()}}function a(t,e,n,r){var i=n?"":r.css;if(t.styleSheet)t.styleSheet.cssText=g(e,i);else{var o=document.createTextNode(i),a=t.childNodes;a[e]&&t.removeChild(a[e]),a.length?t.insertBefore(o,a[e]):t.appendChild(o)}}function s(t,e){var n=e.css,r=e.media,i=e.sourceMap;if(r&&t.setAttribute("media",r),i&&(n+="\n/*# sourceURL="+i.sources[0]+" */",n+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(i))))+" */"),t.styleSheet)t.styleSheet.cssText=n;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(n))}}var u="undefined"!=typeof document;if("undefined"!=typeof DEBUG&&DEBUG&&!u)throw new Error("vue-style-loader cannot be used in a non-browser environment. Use { target: 'node' } in your Webpack config to indicate a server-rendering environment.");var c=n(23),l={},f=u&&(document.head||document.getElementsByTagName("head")[0]),p=null,h=0,d=!1,m=function(){},v="undefined"!=typeof navigator&&/msie [6-9]\b/.test(navigator.userAgent.toLowerCase());t.exports=function(t,e,n){d=n;var i=c(t,e);return r(i),function(e){for(var n=[],o=0;o<i.length;o++){var a=i[o],s=l[a.id];s.refs--,n.push(s)}e?(i=c(t,e),r(i)):i=[];for(var o=0;o<n.length;o++){var s=n[o];if(0===s.refs){for(var u=0;u<s.parts.length;u++)s.parts[u]();delete l[s.id]}}}};var g=function(){var t=[];return function(e,n){return t[e]=n,t.filter(Boolean).join("\n")}}()},function(t,e){t.exports=function(t,e){for(var n=[],r={},i=0;i<e.length;i++){var o=e[i],a=o[0],s=o[1],u=o[2],c=o[3],l={id:t+":"+i,css:s,media:u,sourceMap:c};r[a]?r[a].parts.push(l):n.push(r[a]={id:a,parts:[l]})}return n}},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r=n(4),i=n(5),o=n.n(i),a={install:function(t,e){e||(e={});var n=new r.a(e);t.component("toasted",o.a),t.toasted=t.prototype.$toasted=n}};"undefined"!=typeof window&&window.Vue&&(window.Toasted=a),e.default=a}])});
 
 /***/ }),
-/* 256 */
+/* 261 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -31806,24 +32041,24 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 257 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(388);
+__webpack_require__(391);
 
-__webpack_require__(294);
+__webpack_require__(297);
 
-__webpack_require__(293);
+__webpack_require__(296);
 
-var _app = __webpack_require__(262);
+var _app = __webpack_require__(267);
 
 _app.app.$mount('#app');
 
 /***/ }),
-/* 258 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__resourceQuery, module) {/*eslint-env browser*/
@@ -31842,7 +32077,7 @@ var options = {
   ansiColors: {}
 };
 if (true) {
-  var querystring = __webpack_require__(384);
+  var querystring = __webpack_require__(387);
   var overrides = querystring.parse(__resourceQuery.slice(1));
   setOverrides(overrides);
 }
@@ -31979,11 +32214,11 @@ if (typeof window !== 'undefined') {
 }
 
 function createReporter() {
-  var strip = __webpack_require__(387);
+  var strip = __webpack_require__(390);
 
   var overlay;
   if (typeof document !== 'undefined' && options.overlay) {
-    overlay = __webpack_require__(463)({
+    overlay = __webpack_require__(452)({
       ansiColors: options.ansiColors,
       overlayStyles: options.overlayStyles
     });
@@ -32039,7 +32274,7 @@ function createReporter() {
   };
 }
 
-var processUpdate = __webpack_require__(464);
+var processUpdate = __webpack_require__(453);
 
 var customHandler;
 var subscribeAllHandler;
@@ -32105,16 +32340,16 @@ if (module) {
   };
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, "?path=__webpack_hmr&dynamicPublicPath=true", __webpack_require__(256)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, "?path=__webpack_hmr&dynamicPublicPath=true", __webpack_require__(261)(module)))
 
 /***/ }),
-/* 259 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (__webpack_require__(29))(12);
 
 /***/ }),
-/* 260 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32297,7 +32532,7 @@ ansiHTML.reset()
 
 
 /***/ }),
-/* 261 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32308,7 +32543,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 262 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32327,29 +32562,29 @@ var _vue = __webpack_require__(2);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _axios = __webpack_require__(93);
+var _axios = __webpack_require__(91);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _router = __webpack_require__(263);
+var _router = __webpack_require__(268);
 
 var _router2 = _interopRequireDefault(_router);
 
-var _store = __webpack_require__(95);
+var _store = __webpack_require__(93);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _vuexRouterSync = __webpack_require__(462);
+var _vuexRouterSync = __webpack_require__(451);
 
-var _appRoot = __webpack_require__(407);
+var _appRoot = __webpack_require__(402);
 
 var _appRoot2 = _interopRequireDefault(_appRoot);
 
-var _buefy = __webpack_require__(96);
+var _buefy = __webpack_require__(94);
 
 var _buefy2 = _interopRequireDefault(_buefy);
 
-__webpack_require__(389);
+__webpack_require__(392);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32367,7 +32602,7 @@ exports.router = _router2.default;
 exports.store = _store2.default;
 
 /***/ }),
-/* 263 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32381,11 +32616,11 @@ var _vue = __webpack_require__(2);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vueRouter = __webpack_require__(465);
+var _vueRouter = __webpack_require__(454);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _buefy = __webpack_require__(96);
+var _buefy = __webpack_require__(94);
 
 var _buefy2 = _interopRequireDefault(_buefy);
 
@@ -32403,314 +32638,6 @@ var router = new _vueRouter2.default({
 exports.default = router;
 
 /***/ }),
-/* 264 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _moment = __webpack_require__(0);
-
-var _moment2 = _interopRequireDefault(_moment);
-
-var _TheShift = __webpack_require__(92);
-
-var _TheShift2 = _interopRequireDefault(_TheShift);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  name: 'day',
-  props: ['thisDay', 'Day'],
-  methods: {
-    getDay: function getDay(date) {
-      return (0, _moment2.default)(date, 'MM-DD-YYYY').format('dddd');
-    },
-    eventClicked: function eventClicked(event) {
-      event.shiftDate = this.Day.date;
-      this.$emit('eventClicked', event);
-    },
-
-    components: { shift: _TheShift2.default }
-  }
-};
-
-/***/ }),
-/* 265 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _moment = __webpack_require__(0);
-
-var _moment2 = _interopRequireDefault(_moment);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'schedule-consequences',
-    data: function data() {
-        return {
-            managerDays: [],
-            schedule: [],
-            consequences: []
-        };
-    },
-
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchVacationHistory', 'fetchRequiredShifts', 'fetchLoggedInUser', 'fetchManagers', 'fetchWeek']), {
-        getDays: function getDays(rate) {
-            var days = (365 - (0, _moment2.default)().format("DDDD")) * rate / 1.4;
-            return days;
-        }
-    }),
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays', 'getUser', 'getVacationHistory', 'getWeeklyRequirements'])),
-    created: function created() {
-        var _this = this;
-
-        var param = {
-            eow: this.eow,
-            locationId: this.$store.state.loggedInUser.locationId
-        };
-        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId).then(function () {
-            _this.fetchRequiredShifts(_this.$store.state.loggedInUser.locationId);
-            _this.fetchManagers(_this.$store.state.loggedInUser.locationId).then(function () {
-                _this.fetchWeek(param);
-            });
-        });
-    }
-};
-
-/***/ }),
-/* 266 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = {
-  name: 'ShiftModal',
-  props: ['manager', 'shiftcode', 'shiftdate'],
-  data: function data() {
-    return {};
-  }
-};
-
-/***/ }),
-/* 267 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    name: "shift",
-    data: function data() {
-        return {};
-    },
-
-    props: ['shiftType', 'managerName', 'managerFromId', 'date', 'shiftCode'],
-    methods: {
-        eventClicked: function eventClicked() {
-            var Event = {
-                name: this.managerName,
-                managerFromId: this.managerFromId,
-                Date: this.date,
-                shiftCode: this.shiftCode,
-                shiftDate: ""
-            };
-            this.$emit('eventClicked', Event);
-        }
-    }
-
-};
-
-/***/ }),
-/* 268 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _moment = __webpack_require__(0);
-
-var _moment2 = _interopRequireDefault(_moment);
-
-var _OneDay = __webpack_require__(394);
-
-var _OneDay2 = _interopRequireDefault(_OneDay);
-
-var _ShiftModal = __webpack_require__(396);
-
-var _ShiftModal2 = _interopRequireDefault(_ShiftModal);
-
-var _TheShift = __webpack_require__(92);
-
-var _TheShift2 = _interopRequireDefault(_TheShift);
-
-var _vueToasted = __webpack_require__(255);
-
-var _vueToasted2 = _interopRequireDefault(_vueToasted);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'weekly-calendar',
-    components: { Day: _OneDay2.default, ShiftModal: _ShiftModal2.default, shift: _TheShift2.default },
-    props: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchWeek', 'fetchManagers', 'fetchShiftCodes', 'submitNewShift', 'submitShiftChange']), {
-        nextWeek: function nextWeek() {
-            var eowString = (0, _moment2.default)(this.eow, "MM-DD-YYYY").add(7, 'day').format('MM-DD-YYYY');
-            return eowString;
-        },
-        lastWeek: function lastWeek() {
-            var eowString = (0, _moment2.default)(this.eow, "MM-DD-YYYY").subtract(7, 'day').format('MM-DD-YYYY');
-            return eowString;
-        },
-        addShift: function addShift(event) {
-            var dateArray = event.toString().split(' ');
-            var date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3];
-            this.shiftDate = (0, _moment2.default)(date, "MM-DD-YYYY").format("MM-DD-YYYY");
-            this.showModal = true;
-        },
-        dayClicked: function dayClicked(event) {
-            this.showDayClickedModal = true;
-            this.workingDate = event;
-        },
-        eventClicked: function eventClicked(event, date) {
-            this.showDayClickedModal = false;
-            this.showChangeModal = true;
-            this.managerFromId = event.managerFromId;
-            this.managerChangeFrom = event.name;
-            this.shiftCode = event.shiftCode;
-            this.dayToChange = event.shiftDate;
-        },
-        submitChange: function submitChange() {
-            var _this = this;
-
-            var managerIndex = this.getManagers.findIndex(function (x) {
-                return x.Name === _this.selectedManager;
-            });
-            var GMIndex = this.getManagers.findIndex(function (m) {
-                return m.Role === 3;
-            });
-            var shiftDayIndex = this.getSchedule.findIndex(function (d) {
-                return d.start === _this.dayToChange;
-            });
-            var shiftChange = {
-                RequestId: '',
-                Id: this.getManagers[managerIndex].Id,
-                ManagerId: this.getManagers[managerIndex].Id,
-                ManagerToName: this.getManagers[managerIndex].Name,
-                ManagerFromName: this.managerChangeFrom,
-                EOW: this.eow,
-                ShiftCode: this.shiftCode,
-                Reason: this.reasonForChange,
-                shiftDate: this.dayToChange,
-                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,
-                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,
-                LocationId: this.$store.state.loggedInUser.locationId,
-                RequestingManagerRole: this.$store.state.loggedInUser.role,
-                managerFromId: this.managerFromId
-            };
-            this.submitShiftChange(shiftChange);
-            this.closeModal();
-            this.emptyFields();
-            this.submissionCompletion();
-        },
-        emptyFields: function emptyFields() {
-            this.selectedManager = '';
-            this.newShiftCode = '';
-            this.reasonForChange = '';
-        },
-        submissionCompletion: function submissionCompletion() {
-            this.$emit('shiftSubmitted');
-        },
-        closeModal: function closeModal() {
-            this.showDayClickedModal = false;
-            this.showChangeModal = false;
-        },
-        submit: function submit() {
-            var _this2 = this;
-
-            var shiftDay = (0, _moment2.default)(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY');
-            var managerIndex = this.getManagers.findIndex(function (x) {
-                return x.Name === _this2.selectedManager;
-            });
-            var shiftCodeIndex = this.getShiftCodes.findIndex(function (x) {
-                return x.description === _this2.newShiftCode;
-            });
-            var aNewShift = {
-                LocationId: this.$store.state.loggedInUser.locationId,
-                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,
-                ManagerId: this.getManagers[managerIndex].Id,
-                Day: shiftDay,
-                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus
-            };
-            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {
-                this.submitNewShift(aNewShift);
-                this.emptyFields();
-                this.closeModal();
-                this.submissionCompletion();
-            } else alert('unable to submit new shift');
-        }
-    }),
-    data: function data() {
-        return {
-            showDayClickedModal: false,
-            selectedManager: '',
-            newShiftCode: '',
-            eow: this.$route.query.eow,
-            locationId: this.$store.state.loggedInUser.locationId,
-            workingDate: "",
-            nextweekString: "",
-            lastWeekString: "",
-            showChangeModal: false,
-            dayToChange: "",
-            shiftCode: "",
-            reasonForChange: "",
-            managerFromId: ""
-        };
-    },
-
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagers', 'getShiftCodes', 'getSchedule'])),
-    created: function created() {
-        this.nextweekString = "/approveSchedule/?eow=" + this.nextWeek();
-        this.lastWeekString = "/approveSchedule/?eow=" + this.lastWeek();
-    }
-};
-
-/***/ }),
 /* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32718,742 +32645,12 @@ exports.default = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _ShiftSelection = __webpack_require__(400);
-
-var _ShiftSelection2 = _interopRequireDefault(_ShiftSelection);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  name: 'daily-shift-requirements',
-  components: {
-    shift: _ShiftSelection2.default
-  },
-  methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchShiftCodes', 'addShiftToDay', 'removeShiftFromDay']), {
-    addShift: function addShift(event) {
-      var shifttoAdd = { day: this.day, shift: event };
-      this.addShiftToDay(shifttoAdd);
-    },
-    removeShift: function removeShift(event) {
-      var shiftToRemove = { day: this.day, shiftCode: event };
-      this.removeShiftFromDay(shiftToRemove);
-    },
-    clicked: function clicked() {
-      this.submitDailyShiftRequirements(this.shiftCodes);
-    }
-  }),
-  computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getShiftCodes'])),
-  data: function data() {
-    return {
-      shiftCodes: [],
-      selected: false
-    };
-  },
-
-  props: ['day'],
-  created: function created() {
-    this.fetchShiftCodes(this.state);
-  }
-};
-
-/***/ }),
-/* 270 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
 var _extends2 = __webpack_require__(7);
 
 var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _moment = __webpack_require__(0);
-
-var _moment2 = _interopRequireDefault(_moment);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    data: function data() {
-        return {
-            loggedInUser: {},
-            week: ""
-        };
-    },
-
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)([]), {
-        getEow: function getEow() {
-            var daysuntileow = 7 - (0, _moment2.default)().format('d');
-            var eowstring = (0, _moment2.default)().add(daysuntileow, 'day').format('MM-DD-YYYY');
-            return eowstring;
-        }
-    }),
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)([])),
-    created: function created() {
-        this.loggedInUser = this.$store.state.loggedInUser;
-        this.week = "/approveSchedule/?eow=" + this.getEow();
-    }
-};
-
-/***/ }),
-/* 271 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'ShiftRequirementsModal',
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUnSubShiftReq'])),
-    props: [],
-    data: function data() {
-        return {};
-    }
-};
-
-/***/ }),
-/* 272 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _DailyShiftRequirements = __webpack_require__(251);
-
-var _DailyShiftRequirements2 = _interopRequireDefault(_DailyShiftRequirements);
-
-var _vuex = __webpack_require__(8);
-
-var _ShiftRequirementsModal = __webpack_require__(398);
-
-var _ShiftRequirementsModal2 = _interopRequireDefault(_ShiftRequirementsModal);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'GmPage',
-    data: function data() {
-        return {
-            showModal: false
-        };
-    },
-
-    components: {
-        DailyShiftRequirements: _DailyShiftRequirements2.default,
-        ShiftRequirementsModal: _ShiftRequirementsModal2.default
-    },
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUnSubShiftReq'])),
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['submitDailyShiftRequirements']), {
-        addShiftDay: function addShiftDay(event) {},
-        submitShiftsRequirements: function submitShiftsRequirements() {
-            this.showModal = true;
-        },
-        closeModal: function closeModal() {
-            this.showModal = false;
-        },
-        submit: function submit() {
-            this.submitDailyShiftRequirements();
-            this.showModal = false;
-            window.location.href = 'http://192.168.0.37:8000/GmPage';
-        }
-    })
-};
-
-/***/ }),
-/* 273 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = {
-  name: 'shift',
-  props: ['ShiftCode', 'shiftDescription'],
-  methods: {
-    clicked: function clicked() {
-      this.selected = !this.selected;
-      if (this.selected) {
-        this.$emit('AddShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription });
-      } else {
-        this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription });
-      }
-    }
-  },
-  data: function data() {
-    return {
-      selected: false
-    };
-  }
-};
-
-/***/ }),
-/* 274 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'approve-modal',
-    data: function data() {
-        return {
-            reason: ''
-        };
-    },
-
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['checkShiftRequirements'])),
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays', 'getVacationHistory', 'getMissingShifts'])),
-    created: function created() {}
-};
-
-/***/ }),
-/* 275 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = {
-  name: 'disapprove-modal',
-  data: function data() {
-    return {
-      reason: ''
-    };
-  }
-};
-
-/***/ }),
-/* 276 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _WeeklyCalendar = __webpack_require__(250);
-
-var _WeeklyCalendar2 = _interopRequireDefault(_WeeklyCalendar);
-
-var _DisapproveModal = __webpack_require__(402);
-
-var _DisapproveModal2 = _interopRequireDefault(_DisapproveModal);
-
-var _ApproveModal = __webpack_require__(401);
-
-var _ApproveModal2 = _interopRequireDefault(_ApproveModal);
-
-var _TheShift = __webpack_require__(92);
-
-var _TheShift2 = _interopRequireDefault(_TheShift);
-
-var _ScheduleConsequences = __webpack_require__(395);
-
-var _ScheduleConsequences2 = _interopRequireDefault(_ScheduleConsequences);
-
-var _moment = __webpack_require__(0);
-
-var _moment2 = _interopRequireDefault(_moment);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'gmapproveschedule',
-    components: { WeeklyCalendar: _WeeklyCalendar2.default, DisapproveModal: _DisapproveModal2.default, ApproveModal: _ApproveModal2.default, ScheduleConsequences: _ScheduleConsequences2.default },
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['approveSchedule', 'fetchLoggedInUser', 'fetchVacationHistory', 'fetchRequiredShifts', 'fetchManagers', 'fetchWeek', 'fetchShiftCodes', 'checkShiftRequirements']), {
-        distributeWeek: function distributeWeek(week) {
-            for (var day in week) {
-                var dotw = (0, _moment2.default)(week[day].date, 'MM-DD-YYYY').format('ddd');
-                if (dotw === 'Mon') {
-                    this.monday = week[day];
-                }
-                if (dotw === 'Tue') {
-                    this.tuesday = week[day];
-                }
-                if (dotw === 'Wed') {
-                    this.wednesday = week[day];
-                }
-                if (dotw === 'Thu') {
-                    this.thursday = week[day];
-                }
-                if (dotw === 'Fri') {
-                    this.friday = week[day];
-                }
-                if (dotw === 'Sat') {
-                    this.saturday = week[day];
-                }
-                if (dotw === 'Sun') {
-                    this.sunday = week[day];
-                }
-            }
-        },
-        closeModal: function closeModal() {
-            this.disapproveModal = false;
-            this.approvalModal = false;
-        },
-        approveThisSchedule: function approveThisSchedule() {
-            var approval = {
-                eow: this.eow,
-                GmId: this.$store.state.loggedInUser.id,
-                RestaurantId: this.$store.state.loggedInUser.locationId
-            };
-            this.approveSchedule(approval);
-        },
-        rejectSchedule: function rejectSchedule() {
-            this.disapproveModal = true;
-        },
-        modalScheduleApproval: function modalScheduleApproval() {
-            this.approvalModal = true;
-        },
-        shiftSubmitted: function shiftSubmitted() {
-            var _this = this;
-
-            var param = {
-                eow: this.eow,
-                locationId: this.$store.state.loggedInUser.locationId
-            };
-            setTimeout(function () {
-                _this.fetchWeek(param).then(function () {
-                    _this.distributeWeek(_this.getWeek);
-                });
-            }, 200);
-        },
-        rejected: function rejected(event) {
-            this.disapproveModal = false;
-        }
-    }),
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagers'])),
-    data: function data() {
-        return {
-            eow: this.$route.query.eow,
-            reason: '',
-            disapproveModal: false,
-            approvalModal: false,
-            monday: {},
-            tuesday: {},
-            wednesday: {},
-            thursday: {},
-            friday: {},
-            saturday: {},
-            sunday: {}
-        };
-    },
-    created: function created() {
-        var _this2 = this;
-
-        this.fetchLoggedInUser().then(function () {
-            var param = {
-                eow: _this2.eow,
-                locationId: _this2.$store.state.loggedInUser.locationId
-            };
-            _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId).then(function () {
-                _this2.fetchWeek(param).then(function () {
-                    _this2.fetchRequiredShifts(_this2.$store.state.loggedInUser.locationId).then(function () {
-                        _this2.distributeWeek(_this2.getWeek);
-                        _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId);
-                        _this2.fetchShiftCodes(_this2.state);
-                        _this2.fetchVacationHistory(_this2.$store.state.loggedInUser.locationId);
-                    });
-                });
-            });
-        });
-    }
-};
-
-/***/ }),
-/* 277 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _navLeft = __webpack_require__(410);
-
-var _navLeft2 = _interopRequireDefault(_navLeft);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  components: { navLeft: _navLeft2.default },
-  methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchManagers', 'fetchChangeRequest', 'payrollAcceptShiftChange', 'gmRejectShiftChange']), {
-    approveChange: function approveChange(request) {
-      var approval = { GMId: 1, Request: request };
-      this.payrollAcceptShiftChange(approval);
-    },
-    rejectChange: function rejectChange(request) {
-      var approval = { GMId: 1, Request: request };
-      this.gmRejectShiftChange(approval);
-    }
-  }),
-  computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getChangeRequest', 'getUser']), {
-    format: function format() {
-      return this.formatAmPm ? '12' : '24';
-    }
-  }),
-  data: function data() {
-    return {
-      Id: this.$route.params,
-      date: new Date(),
-      formatAmPm: false
-    };
-  },
-  created: function created() {
-    var params = this.$route.query;
-    this.fetchManagers(this.$store.state.loggedInUser.locationID);
-    this.fetchChangeRequest(params);
-  }
-};
-
-/***/ }),
-/* 278 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _regenerator = __webpack_require__(292);
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = __webpack_require__(291);
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-var _WeeklyCalendar = __webpack_require__(250);
-
-var _WeeklyCalendar2 = _interopRequireDefault(_WeeklyCalendar);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  components: { WeeklyCalendar: _WeeklyCalendar2.default },
-  methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchChangeRequest', 'gmAcceptShiftChange', 'gmRejectShiftChange']), {
-    components: {
-      WeeklyCalendar: _WeeklyCalendar2.default
-    },
-    approveChange: function approveChange(request) {
-      var approval = { GMId: 1, Request: request };
-      this.gmAcceptShiftChange(approval);
-    },
-    rejectChange: function rejectChange(request) {
-      var rejection = {
-        GMId: 1,
-        Id: request.fromId,
-        requestId: request.id,
-        Reason: this.gmReason };
-      this.gmRejectShiftChange(rejection);
-    }
-  }),
-  computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getChangeRequest'])),
-  data: function data() {
-    return {
-      Id: this.$route.params,
-      gmReason: ''
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    return (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-      var params;
-      return _regenerator2.default.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              params = _this.$route.query;
-
-              _this.fetchChangeRequest(params);
-              _context.next = 4;
-              return _this.getChangeRequest;
-
-            case 4:
-            case 'end':
-              return _context.stop();
-          }
-        }
-      }, _callee, _this);
-    }))();
-  }
-};
-
-/***/ }),
-/* 279 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vuex = __webpack_require__(8);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var thisMonth = new Date().getMonth();
-var thisYear = new Date().getFullYear();
-exports.default = {
-    data: function data() {
-        return {
-            startDate: new Date(thisYear, thisMonth, 1),
-            endDate: new Date(thisYear, thisMonth, 28)
-        };
-    },
-
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['download']), {
-        downloadButton: function downloadButton() {
-            var aStartDate = this.startDate.toString().split(' ');
-            var stringgyDate1 = aStartDate[1] + "-" + aStartDate[2] + "-" + aStartDate[3];
-            var anEndtDate = this.endDate.toString().split(' ');
-            var stringgyDate2 = anEndtDate[1] + "-" + anEndtDate[2] + "-" + anEndtDate[3];
-            var payload = { startDate: stringgyDate1, endDate: stringgyDate2 };
-            this.download(payload);
-        }
-    })
-};
-
-/***/ }),
-/* 280 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _routes = __webpack_require__(49);
-
-var _vue = __webpack_require__(2);
-
-var _vue2 = _interopRequireDefault(_vue);
-
-var _homePage = __webpack_require__(253);
-
-var _homePage2 = _interopRequireDefault(_homePage);
-
-var _navMenu = __webpack_require__(411);
-
-var _navMenu2 = _interopRequireDefault(_navMenu);
-
-var _monthlyCalendar = __webpack_require__(252);
-
-var _monthlyCalendar2 = _interopRequireDefault(_monthlyCalendar);
-
-var _vue2SimpleCalendar = __webpack_require__(461);
-
-var _vue2SimpleCalendar2 = _interopRequireDefault(_vue2SimpleCalendar);
-
-var _dropdown = __webpack_require__(254);
-
-var _dropdown2 = _interopRequireDefault(_dropdown);
-
-var _vuex = __webpack_require__(8);
-
-var _vuex2 = _interopRequireDefault(_vuex);
-
-var _TheShift = __webpack_require__(409);
-
-var _TheShift2 = _interopRequireDefault(_TheShift);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_vue2.default.component('home-page', _homePage2.default);
-_vue2.default.component('nav-menu', _navMenu2.default);
-_vue2.default.component('monthly-calendar', _monthlyCalendar2.default);
-_vue2.default.component('dropdown', _dropdown2.default);
-_vue2.default.component('shift', _TheShift2.default);
-_vue2.default.use(_vuex2.default);
-
-exports.default = {
-    data: function data() {
-        return {
-            routes: _routes.routes,
-            collapsed: true,
-            SupplyHub: [{ title: 'Home (NEW)', link: "" }, { title: 'Products', link: "" }, { title: 'SKUs', link: "" }, { title: 'Contracts', link: "" }, { title: 'Bids', link: "" }, { title: 'Mapper', link: "" }, { title: 'Admin', link: "" }],
-            MenuHub: [{ title: 'Products', link: "" }, { title: 'Recipes', link: "" }, { title: 'Menus', link: "" }, { title: 'Menus Items', link: "" }],
-            OpsHub: [{ title: 'My Pillars', link: "" }, { title: 'OOO Grid', link: "" }, { title: 'OOO Pivot Data', link: "" }, { title: 'Mgmt Change', link: "" }, { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/" }, { title: "Gm Page", link: "http://192.168.0.37:8000/GmPage" }],
-            FinanceHub: [{ title: 'PurchaseOrders', link: "" }],
-            AdminHub: [{ title: 'Mgmt Change', link: "" }, { title: 'Alerts', link: "" }, { title: 'Measure Units', link: "" }, { title: 'Ops Review', link: "" }],
-            InventoryHub: [{ title: 'Home', link: "" }]
-        };
-    },
-
-    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUser'])),
-    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchLoggedInUser']), {
-        logout: function logout() {
-            document.cookie = "";
-            window.location.href = 'http://192.168.0.37:8001';
-        }
-    }),
-    created: function created() {
-        this.fetchLoggedInUser();
-    }
-};
-
-/***/ }),
-/* 281 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = {
-  name: 'ShiftModal',
-  props: ['manager', 'shiftcode', 'shiftdate'],
-  data: function data() {
-    return {};
-  }
-};
-
-/***/ }),
-/* 282 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    name: "shift",
-    data: function data() {
-        return {};
-    },
-
-    props: ['shiftType', 'managerName', 'managerFromId', 'date', 'shiftCode'],
-    methods: {
-        eventClicked: function eventClicked() {
-            var Event = {
-                name: this.managerName,
-                managerFromId: this.managerFromId,
-                Date: this.date,
-                shiftCode: this.shiftCode,
-                shiftDate: ""
-            };
-            this.$emit('eventClicked', Event);
-        }
-    }
-
-};
-
-/***/ }),
-/* 283 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends2 = __webpack_require__(7);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _vueFullcalendar = __webpack_require__(393);
-
-var _vueFullcalendar2 = _interopRequireDefault(_vueFullcalendar);
-
-var _ShiftModal = __webpack_require__(408);
-
-var _ShiftModal2 = _interopRequireDefault(_ShiftModal);
 
 var _moment = __webpack_require__(0);
 
@@ -33461,7 +32658,7 @@ var _moment2 = _interopRequireDefault(_moment);
 
 var _vuex = __webpack_require__(8);
 
-var _vueToasted = __webpack_require__(255);
+var _vueToasted = __webpack_require__(260);
 
 var _vueToasted2 = _interopRequireDefault(_vueToasted);
 
@@ -33496,10 +32693,6 @@ exports.default = {
         };
     },
 
-    components: {
-        shiftModal: _ShiftModal2.default,
-        calendar: _vueFullcalendar2.default
-    },
     computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getSchedule', 'getManagers', 'getShiftCodes', 'getUser']), {
         regetSchedule: function regetSchedule() {
             return this.fetchSchedule(this.state);
@@ -33632,7 +32825,1025 @@ exports.default = {
 };
 
 /***/ }),
+/* 270 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _TheShift = __webpack_require__(249);
+
+var _TheShift2 = _interopRequireDefault(_TheShift);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  name: 'day',
+  props: ['thisDay', 'Day'],
+  methods: {
+    getDay: function getDay(date) {
+      return (0, _moment2.default)(date, 'MM-DD-YYYY').format('dddd');
+    },
+    eventClicked: function eventClicked(event) {
+      event.shiftDate = this.Day.date;
+      this.$emit('eventClicked', event);
+    },
+
+    components: { shift: _TheShift2.default }
+  }
+};
+
+/***/ }),
+/* 271 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'schedule-consequences',
+    data: function data() {
+        return {
+            managerDays: [],
+            schedule: [],
+            consequences: []
+        };
+    },
+
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchVacationHistory', 'fetchRequiredShifts', 'fetchLoggedInUser', 'fetchManagers', 'fetchWeek']), {
+        getDays: function getDays(rate) {
+            var days = (365 - (0, _moment2.default)().format("DDDD")) * rate / 1.4;
+            return days;
+        }
+    }),
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays', 'getUser', 'getVacationHistory', 'getWeeklyRequirements'])),
+    created: function created() {
+        var _this = this;
+
+        var param = {
+            eow: this.eow,
+            locationId: this.$store.state.loggedInUser.locationId
+        };
+        this.fetchVacationHistory(this.$store.state.loggedInUser.locationId).then(function () {
+            _this.fetchRequiredShifts(_this.$store.state.loggedInUser.locationId);
+            _this.fetchManagers(_this.$store.state.loggedInUser.locationId).then(function () {
+                _this.fetchWeek(param);
+            });
+        });
+    }
+};
+
+/***/ }),
+/* 272 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  name: 'ShiftModal',
+  props: ['manager', 'shiftcode', 'shiftdate'],
+  data: function data() {
+    return {};
+  }
+};
+
+/***/ }),
+/* 273 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    name: "shift",
+    data: function data() {
+        return {};
+    },
+
+    props: ['shiftType', 'managerName', 'managerFromId', 'date', 'shiftCode'],
+    methods: {
+        eventClicked: function eventClicked() {
+            var Event = {
+                name: this.managerName,
+                managerFromId: this.managerFromId,
+                Date: this.date,
+                shiftCode: this.shiftCode,
+                shiftDate: ""
+            };
+            this.$emit('eventClicked', Event);
+        }
+    }
+
+};
+
+/***/ }),
+/* 274 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _vueToasted = __webpack_require__(260);
+
+var _vueToasted2 = _interopRequireDefault(_vueToasted);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'weekly-calendar',
+    props: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchWeek', 'fetchManagers', 'fetchShiftCodes', 'submitNewShift', 'submitShiftChange']), {
+        nextWeek: function nextWeek() {
+            var eowString = (0, _moment2.default)(this.eow, "MM-DD-YYYY").add(7, 'day').format('MM-DD-YYYY');
+            return eowString;
+        },
+        lastWeek: function lastWeek() {
+            var eowString = (0, _moment2.default)(this.eow, "MM-DD-YYYY").subtract(7, 'day').format('MM-DD-YYYY');
+            return eowString;
+        },
+        addShift: function addShift(event) {
+            var dateArray = event.toString().split(' ');
+            var date = dateArray[1] + '-' + dateArray[2] + '-' + dateArray[3];
+            this.shiftDate = (0, _moment2.default)(date, "MM-DD-YYYY").format("MM-DD-YYYY");
+            this.showModal = true;
+        },
+        dayClicked: function dayClicked(event) {
+            this.showDayClickedModal = true;
+            this.workingDate = event;
+        },
+        eventClicked: function eventClicked(event, date) {
+            this.showDayClickedModal = false;
+            this.showChangeModal = true;
+            this.managerFromId = event.managerFromId;
+            this.managerChangeFrom = event.name;
+            this.shiftCode = event.shiftCode;
+            this.dayToChange = event.shiftDate;
+        },
+        submitChange: function submitChange() {
+            var _this = this;
+
+            var managerIndex = this.getManagers.findIndex(function (x) {
+                return x.Name === _this.selectedManager;
+            });
+            var GMIndex = this.getManagers.findIndex(function (m) {
+                return m.Role === 3;
+            });
+            var shiftDayIndex = this.getSchedule.findIndex(function (d) {
+                return d.start === _this.dayToChange;
+            });
+            var shiftChange = {
+                RequestId: '',
+                Id: this.getManagers[managerIndex].Id,
+                ManagerId: this.getManagers[managerIndex].Id,
+                ManagerToName: this.getManagers[managerIndex].Name,
+                ManagerFromName: this.managerChangeFrom,
+                EOW: this.eow,
+                ShiftCode: this.shiftCode,
+                Reason: this.reasonForChange,
+                shiftDate: this.dayToChange,
+                ManagerEmailAddress: this.getManagers[managerIndex].EmailAddress,
+                GMEmailAddress: this.getManagers[GMIndex].EmailAddress,
+                LocationId: this.$store.state.loggedInUser.locationId,
+                RequestingManagerRole: this.$store.state.loggedInUser.role,
+                managerFromId: this.managerFromId
+            };
+            this.submitShiftChange(shiftChange);
+            this.closeModal();
+            this.emptyFields();
+            this.submissionCompletion();
+        },
+        emptyFields: function emptyFields() {
+            this.selectedManager = '';
+            this.newShiftCode = '';
+            this.reasonForChange = '';
+        },
+        submissionCompletion: function submissionCompletion() {
+            this.$emit('shiftSubmitted');
+        },
+        closeModal: function closeModal() {
+            this.showDayClickedModal = false;
+            this.showChangeModal = false;
+        },
+        submit: function submit() {
+            var _this2 = this;
+
+            var shiftDay = (0, _moment2.default)(this.workingDate, 'MM-DD-YYYY').format('MM-DD-YYYY');
+            var managerIndex = this.getManagers.findIndex(function (x) {
+                return x.Name === _this2.selectedManager;
+            });
+            var shiftCodeIndex = this.getShiftCodes.findIndex(function (x) {
+                return x.description === _this2.newShiftCode;
+            });
+            var aNewShift = {
+                LocationId: this.$store.state.loggedInUser.locationId,
+                ShiftCode: this.getShiftCodes[shiftCodeIndex].statusId,
+                ManagerId: this.getManagers[managerIndex].Id,
+                Day: shiftDay,
+                ShiftStatus: this.getShiftCodes[shiftCodeIndex].shiftStatus
+            };
+            if (aNewShift.Day && aNewShift.LocationId && aNewShift.ManagerId && aNewShift.ShiftCode && aNewShift.ShiftStatus) {
+                this.submitNewShift(aNewShift);
+                this.emptyFields();
+                this.closeModal();
+                this.submissionCompletion();
+            } else alert('unable to submit new shift');
+        }
+    }),
+    data: function data() {
+        return {
+            showDayClickedModal: false,
+            selectedManager: '',
+            newShiftCode: '',
+            eow: this.$route.query.eow,
+            locationId: this.$store.state.loggedInUser.locationId,
+            workingDate: "",
+            nextweekString: "",
+            lastWeekString: "",
+            showChangeModal: false,
+            dayToChange: "",
+            shiftCode: "",
+            reasonForChange: "",
+            managerFromId: ""
+        };
+    },
+
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagers', 'getShiftCodes', 'getSchedule'])),
+    created: function created() {
+        this.nextweekString = "/approveSchedule/?eow=" + this.nextWeek();
+        this.lastWeekString = "/approveSchedule/?eow=" + this.lastWeek();
+    }
+};
+
+/***/ }),
+/* 275 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _ShiftSelection = __webpack_require__(254);
+
+var _ShiftSelection2 = _interopRequireDefault(_ShiftSelection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  name: 'daily-shift-requirements',
+  components: {
+    shift: _ShiftSelection2.default
+  },
+  methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchShiftCodes', 'addShiftToDay', 'removeShiftFromDay']), {
+    addShift: function addShift(event) {
+      var shifttoAdd = { day: this.day, shift: event };
+      this.addShiftToDay(shifttoAdd);
+    },
+    removeShift: function removeShift(event) {
+      var shiftToRemove = { day: this.day, shiftCode: event };
+      this.removeShiftFromDay(shiftToRemove);
+    },
+    clicked: function clicked() {
+      this.submitDailyShiftRequirements(this.shiftCodes);
+    }
+  }),
+  computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getShiftCodes'])),
+  data: function data() {
+    return {
+      shiftCodes: [],
+      selected: false
+    };
+  },
+
+  props: ['day'],
+  created: function created() {
+    this.fetchShiftCodes(this.state);
+  }
+};
+
+/***/ }),
+/* 276 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: "GmPage",
+    data: function data() {
+        return {
+            loggedInUser: {},
+            week: ""
+        };
+    },
+
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)([]), {
+        getEow: function getEow() {
+            var daysuntileow = 7 - (0, _moment2.default)().format('d');
+            var eowstring = (0, _moment2.default)().add(daysuntileow, 'day').format('MM-DD-YYYY');
+            return eowstring;
+        }
+    }),
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)([])),
+    created: function created() {
+        this.loggedInUser = this.$store.state.loggedInUser;
+        this.week = "/approveSchedule/?eow=" + this.getEow();
+    }
+};
+
+/***/ }),
+/* 277 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'ShiftRequirementsModal',
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUnSubShiftReq'])),
+    props: [],
+    data: function data() {
+        return {};
+    }
+};
+
+/***/ }),
+/* 278 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _DailyShiftRequirements = __webpack_require__(90);
+
+var _DailyShiftRequirements2 = _interopRequireDefault(_DailyShiftRequirements);
+
+var _vuex = __webpack_require__(8);
+
+var _ShiftRequirementsModal = __webpack_require__(252);
+
+var _ShiftRequirementsModal2 = _interopRequireDefault(_ShiftRequirementsModal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'GmPage',
+    data: function data() {
+        return {
+            showModal: false
+        };
+    },
+
+    components: {
+        DailyShiftRequirements: _DailyShiftRequirements2.default,
+        ShiftRequirementsModal: _ShiftRequirementsModal2.default
+    },
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUnSubShiftReq'])),
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['submitDailyShiftRequirements']), {
+        addShiftDay: function addShiftDay(event) {},
+        submitShiftsRequirements: function submitShiftsRequirements() {
+            this.showModal = true;
+        },
+        closeModal: function closeModal() {
+            this.showModal = false;
+        },
+        submit: function submit() {
+            this.submitDailyShiftRequirements();
+            this.showModal = false;
+            window.location.href = 'http://192.168.0.37:8000/GmPage';
+        }
+    })
+};
+
+/***/ }),
+/* 279 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  name: 'shift',
+  props: ['ShiftCode', 'shiftDescription'],
+  methods: {
+    clicked: function clicked() {
+      this.selected = !this.selected;
+      if (this.selected) {
+        this.$emit('AddShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription });
+      } else {
+        this.$emit('RemoveShiftCode', { shiftCode: this.ShiftCode, ShiftDescription: this.shiftDescription });
+      }
+    }
+  },
+  data: function data() {
+    return {
+      selected: false
+    };
+  }
+};
+
+/***/ }),
+/* 280 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'approve-modal',
+    data: function data() {
+        return {
+            reason: ''
+        };
+    },
+
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['checkShiftRequirements'])),
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagerDays', 'getVacationHistory', 'getMissingShifts'])),
+    created: function created() {}
+};
+
+/***/ }),
+/* 281 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  name: 'disapprove-modal',
+  data: function data() {
+    return {
+      reason: ''
+    };
+  }
+};
+
+/***/ }),
+/* 282 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'gmapproveschedule',
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['approveSchedule', 'fetchLoggedInUser', 'fetchVacationHistory', 'fetchRequiredShifts', 'fetchManagers', 'fetchWeek', 'fetchShiftCodes', 'checkShiftRequirements']), {
+        distributeWeek: function distributeWeek(week) {
+            for (var day in week) {
+                var dotw = (0, _moment2.default)(week[day].date, 'MM-DD-YYYY').format('ddd');
+                if (dotw === 'Mon') {
+                    this.monday = week[day];
+                }
+                if (dotw === 'Tue') {
+                    this.tuesday = week[day];
+                }
+                if (dotw === 'Wed') {
+                    this.wednesday = week[day];
+                }
+                if (dotw === 'Thu') {
+                    this.thursday = week[day];
+                }
+                if (dotw === 'Fri') {
+                    this.friday = week[day];
+                }
+                if (dotw === 'Sat') {
+                    this.saturday = week[day];
+                }
+                if (dotw === 'Sun') {
+                    this.sunday = week[day];
+                }
+            }
+        },
+        closeModal: function closeModal() {
+            this.disapproveModal = false;
+            this.approvalModal = false;
+        },
+        approveThisSchedule: function approveThisSchedule() {
+            var approval = {
+                eow: this.eow,
+                GmId: this.$store.state.loggedInUser.id,
+                RestaurantId: this.$store.state.loggedInUser.locationId
+            };
+            this.approveSchedule(approval);
+        },
+        rejectSchedule: function rejectSchedule() {
+            this.disapproveModal = true;
+        },
+        modalScheduleApproval: function modalScheduleApproval() {
+            this.approvalModal = true;
+        },
+        shiftSubmitted: function shiftSubmitted() {
+            var _this = this;
+
+            var param = {
+                eow: this.eow,
+                locationId: this.$store.state.loggedInUser.locationId
+            };
+            setTimeout(function () {
+                _this.fetchWeek(param).then(function () {
+                    _this.distributeWeek(_this.getWeek);
+                });
+            }, 200);
+        },
+        rejected: function rejected(event) {
+            this.disapproveModal = false;
+        }
+    }),
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getWeek', 'getManagers'])),
+    data: function data() {
+        return {
+            eow: this.$route.query.eow,
+            reason: '',
+            disapproveModal: false,
+            approvalModal: false,
+            monday: {},
+            tuesday: {},
+            wednesday: {},
+            thursday: {},
+            friday: {},
+            saturday: {},
+            sunday: {}
+        };
+    },
+    created: function created() {
+        var _this2 = this;
+
+        this.fetchLoggedInUser().then(function () {
+            var param = {
+                eow: _this2.eow,
+                locationId: _this2.$store.state.loggedInUser.locationId
+            };
+            _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId).then(function () {
+                _this2.fetchWeek(param).then(function () {
+                    _this2.fetchRequiredShifts(_this2.$store.state.loggedInUser.locationId).then(function () {
+                        _this2.distributeWeek(_this2.getWeek);
+                        _this2.fetchManagers(_this2.$store.state.loggedInUser.locationId);
+                        _this2.fetchShiftCodes(_this2.state);
+                        _this2.fetchVacationHistory(_this2.$store.state.loggedInUser.locationId);
+                    });
+                });
+            });
+        });
+    }
+};
+
+/***/ }),
+/* 283 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _navLeft = __webpack_require__(403);
+
+var _navLeft2 = _interopRequireDefault(_navLeft);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  components: { navLeft: _navLeft2.default },
+  methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchManagers', 'fetchChangeRequest', 'payrollAcceptShiftChange', 'gmRejectShiftChange']), {
+    approveChange: function approveChange(request) {
+      var approval = { GMId: 1, Request: request };
+      this.payrollAcceptShiftChange(approval);
+    },
+    rejectChange: function rejectChange(request) {
+      var approval = { GMId: 1, Request: request };
+      this.gmRejectShiftChange(approval);
+    }
+  }),
+  computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getChangeRequest', 'getUser']), {
+    format: function format() {
+      return this.formatAmPm ? '12' : '24';
+    }
+  }),
+  data: function data() {
+    return {
+      Id: this.$route.params,
+      date: new Date(),
+      formatAmPm: false
+    };
+  },
+  created: function created() {
+    var params = this.$route.query;
+    this.fetchManagers(this.$store.state.loggedInUser.locationID);
+    this.fetchChangeRequest(params);
+  }
+};
+
+/***/ }),
 /* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _regenerator = __webpack_require__(295);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(294);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+var _WeeklyCalendar = __webpack_require__(250);
+
+var _WeeklyCalendar2 = _interopRequireDefault(_WeeklyCalendar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  components: { WeeklyCalendar: _WeeklyCalendar2.default },
+  methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchChangeRequest', 'gmAcceptShiftChange', 'gmRejectShiftChange']), {
+    components: {
+      WeeklyCalendar: _WeeklyCalendar2.default
+    },
+    approveChange: function approveChange(request) {
+      var approval = { GMId: 1, Request: request };
+      this.gmAcceptShiftChange(approval);
+    },
+    rejectChange: function rejectChange(request) {
+      var rejection = {
+        GMId: 1,
+        Id: request.fromId,
+        requestId: request.id,
+        Reason: this.gmReason };
+      this.gmRejectShiftChange(rejection);
+    }
+  }),
+  computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getChangeRequest'])),
+  data: function data() {
+    return {
+      Id: this.$route.params,
+      gmReason: ''
+    };
+  },
+  created: function created() {
+    var _this = this;
+
+    return (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+      var params;
+      return _regenerator2.default.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              params = _this.$route.query;
+
+              _this.fetchChangeRequest(params);
+              _context.next = 4;
+              return _this.getChangeRequest;
+
+            case 4:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, _this);
+    }))();
+  }
+};
+
+/***/ }),
+/* 285 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _vuex = __webpack_require__(8);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var thisMonth = new Date().getMonth();
+var thisYear = new Date().getFullYear();
+exports.default = {
+    data: function data() {
+        return {
+            startDate: new Date(thisYear, thisMonth, 1),
+            endDate: new Date(thisYear, thisMonth, 28)
+        };
+    },
+
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['download']), {
+        downloadButton: function downloadButton() {
+            var aStartDate = this.startDate.toString().split(' ');
+            var stringgyDate1 = aStartDate[1] + "-" + aStartDate[2] + "-" + aStartDate[3];
+            var anEndtDate = this.endDate.toString().split(' ');
+            var stringgyDate2 = anEndtDate[1] + "-" + anEndtDate[2] + "-" + anEndtDate[3];
+            var payload = { startDate: stringgyDate1, endDate: stringgyDate2 };
+            this.download(payload);
+        }
+    })
+};
+
+/***/ }),
+/* 286 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(7);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _routes = __webpack_require__(49);
+
+var _vue = __webpack_require__(2);
+
+var _vue2 = _interopRequireDefault(_vue);
+
+var _vuex = __webpack_require__(8);
+
+var _vuex2 = _interopRequireDefault(_vuex);
+
+var _homePage = __webpack_require__(258);
+
+var _homePage2 = _interopRequireDefault(_homePage);
+
+var _navMenu = __webpack_require__(404);
+
+var _navMenu2 = _interopRequireDefault(_navMenu);
+
+var _MonthlyCalendar = __webpack_require__(248);
+
+var _MonthlyCalendar2 = _interopRequireDefault(_MonthlyCalendar);
+
+var _vue2SimpleCalendar = __webpack_require__(450);
+
+var _vue2SimpleCalendar2 = _interopRequireDefault(_vue2SimpleCalendar);
+
+var _dropdown = __webpack_require__(259);
+
+var _dropdown2 = _interopRequireDefault(_dropdown);
+
+var _TheShift = __webpack_require__(249);
+
+var _TheShift2 = _interopRequireDefault(_TheShift);
+
+var _OneDay = __webpack_require__(396);
+
+var _OneDay2 = _interopRequireDefault(_OneDay);
+
+var _ScheduleConsequences = __webpack_require__(397);
+
+var _ScheduleConsequences2 = _interopRequireDefault(_ScheduleConsequences);
+
+var _ShiftModal = __webpack_require__(398);
+
+var _ShiftModal2 = _interopRequireDefault(_ShiftModal);
+
+var _WeeklyCalendar = __webpack_require__(250);
+
+var _WeeklyCalendar2 = _interopRequireDefault(_WeeklyCalendar);
+
+var _DailyShiftRequirements = __webpack_require__(90);
+
+var _DailyShiftRequirements2 = _interopRequireDefault(_DailyShiftRequirements);
+
+var _GmPage = __webpack_require__(251);
+
+var _GmPage2 = _interopRequireDefault(_GmPage);
+
+var _ShiftRequirementsModal = __webpack_require__(252);
+
+var _ShiftRequirementsModal2 = _interopRequireDefault(_ShiftRequirementsModal);
+
+var _ShiftRequirementsWeek = __webpack_require__(253);
+
+var _ShiftRequirementsWeek2 = _interopRequireDefault(_ShiftRequirementsWeek);
+
+var _ShiftSelection = __webpack_require__(254);
+
+var _ShiftSelection2 = _interopRequireDefault(_ShiftSelection);
+
+var _ApproveModal = __webpack_require__(399);
+
+var _ApproveModal2 = _interopRequireDefault(_ApproveModal);
+
+var _DisapproveModal = __webpack_require__(400);
+
+var _DisapproveModal2 = _interopRequireDefault(_DisapproveModal);
+
+var _GMApproveSchedule = __webpack_require__(255);
+
+var _GMApproveSchedule2 = _interopRequireDefault(_GMApproveSchedule);
+
+var _PayrollApproval = __webpack_require__(256);
+
+var _PayrollApproval2 = _interopRequireDefault(_PayrollApproval);
+
+var _ReviewScheduleChange = __webpack_require__(257);
+
+var _ReviewScheduleChange2 = _interopRequireDefault(_ReviewScheduleChange);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_vue2.default.component('home-page', _homePage2.default);
+_vue2.default.component('nav-menu', _navMenu2.default);
+_vue2.default.component('monthly-calendar', _MonthlyCalendar2.default);
+_vue2.default.component('dropdown', _dropdown2.default);
+_vue2.default.component('shift', _TheShift2.default);
+_vue2.default.component('oneday', _OneDay2.default);
+_vue2.default.component('scheduleConsequences', _ScheduleConsequences2.default);
+_vue2.default.component('shiftModal', _ShiftModal2.default);
+_vue2.default.component('dailyShiftRequirements', _DailyShiftRequirements2.default);
+_vue2.default.component('gmPage', _GmPage2.default);
+_vue2.default.component('shiftRequirementsModal', _ShiftRequirementsModal2.default);
+_vue2.default.component('shiftRequirementsWeek', _ShiftRequirementsWeek2.default);
+_vue2.default.component('shiftSelection', _ShiftSelection2.default);
+_vue2.default.component('approveModal', _ApproveModal2.default);
+_vue2.default.component('dsapproveModal', _DisapproveModal2.default);
+_vue2.default.component('gMApproveSchedule', _GMApproveSchedule2.default);
+_vue2.default.component('PayRollApproval', _PayrollApproval2.default);
+_vue2.default.component('ReviewScheduleChange', _ReviewScheduleChange2.default);
+_vue2.default.component('calendar', _vue2SimpleCalendar2.default);
+
+_vue2.default.use(_vuex2.default);
+
+exports.default = {
+    data: function data() {
+        return {
+            routes: _routes.routes,
+            collapsed: true,
+            SupplyHub: [{ title: 'Home (NEW)', link: "" }, { title: 'Products', link: "" }, { title: 'SKUs', link: "" }, { title: 'Contracts', link: "" }, { title: 'Bids', link: "" }, { title: 'Mapper', link: "" }, { title: 'Admin', link: "" }],
+            MenuHub: [{ title: 'Products', link: "" }, { title: 'Recipes', link: "" }, { title: 'Menus', link: "" }, { title: 'Menus Items', link: "" }],
+            OpsHub: [{ title: 'My Pillars', link: "" }, { title: 'OOO Grid', link: "" }, { title: 'OOO Pivot Data', link: "" }, { title: 'Mgmt Change', link: "" }, { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/" }, { title: "Gm Page", link: "http://192.168.0.37:8000/GmPage" }],
+            FinanceHub: [{ title: 'PurchaseOrders', link: "" }],
+            AdminHub: [{ title: 'Mgmt Change', link: "" }, { title: 'Alerts', link: "" }, { title: 'Measure Units', link: "" }, { title: 'Ops Review', link: "" }],
+            InventoryHub: [{ title: 'Home', link: "" }]
+        };
+    },
+
+    computed: (0, _extends3.default)({}, (0, _vuex.mapGetters)(['getUser'])),
+    methods: (0, _extends3.default)({}, (0, _vuex.mapActions)(['fetchLoggedInUser']), {
+        logout: function logout() {
+            document.cookie = "";
+            window.location.href = 'http://192.168.0.37:8001';
+        }
+    }),
+    created: function created() {
+        this.fetchLoggedInUser();
+    }
+};
+
+/***/ }),
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33664,7 +33875,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 285 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33680,7 +33891,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 286 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33694,7 +33905,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 287 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33712,7 +33923,7 @@ var _routes = __webpack_require__(49);
 
 var _vuex = __webpack_require__(8);
 
-var _dropdown = __webpack_require__(254);
+var _dropdown = __webpack_require__(259);
 
 var _dropdown2 = _interopRequireDefault(_dropdown);
 
@@ -33763,25 +33974,25 @@ exports.default = {
 };
 
 /***/ }),
-/* 288 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(295), __esModule: true };
-
-/***/ }),
-/* 289 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(296), __esModule: true };
-
-/***/ }),
-/* 290 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(297), __esModule: true };
-
-/***/ }),
 /* 291 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(298), __esModule: true };
+
+/***/ }),
+/* 292 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(299), __esModule: true };
+
+/***/ }),
+/* 293 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(300), __esModule: true };
+
+/***/ }),
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33789,7 +34000,7 @@ module.exports = { "default": __webpack_require__(297), __esModule: true };
 
 exports.__esModule = true;
 
-var _promise = __webpack_require__(290);
+var _promise = __webpack_require__(293);
 
 var _promise2 = _interopRequireDefault(_promise);
 
@@ -33825,90 +34036,90 @@ exports.default = function (fn) {
 };
 
 /***/ }),
-/* 292 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(385);
-
-
-/***/ }),
-/* 293 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(128);
-__webpack_require__(364);
-__webpack_require__(362);
-__webpack_require__(368);
-__webpack_require__(365);
-__webpack_require__(371);
-__webpack_require__(373);
-__webpack_require__(361);
-__webpack_require__(367);
-__webpack_require__(358);
-__webpack_require__(372);
-__webpack_require__(356);
-__webpack_require__(370);
-__webpack_require__(369);
-__webpack_require__(363);
-__webpack_require__(366);
-__webpack_require__(355);
-__webpack_require__(357);
-__webpack_require__(360);
-__webpack_require__(359);
-__webpack_require__(374);
-__webpack_require__(127);
-module.exports = __webpack_require__(24).Array;
-
-
-/***/ }),
-/* 294 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(375);
-__webpack_require__(128);
-__webpack_require__(377);
-__webpack_require__(376);
-module.exports = __webpack_require__(24).Promise;
-
-
-/***/ }),
 /* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(326);
-module.exports = __webpack_require__(14).Object.assign;
+module.exports = __webpack_require__(388);
 
 
 /***/ }),
 /* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(327);
-module.exports = __webpack_require__(14).Object.keys;
+__webpack_require__(126);
+__webpack_require__(367);
+__webpack_require__(365);
+__webpack_require__(371);
+__webpack_require__(368);
+__webpack_require__(374);
+__webpack_require__(376);
+__webpack_require__(364);
+__webpack_require__(370);
+__webpack_require__(361);
+__webpack_require__(375);
+__webpack_require__(359);
+__webpack_require__(373);
+__webpack_require__(372);
+__webpack_require__(366);
+__webpack_require__(369);
+__webpack_require__(358);
+__webpack_require__(360);
+__webpack_require__(363);
+__webpack_require__(362);
+__webpack_require__(377);
+__webpack_require__(125);
+module.exports = __webpack_require__(24).Array;
 
 
 /***/ }),
 /* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(328);
-__webpack_require__(330);
-__webpack_require__(333);
-__webpack_require__(329);
-__webpack_require__(331);
-__webpack_require__(332);
-module.exports = __webpack_require__(14).Promise;
+__webpack_require__(378);
+__webpack_require__(126);
+__webpack_require__(380);
+__webpack_require__(379);
+module.exports = __webpack_require__(24).Promise;
 
 
 /***/ }),
 /* 298 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(329);
+module.exports = __webpack_require__(14).Object.assign;
+
+
+/***/ }),
+/* 299 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(330);
+module.exports = __webpack_require__(14).Object.keys;
+
+
+/***/ }),
+/* 300 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(331);
+__webpack_require__(333);
+__webpack_require__(336);
+__webpack_require__(332);
+__webpack_require__(334);
+__webpack_require__(335);
+module.exports = __webpack_require__(14).Promise;
+
+
+/***/ }),
+/* 301 */
 /***/ (function(module, exports) {
 
 module.exports = function () { /* empty */ };
 
 
 /***/ }),
-/* 299 */
+/* 302 */
 /***/ (function(module, exports) {
 
 module.exports = function (it, Constructor, name, forbiddenField) {
@@ -33919,14 +34130,14 @@ module.exports = function (it, Constructor, name, forbiddenField) {
 
 
 /***/ }),
-/* 300 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = __webpack_require__(57);
-var toLength = __webpack_require__(109);
-var toAbsoluteIndex = __webpack_require__(322);
+var toLength = __webpack_require__(107);
+var toAbsoluteIndex = __webpack_require__(325);
 module.exports = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIObject($this);
@@ -33948,15 +34159,15 @@ module.exports = function (IS_INCLUDES) {
 
 
 /***/ }),
-/* 301 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx = __webpack_require__(42);
-var call = __webpack_require__(305);
-var isArrayIter = __webpack_require__(304);
+var call = __webpack_require__(308);
+var isArrayIter = __webpack_require__(307);
 var anObject = __webpack_require__(16);
-var toLength = __webpack_require__(109);
-var getIterFn = __webpack_require__(324);
+var toLength = __webpack_require__(107);
+var getIterFn = __webpack_require__(327);
 var BREAK = {};
 var RETURN = {};
 var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
@@ -33979,7 +34190,7 @@ exports.RETURN = RETURN;
 
 
 /***/ }),
-/* 302 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = !__webpack_require__(30) && !__webpack_require__(43)(function () {
@@ -33988,7 +34199,7 @@ module.exports = !__webpack_require__(30) && !__webpack_require__(43)(function (
 
 
 /***/ }),
-/* 303 */
+/* 306 */
 /***/ (function(module, exports) {
 
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
@@ -34010,7 +34221,7 @@ module.exports = function (fn, args, that) {
 
 
 /***/ }),
-/* 304 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
@@ -34024,7 +34235,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 305 */
+/* 308 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // call something on iterator step with safe closing on error
@@ -34042,13 +34253,13 @@ module.exports = function (iterator, fn, value, entries) {
 
 
 /***/ }),
-/* 306 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var create = __webpack_require__(311);
-var descriptor = __webpack_require__(105);
+var create = __webpack_require__(314);
+var descriptor = __webpack_require__(103);
 var setToStringTag = __webpack_require__(54);
 var IteratorPrototype = {};
 
@@ -34062,7 +34273,7 @@ module.exports = function (Constructor, NAME, next) {
 
 
 /***/ }),
-/* 307 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ITERATOR = __webpack_require__(11)('iterator');
@@ -34090,7 +34301,7 @@ module.exports = function (exec, skipClosing) {
 
 
 /***/ }),
-/* 308 */
+/* 311 */
 /***/ (function(module, exports) {
 
 module.exports = function (done, value) {
@@ -34099,11 +34310,11 @@ module.exports = function (done, value) {
 
 
 /***/ }),
-/* 309 */
+/* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(10);
-var macrotask = __webpack_require__(108).set;
+var macrotask = __webpack_require__(106).set;
 var Observer = global.MutationObserver || global.WebKitMutationObserver;
 var process = global.process;
 var Promise = global.Promise;
@@ -34173,17 +34384,17 @@ module.exports = function () {
 
 
 /***/ }),
-/* 310 */
+/* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys = __webpack_require__(53);
-var gOPS = __webpack_require__(313);
-var pIE = __webpack_require__(316);
+var gOPS = __webpack_require__(316);
+var pIE = __webpack_require__(319);
 var toObject = __webpack_require__(58);
-var IObject = __webpack_require__(100);
+var IObject = __webpack_require__(98);
 var $assign = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
@@ -34214,13 +34425,13 @@ module.exports = !$assign || __webpack_require__(43)(function () {
 
 
 /***/ }),
-/* 311 */
+/* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject = __webpack_require__(16);
-var dPs = __webpack_require__(312);
-var enumBugKeys = __webpack_require__(98);
+var dPs = __webpack_require__(315);
+var enumBugKeys = __webpack_require__(96);
 var IE_PROTO = __webpack_require__(55)('IE_PROTO');
 var Empty = function () { /* empty */ };
 var PROTOTYPE = 'prototype';
@@ -34234,7 +34445,7 @@ var createDict = function () {
   var gt = '>';
   var iframeDocument;
   iframe.style.display = 'none';
-  __webpack_require__(99).appendChild(iframe);
+  __webpack_require__(97).appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
   // createDict = iframe.contentWindow.Object;
   // html.removeChild(iframe);
@@ -34261,7 +34472,7 @@ module.exports = Object.create || function create(O, Properties) {
 
 
 /***/ }),
-/* 312 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(45);
@@ -34280,14 +34491,14 @@ module.exports = __webpack_require__(30) ? Object.defineProperties : function de
 
 
 /***/ }),
-/* 313 */
+/* 316 */
 /***/ (function(module, exports) {
 
 exports.f = Object.getOwnPropertySymbols;
 
 
 /***/ }),
-/* 314 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
@@ -34306,12 +34517,12 @@ module.exports = Object.getPrototypeOf || function (O) {
 
 
 /***/ }),
-/* 315 */
+/* 318 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var has = __webpack_require__(44);
 var toIObject = __webpack_require__(57);
-var arrayIndexOf = __webpack_require__(300)(false);
+var arrayIndexOf = __webpack_require__(303)(false);
 var IE_PROTO = __webpack_require__(55)('IE_PROTO');
 
 module.exports = function (object, names) {
@@ -34329,14 +34540,14 @@ module.exports = function (object, names) {
 
 
 /***/ }),
-/* 316 */
+/* 319 */
 /***/ (function(module, exports) {
 
 exports.f = {}.propertyIsEnumerable;
 
 
 /***/ }),
-/* 317 */
+/* 320 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // most Object methods by ES6 should accept primitives
@@ -34352,7 +34563,7 @@ module.exports = function (KEY, exec) {
 
 
 /***/ }),
-/* 318 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var hide = __webpack_require__(21);
@@ -34365,14 +34576,14 @@ module.exports = function (target, src, safe) {
 
 
 /***/ }),
-/* 319 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(21);
 
 
 /***/ }),
-/* 320 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34393,7 +34604,7 @@ module.exports = function (KEY) {
 
 
 /***/ }),
-/* 321 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(56);
@@ -34416,7 +34627,7 @@ module.exports = function (TO_STRING) {
 
 
 /***/ }),
-/* 322 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(56);
@@ -34429,7 +34640,7 @@ module.exports = function (index, length) {
 
 
 /***/ }),
-/* 323 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
@@ -34447,10 +34658,10 @@ module.exports = function (it, S) {
 
 
 /***/ }),
-/* 324 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var classof = __webpack_require__(97);
+var classof = __webpack_require__(95);
 var ITERATOR = __webpack_require__(11)('iterator');
 var Iterators = __webpack_require__(32);
 module.exports = __webpack_require__(14).getIteratorMethod = function (it) {
@@ -34461,13 +34672,13 @@ module.exports = __webpack_require__(14).getIteratorMethod = function (it) {
 
 
 /***/ }),
-/* 325 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(298);
-var step = __webpack_require__(308);
+var addToUnscopables = __webpack_require__(301);
+var step = __webpack_require__(311);
 var Iterators = __webpack_require__(32);
 var toIObject = __webpack_require__(57);
 
@@ -34475,7 +34686,7 @@ var toIObject = __webpack_require__(57);
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = __webpack_require__(101)(Array, 'Array', function (iterated, kind) {
+module.exports = __webpack_require__(99)(Array, 'Array', function (iterated, kind) {
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -34502,24 +34713,24 @@ addToUnscopables('entries');
 
 
 /***/ }),
-/* 326 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.1 Object.assign(target, source)
 var $export = __webpack_require__(20);
 
-$export($export.S + $export.F, 'Object', { assign: __webpack_require__(310) });
+$export($export.S + $export.F, 'Object', { assign: __webpack_require__(313) });
 
 
 /***/ }),
-/* 327 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 Object.keys(O)
 var toObject = __webpack_require__(58);
 var $keys = __webpack_require__(53);
 
-__webpack_require__(317)('keys', function () {
+__webpack_require__(320)('keys', function () {
   return function keys(it) {
     return $keys(toObject(it));
   };
@@ -34527,32 +34738,32 @@ __webpack_require__(317)('keys', function () {
 
 
 /***/ }),
-/* 328 */
+/* 331 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 329 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(102);
+var LIBRARY = __webpack_require__(100);
 var global = __webpack_require__(10);
 var ctx = __webpack_require__(42);
-var classof = __webpack_require__(97);
+var classof = __webpack_require__(95);
 var $export = __webpack_require__(20);
 var isObject = __webpack_require__(31);
 var aFunction = __webpack_require__(40);
-var anInstance = __webpack_require__(299);
-var forOf = __webpack_require__(301);
-var speciesConstructor = __webpack_require__(107);
-var task = __webpack_require__(108).set;
-var microtask = __webpack_require__(309)();
+var anInstance = __webpack_require__(302);
+var forOf = __webpack_require__(304);
+var speciesConstructor = __webpack_require__(105);
+var task = __webpack_require__(106).set;
+var microtask = __webpack_require__(312)();
 var newPromiseCapabilityModule = __webpack_require__(52);
-var perform = __webpack_require__(103);
-var promiseResolve = __webpack_require__(104);
+var perform = __webpack_require__(101);
+var promiseResolve = __webpack_require__(102);
 var PROMISE = 'Promise';
 var TypeError = global.TypeError;
 var process = global.process;
@@ -34715,7 +34926,7 @@ if (!USE_NATIVE) {
     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
     this._n = false;          // <- notify
   };
-  Internal.prototype = __webpack_require__(318)($Promise.prototype, {
+  Internal.prototype = __webpack_require__(321)($Promise.prototype, {
     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
     then: function then(onFulfilled, onRejected) {
       var reaction = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -34747,7 +34958,7 @@ if (!USE_NATIVE) {
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, { Promise: $Promise });
 __webpack_require__(54)($Promise, PROMISE);
-__webpack_require__(320)(PROMISE);
+__webpack_require__(323)(PROMISE);
 Wrapper = __webpack_require__(14)[PROMISE];
 
 // statics
@@ -34766,7 +34977,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return promiseResolve(LIBRARY && this === Wrapper ? $Promise : this, x);
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(307)(function (iter) {
+$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(310)(function (iter) {
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -34813,15 +35024,15 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(307)(functio
 
 
 /***/ }),
-/* 330 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $at = __webpack_require__(321)(true);
+var $at = __webpack_require__(324)(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-__webpack_require__(101)(String, 'String', function (iterated) {
+__webpack_require__(99)(String, 'String', function (iterated) {
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
@@ -34837,7 +35048,7 @@ __webpack_require__(101)(String, 'String', function (iterated) {
 
 
 /***/ }),
-/* 331 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34846,8 +35057,8 @@ __webpack_require__(101)(String, 'String', function (iterated) {
 var $export = __webpack_require__(20);
 var core = __webpack_require__(14);
 var global = __webpack_require__(10);
-var speciesConstructor = __webpack_require__(107);
-var promiseResolve = __webpack_require__(104);
+var speciesConstructor = __webpack_require__(105);
+var promiseResolve = __webpack_require__(102);
 
 $export($export.P + $export.R, 'Promise', { 'finally': function (onFinally) {
   var C = speciesConstructor(this, core.Promise || global.Promise);
@@ -34864,7 +35075,7 @@ $export($export.P + $export.R, 'Promise', { 'finally': function (onFinally) {
 
 
 /***/ }),
-/* 332 */
+/* 335 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34872,7 +35083,7 @@ $export($export.P + $export.R, 'Promise', { 'finally': function (onFinally) {
 // https://github.com/tc39/proposal-promise-try
 var $export = __webpack_require__(20);
 var newPromiseCapability = __webpack_require__(52);
-var perform = __webpack_require__(103);
+var perform = __webpack_require__(101);
 
 $export($export.S, 'Promise', { 'try': function (callbackfn) {
   var promiseCapability = newPromiseCapability.f(this);
@@ -34883,10 +35094,10 @@ $export($export.S, 'Promise', { 'try': function (callbackfn) {
 
 
 /***/ }),
-/* 333 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(325);
+__webpack_require__(328);
 var global = __webpack_require__(10);
 var hide = __webpack_require__(21);
 var Iterators = __webpack_require__(32);
@@ -34908,7 +35119,7 @@ for (var i = 0; i < DOMIterables.length; i++) {
 
 
 /***/ }),
-/* 334 */
+/* 337 */
 /***/ (function(module, exports) {
 
 module.exports = function (it, Constructor, name, forbiddenField) {
@@ -34919,7 +35130,7 @@ module.exports = function (it, Constructor, name, forbiddenField) {
 
 
 /***/ }),
-/* 335 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34952,7 +35163,7 @@ module.exports = [].copyWithin || function copyWithin(target /* = 0 */, start /*
 
 
 /***/ }),
-/* 336 */
+/* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34974,11 +35185,11 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 
 
 /***/ }),
-/* 337 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(28);
-var isArray = __webpack_require__(116);
+var isArray = __webpack_require__(114);
 var SPECIES = __webpack_require__(9)('species');
 
 module.exports = function (original) {
@@ -34996,11 +35207,11 @@ module.exports = function (original) {
 
 
 /***/ }),
-/* 338 */
+/* 341 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
-var speciesConstructor = __webpack_require__(337);
+var speciesConstructor = __webpack_require__(340);
 
 module.exports = function (original, length) {
   return new (speciesConstructor(original))(length);
@@ -35008,15 +35219,15 @@ module.exports = function (original, length) {
 
 
 /***/ }),
-/* 339 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx = __webpack_require__(25);
-var call = __webpack_require__(117);
-var isArrayIter = __webpack_require__(115);
+var call = __webpack_require__(115);
+var isArrayIter = __webpack_require__(113);
 var anObject = __webpack_require__(17);
 var toLength = __webpack_require__(15);
-var getIterFn = __webpack_require__(126);
+var getIterFn = __webpack_require__(124);
 var BREAK = {};
 var RETURN = {};
 var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) {
@@ -35039,7 +35250,7 @@ exports.RETURN = RETURN;
 
 
 /***/ }),
-/* 340 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = !__webpack_require__(34) && !__webpack_require__(26)(function () {
@@ -35048,7 +35259,7 @@ module.exports = !__webpack_require__(34) && !__webpack_require__(26)(function (
 
 
 /***/ }),
-/* 341 */
+/* 344 */
 /***/ (function(module, exports) {
 
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
@@ -35070,12 +35281,12 @@ module.exports = function (fn, args, that) {
 
 
 /***/ }),
-/* 342 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var create = __webpack_require__(345);
+var create = __webpack_require__(348);
 var descriptor = __webpack_require__(63);
 var setToStringTag = __webpack_require__(64);
 var IteratorPrototype = {};
@@ -35090,7 +35301,7 @@ module.exports = function (Constructor, NAME, next) {
 
 
 /***/ }),
-/* 343 */
+/* 346 */
 /***/ (function(module, exports) {
 
 module.exports = function (done, value) {
@@ -35099,11 +35310,11 @@ module.exports = function (done, value) {
 
 
 /***/ }),
-/* 344 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(12);
-var macrotask = __webpack_require__(125).set;
+var macrotask = __webpack_require__(123).set;
 var Observer = global.MutationObserver || global.WebKitMutationObserver;
 var process = global.process;
 var Promise = global.Promise;
@@ -35173,13 +35384,13 @@ module.exports = function () {
 
 
 /***/ }),
-/* 345 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject = __webpack_require__(17);
-var dPs = __webpack_require__(346);
-var enumBugKeys = __webpack_require__(114);
+var dPs = __webpack_require__(349);
+var enumBugKeys = __webpack_require__(112);
 var IE_PROTO = __webpack_require__(65)('IE_PROTO');
 var Empty = function () { /* empty */ };
 var PROTOTYPE = 'prototype';
@@ -35220,12 +35431,12 @@ module.exports = Object.create || function create(O, Properties) {
 
 
 /***/ }),
-/* 346 */
+/* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(37);
 var anObject = __webpack_require__(17);
-var getKeys = __webpack_require__(122);
+var getKeys = __webpack_require__(120);
 
 module.exports = __webpack_require__(34) ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
@@ -35239,7 +35450,7 @@ module.exports = __webpack_require__(34) ? Object.defineProperties : function de
 
 
 /***/ }),
-/* 347 */
+/* 350 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
@@ -35258,12 +35469,12 @@ module.exports = Object.getPrototypeOf || function (O) {
 
 
 /***/ }),
-/* 348 */
+/* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var has = __webpack_require__(35);
 var toIObject = __webpack_require__(39);
-var arrayIndexOf = __webpack_require__(111)(false);
+var arrayIndexOf = __webpack_require__(109)(false);
 var IE_PROTO = __webpack_require__(65)('IE_PROTO');
 
 module.exports = function (object, names) {
@@ -35281,7 +35492,7 @@ module.exports = function (object, names) {
 
 
 /***/ }),
-/* 349 */
+/* 352 */
 /***/ (function(module, exports) {
 
 module.exports = function (exec) {
@@ -35294,12 +35505,12 @@ module.exports = function (exec) {
 
 
 /***/ }),
-/* 350 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(17);
 var isObject = __webpack_require__(28);
-var newPromiseCapability = __webpack_require__(121);
+var newPromiseCapability = __webpack_require__(119);
 
 module.exports = function (C, x) {
   anObject(C);
@@ -35312,7 +35523,7 @@ module.exports = function (C, x) {
 
 
 /***/ }),
-/* 351 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var redefine = __webpack_require__(38);
@@ -35323,7 +35534,7 @@ module.exports = function (target, src, safe) {
 
 
 /***/ }),
-/* 352 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
@@ -35338,7 +35549,7 @@ module.exports = function (O, D) {
 
 
 /***/ }),
-/* 353 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(48);
@@ -35361,7 +35572,7 @@ module.exports = function (TO_STRING) {
 
 
 /***/ }),
-/* 354 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
@@ -35379,24 +35590,24 @@ module.exports = function (it, S) {
 
 
 /***/ }),
-/* 355 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 
-$export($export.P, 'Array', { copyWithin: __webpack_require__(335) });
+$export($export.P, 'Array', { copyWithin: __webpack_require__(338) });
 
 __webpack_require__(33)('copyWithin');
 
 
 /***/ }),
-/* 356 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $every = __webpack_require__(18)(4);
 
 $export($export.P + $export.F * !__webpack_require__(13)([].every, true), 'Array', {
@@ -35408,24 +35619,24 @@ $export($export.P + $export.F * !__webpack_require__(13)([].every, true), 'Array
 
 
 /***/ }),
-/* 357 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 
-$export($export.P, 'Array', { fill: __webpack_require__(336) });
+$export($export.P, 'Array', { fill: __webpack_require__(339) });
 
 __webpack_require__(33)('fill');
 
 
 /***/ }),
-/* 358 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $filter = __webpack_require__(18)(2);
 
 $export($export.P + $export.F * !__webpack_require__(13)([].filter, true), 'Array', {
@@ -35437,13 +35648,13 @@ $export($export.P + $export.F * !__webpack_require__(13)([].filter, true), 'Arra
 
 
 /***/ }),
-/* 359 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $find = __webpack_require__(18)(6);
 var KEY = 'findIndex';
 var forced = true;
@@ -35458,13 +35669,13 @@ __webpack_require__(33)(KEY);
 
 
 /***/ }),
-/* 360 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $find = __webpack_require__(18)(5);
 var KEY = 'find';
 var forced = true;
@@ -35479,12 +35690,12 @@ __webpack_require__(33)(KEY);
 
 
 /***/ }),
-/* 361 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $forEach = __webpack_require__(18)(0);
 var STRICT = __webpack_require__(13)([].forEach, true);
 
@@ -35497,21 +35708,21 @@ $export($export.P + $export.F * !STRICT, 'Array', {
 
 
 /***/ }),
-/* 362 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var ctx = __webpack_require__(25);
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var toObject = __webpack_require__(19);
-var call = __webpack_require__(117);
-var isArrayIter = __webpack_require__(115);
+var call = __webpack_require__(115);
+var isArrayIter = __webpack_require__(113);
 var toLength = __webpack_require__(15);
-var createProperty = __webpack_require__(113);
-var getIterFn = __webpack_require__(126);
+var createProperty = __webpack_require__(111);
+var getIterFn = __webpack_require__(124);
 
-$export($export.S + $export.F * !__webpack_require__(119)(function (iter) { Array.from(iter); }), 'Array', {
+$export($export.S + $export.F * !__webpack_require__(117)(function (iter) { Array.from(iter); }), 'Array', {
   // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
   from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
     var O = toObject(arrayLike);
@@ -35541,13 +35752,13 @@ $export($export.S + $export.F * !__webpack_require__(119)(function (iter) { Arra
 
 
 /***/ }),
-/* 363 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
-var $indexOf = __webpack_require__(111)(false);
+var $export = __webpack_require__(5);
+var $indexOf = __webpack_require__(109)(false);
 var $native = [].indexOf;
 var NEGATIVE_ZERO = !!$native && 1 / [1].indexOf(1, -0) < 0;
 
@@ -35563,23 +35774,23 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(13)($nati
 
 
 /***/ }),
-/* 364 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 
-$export($export.S, 'Array', { isArray: __webpack_require__(116) });
+$export($export.S, 'Array', { isArray: __webpack_require__(114) });
 
 
 /***/ }),
-/* 365 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 22.1.3.13 Array.prototype.join(separator)
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var toIObject = __webpack_require__(39);
 var arrayJoin = [].join;
 
@@ -35592,12 +35803,12 @@ $export($export.P + $export.F * (__webpack_require__(46) != Object || !__webpack
 
 
 /***/ }),
-/* 366 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var toIObject = __webpack_require__(39);
 var toInteger = __webpack_require__(48);
 var toLength = __webpack_require__(15);
@@ -35621,12 +35832,12 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(13)($nati
 
 
 /***/ }),
-/* 367 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $map = __webpack_require__(18)(1);
 
 $export($export.P + $export.F * !__webpack_require__(13)([].map, true), 'Array', {
@@ -35638,13 +35849,13 @@ $export($export.P + $export.F * !__webpack_require__(13)([].map, true), 'Array',
 
 
 /***/ }),
-/* 368 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
-var createProperty = __webpack_require__(113);
+var $export = __webpack_require__(5);
+var createProperty = __webpack_require__(111);
 
 // WebKit Array.of isn't generic
 $export($export.S + $export.F * __webpack_require__(26)(function () {
@@ -35664,13 +35875,13 @@ $export($export.S + $export.F * __webpack_require__(26)(function () {
 
 
 /***/ }),
-/* 369 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
-var $reduce = __webpack_require__(112);
+var $export = __webpack_require__(5);
+var $reduce = __webpack_require__(110);
 
 $export($export.P + $export.F * !__webpack_require__(13)([].reduceRight, true), 'Array', {
   // 22.1.3.19 / 15.4.4.22 Array.prototype.reduceRight(callbackfn [, initialValue])
@@ -35681,13 +35892,13 @@ $export($export.P + $export.F * !__webpack_require__(13)([].reduceRight, true), 
 
 
 /***/ }),
-/* 370 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
-var $reduce = __webpack_require__(112);
+var $export = __webpack_require__(5);
+var $reduce = __webpack_require__(110);
 
 $export($export.P + $export.F * !__webpack_require__(13)([].reduce, true), 'Array', {
   // 22.1.3.18 / 15.4.4.21 Array.prototype.reduce(callbackfn [, initialValue])
@@ -35698,12 +35909,12 @@ $export($export.P + $export.F * !__webpack_require__(13)([].reduce, true), 'Arra
 
 
 /***/ }),
-/* 371 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var html = __webpack_require__(62);
 var cof = __webpack_require__(23);
 var toAbsoluteIndex = __webpack_require__(47);
@@ -35733,12 +35944,12 @@ $export($export.P + $export.F * __webpack_require__(26)(function () {
 
 
 /***/ }),
-/* 372 */
+/* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var $some = __webpack_require__(18)(3);
 
 $export($export.P + $export.F * !__webpack_require__(13)([].some, true), 'Array', {
@@ -35750,12 +35961,12 @@ $export($export.P + $export.F * !__webpack_require__(13)([].some, true), 'Array'
 
 
 /***/ }),
-/* 373 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var aFunction = __webpack_require__(22);
 var toObject = __webpack_require__(19);
 var fails = __webpack_require__(26);
@@ -35780,14 +35991,14 @@ $export($export.P + $export.F * (fails(function () {
 
 
 /***/ }),
-/* 374 */
+/* 377 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(123)('Array');
+__webpack_require__(121)('Array');
 
 
 /***/ }),
-/* 375 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35804,26 +36015,26 @@ if (test + '' != '[object z]') {
 
 
 /***/ }),
-/* 376 */
+/* 379 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY = __webpack_require__(120);
+var LIBRARY = __webpack_require__(118);
 var global = __webpack_require__(12);
 var ctx = __webpack_require__(25);
 var classof = __webpack_require__(59);
-var $export = __webpack_require__(6);
+var $export = __webpack_require__(5);
 var isObject = __webpack_require__(28);
 var aFunction = __webpack_require__(22);
-var anInstance = __webpack_require__(334);
-var forOf = __webpack_require__(339);
-var speciesConstructor = __webpack_require__(352);
-var task = __webpack_require__(125).set;
-var microtask = __webpack_require__(344)();
-var newPromiseCapabilityModule = __webpack_require__(121);
-var perform = __webpack_require__(349);
-var promiseResolve = __webpack_require__(350);
+var anInstance = __webpack_require__(337);
+var forOf = __webpack_require__(342);
+var speciesConstructor = __webpack_require__(355);
+var task = __webpack_require__(123).set;
+var microtask = __webpack_require__(347)();
+var newPromiseCapabilityModule = __webpack_require__(119);
+var perform = __webpack_require__(352);
+var promiseResolve = __webpack_require__(353);
 var PROMISE = 'Promise';
 var TypeError = global.TypeError;
 var process = global.process;
@@ -35986,7 +36197,7 @@ if (!USE_NATIVE) {
     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
     this._n = false;          // <- notify
   };
-  Internal.prototype = __webpack_require__(351)($Promise.prototype, {
+  Internal.prototype = __webpack_require__(354)($Promise.prototype, {
     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
     then: function then(onFulfilled, onRejected) {
       var reaction = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -36018,7 +36229,7 @@ if (!USE_NATIVE) {
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, { Promise: $Promise });
 __webpack_require__(64)($Promise, PROMISE);
-__webpack_require__(123)(PROMISE);
+__webpack_require__(121)(PROMISE);
 Wrapper = __webpack_require__(24)[PROMISE];
 
 // statics
@@ -36037,7 +36248,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return promiseResolve(LIBRARY && this === Wrapper ? $Promise : this, x);
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(119)(function (iter) {
+$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(117)(function (iter) {
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -36084,11 +36295,11 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(119)(functio
 
 
 /***/ }),
-/* 377 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $iterators = __webpack_require__(127);
-var getKeys = __webpack_require__(122);
+var $iterators = __webpack_require__(125);
+var getKeys = __webpack_require__(120);
 var redefine = __webpack_require__(38);
 var global = __webpack_require__(12);
 var hide = __webpack_require__(27);
@@ -36148,19 +36359,19 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
 
 
 /***/ }),
-/* 378 */
+/* 381 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  XmlEntities: __webpack_require__(380),
-  Html4Entities: __webpack_require__(379),
-  Html5Entities: __webpack_require__(129),
-  AllHtmlEntities: __webpack_require__(129)
+  XmlEntities: __webpack_require__(383),
+  Html4Entities: __webpack_require__(382),
+  Html5Entities: __webpack_require__(127),
+  AllHtmlEntities: __webpack_require__(127)
 };
 
 
 /***/ }),
-/* 379 */
+/* 382 */
 /***/ (function(module, exports) {
 
 var HTML_ALPHA = ['apos', 'nbsp', 'iexcl', 'cent', 'pound', 'curren', 'yen', 'brvbar', 'sect', 'uml', 'copy', 'ordf', 'laquo', 'not', 'shy', 'reg', 'macr', 'deg', 'plusmn', 'sup2', 'sup3', 'acute', 'micro', 'para', 'middot', 'cedil', 'sup1', 'ordm', 'raquo', 'frac14', 'frac12', 'frac34', 'iquest', 'Agrave', 'Aacute', 'Acirc', 'Atilde', 'Auml', 'Aring', 'Aelig', 'Ccedil', 'Egrave', 'Eacute', 'Ecirc', 'Euml', 'Igrave', 'Iacute', 'Icirc', 'Iuml', 'ETH', 'Ntilde', 'Ograve', 'Oacute', 'Ocirc', 'Otilde', 'Ouml', 'times', 'Oslash', 'Ugrave', 'Uacute', 'Ucirc', 'Uuml', 'Yacute', 'THORN', 'szlig', 'agrave', 'aacute', 'acirc', 'atilde', 'auml', 'aring', 'aelig', 'ccedil', 'egrave', 'eacute', 'ecirc', 'euml', 'igrave', 'iacute', 'icirc', 'iuml', 'eth', 'ntilde', 'ograve', 'oacute', 'ocirc', 'otilde', 'ouml', 'divide', 'oslash', 'ugrave', 'uacute', 'ucirc', 'uuml', 'yacute', 'thorn', 'yuml', 'quot', 'amp', 'lt', 'gt', 'OElig', 'oelig', 'Scaron', 'scaron', 'Yuml', 'circ', 'tilde', 'ensp', 'emsp', 'thinsp', 'zwnj', 'zwj', 'lrm', 'rlm', 'ndash', 'mdash', 'lsquo', 'rsquo', 'sbquo', 'ldquo', 'rdquo', 'bdquo', 'dagger', 'Dagger', 'permil', 'lsaquo', 'rsaquo', 'euro', 'fnof', 'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega', 'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega', 'thetasym', 'upsih', 'piv', 'bull', 'hellip', 'prime', 'Prime', 'oline', 'frasl', 'weierp', 'image', 'real', 'trade', 'alefsym', 'larr', 'uarr', 'rarr', 'darr', 'harr', 'crarr', 'lArr', 'uArr', 'rArr', 'dArr', 'hArr', 'forall', 'part', 'exist', 'empty', 'nabla', 'isin', 'notin', 'ni', 'prod', 'sum', 'minus', 'lowast', 'radic', 'prop', 'infin', 'ang', 'and', 'or', 'cap', 'cup', 'int', 'there4', 'sim', 'cong', 'asymp', 'ne', 'equiv', 'le', 'ge', 'sub', 'sup', 'nsub', 'sube', 'supe', 'oplus', 'otimes', 'perp', 'sdot', 'lceil', 'rceil', 'lfloor', 'rfloor', 'lang', 'rang', 'loz', 'spades', 'clubs', 'hearts', 'diams'];
@@ -36313,7 +36524,7 @@ module.exports = Html4Entities;
 
 
 /***/ }),
-/* 380 */
+/* 383 */
 /***/ (function(module, exports) {
 
 var ALPHA_INDEX = {
@@ -36474,248 +36685,248 @@ module.exports = XmlEntities;
 
 
 /***/ }),
-/* 381 */
+/* 384 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 130,
-	"./af.js": 130,
-	"./ar": 137,
-	"./ar-dz": 131,
-	"./ar-dz.js": 131,
-	"./ar-kw": 132,
-	"./ar-kw.js": 132,
-	"./ar-ly": 133,
-	"./ar-ly.js": 133,
-	"./ar-ma": 134,
-	"./ar-ma.js": 134,
-	"./ar-sa": 135,
-	"./ar-sa.js": 135,
-	"./ar-tn": 136,
-	"./ar-tn.js": 136,
-	"./ar.js": 137,
-	"./az": 138,
-	"./az.js": 138,
-	"./be": 139,
-	"./be.js": 139,
-	"./bg": 140,
-	"./bg.js": 140,
-	"./bm": 141,
-	"./bm.js": 141,
-	"./bn": 142,
-	"./bn.js": 142,
-	"./bo": 143,
-	"./bo.js": 143,
-	"./br": 144,
-	"./br.js": 144,
-	"./bs": 145,
-	"./bs.js": 145,
-	"./ca": 146,
-	"./ca.js": 146,
-	"./cs": 147,
-	"./cs.js": 147,
-	"./cv": 148,
-	"./cv.js": 148,
-	"./cy": 149,
-	"./cy.js": 149,
-	"./da": 150,
-	"./da.js": 150,
-	"./de": 153,
-	"./de-at": 151,
-	"./de-at.js": 151,
-	"./de-ch": 152,
-	"./de-ch.js": 152,
-	"./de.js": 153,
-	"./dv": 154,
-	"./dv.js": 154,
-	"./el": 155,
-	"./el.js": 155,
-	"./en-au": 156,
-	"./en-au.js": 156,
-	"./en-ca": 157,
-	"./en-ca.js": 157,
-	"./en-gb": 158,
-	"./en-gb.js": 158,
-	"./en-ie": 159,
-	"./en-ie.js": 159,
-	"./en-nz": 160,
-	"./en-nz.js": 160,
-	"./eo": 161,
-	"./eo.js": 161,
-	"./es": 164,
-	"./es-do": 162,
-	"./es-do.js": 162,
-	"./es-us": 163,
-	"./es-us.js": 163,
-	"./es.js": 164,
-	"./et": 165,
-	"./et.js": 165,
-	"./eu": 166,
-	"./eu.js": 166,
-	"./fa": 167,
-	"./fa.js": 167,
-	"./fi": 168,
-	"./fi.js": 168,
-	"./fo": 169,
-	"./fo.js": 169,
-	"./fr": 172,
-	"./fr-ca": 170,
-	"./fr-ca.js": 170,
-	"./fr-ch": 171,
-	"./fr-ch.js": 171,
-	"./fr.js": 172,
-	"./fy": 173,
-	"./fy.js": 173,
-	"./gd": 174,
-	"./gd.js": 174,
-	"./gl": 175,
-	"./gl.js": 175,
-	"./gom-latn": 176,
-	"./gom-latn.js": 176,
-	"./gu": 177,
-	"./gu.js": 177,
-	"./he": 178,
-	"./he.js": 178,
-	"./hi": 179,
-	"./hi.js": 179,
-	"./hr": 180,
-	"./hr.js": 180,
-	"./hu": 181,
-	"./hu.js": 181,
-	"./hy-am": 182,
-	"./hy-am.js": 182,
-	"./id": 183,
-	"./id.js": 183,
-	"./is": 184,
-	"./is.js": 184,
-	"./it": 185,
-	"./it.js": 185,
-	"./ja": 186,
-	"./ja.js": 186,
-	"./jv": 187,
-	"./jv.js": 187,
-	"./ka": 188,
-	"./ka.js": 188,
-	"./kk": 189,
-	"./kk.js": 189,
-	"./km": 190,
-	"./km.js": 190,
-	"./kn": 191,
-	"./kn.js": 191,
-	"./ko": 192,
-	"./ko.js": 192,
-	"./ky": 193,
-	"./ky.js": 193,
-	"./lb": 194,
-	"./lb.js": 194,
-	"./lo": 195,
-	"./lo.js": 195,
-	"./lt": 196,
-	"./lt.js": 196,
-	"./lv": 197,
-	"./lv.js": 197,
-	"./me": 198,
-	"./me.js": 198,
-	"./mi": 199,
-	"./mi.js": 199,
-	"./mk": 200,
-	"./mk.js": 200,
-	"./ml": 201,
-	"./ml.js": 201,
-	"./mr": 202,
-	"./mr.js": 202,
-	"./ms": 204,
-	"./ms-my": 203,
-	"./ms-my.js": 203,
-	"./ms.js": 204,
-	"./mt": 205,
-	"./mt.js": 205,
-	"./my": 206,
-	"./my.js": 206,
-	"./nb": 207,
-	"./nb.js": 207,
-	"./ne": 208,
-	"./ne.js": 208,
-	"./nl": 210,
-	"./nl-be": 209,
-	"./nl-be.js": 209,
-	"./nl.js": 210,
-	"./nn": 211,
-	"./nn.js": 211,
-	"./pa-in": 212,
-	"./pa-in.js": 212,
-	"./pl": 213,
-	"./pl.js": 213,
-	"./pt": 215,
-	"./pt-br": 214,
-	"./pt-br.js": 214,
-	"./pt.js": 215,
-	"./ro": 216,
-	"./ro.js": 216,
-	"./ru": 217,
-	"./ru.js": 217,
-	"./sd": 218,
-	"./sd.js": 218,
-	"./se": 219,
-	"./se.js": 219,
-	"./si": 220,
-	"./si.js": 220,
-	"./sk": 221,
-	"./sk.js": 221,
-	"./sl": 222,
-	"./sl.js": 222,
-	"./sq": 223,
-	"./sq.js": 223,
-	"./sr": 225,
-	"./sr-cyrl": 224,
-	"./sr-cyrl.js": 224,
-	"./sr.js": 225,
-	"./ss": 226,
-	"./ss.js": 226,
-	"./sv": 227,
-	"./sv.js": 227,
-	"./sw": 228,
-	"./sw.js": 228,
-	"./ta": 229,
-	"./ta.js": 229,
-	"./te": 230,
-	"./te.js": 230,
-	"./tet": 231,
-	"./tet.js": 231,
-	"./th": 232,
-	"./th.js": 232,
-	"./tl-ph": 233,
-	"./tl-ph.js": 233,
-	"./tlh": 234,
-	"./tlh.js": 234,
-	"./tr": 235,
-	"./tr.js": 235,
-	"./tzl": 236,
-	"./tzl.js": 236,
-	"./tzm": 238,
-	"./tzm-latn": 237,
-	"./tzm-latn.js": 237,
-	"./tzm.js": 238,
-	"./uk": 239,
-	"./uk.js": 239,
-	"./ur": 240,
-	"./ur.js": 240,
-	"./uz": 242,
-	"./uz-latn": 241,
-	"./uz-latn.js": 241,
-	"./uz.js": 242,
-	"./vi": 243,
-	"./vi.js": 243,
-	"./x-pseudo": 244,
-	"./x-pseudo.js": 244,
-	"./yo": 245,
-	"./yo.js": 245,
-	"./zh-cn": 246,
-	"./zh-cn.js": 246,
-	"./zh-hk": 247,
-	"./zh-hk.js": 247,
-	"./zh-tw": 248,
-	"./zh-tw.js": 248
+	"./af": 128,
+	"./af.js": 128,
+	"./ar": 135,
+	"./ar-dz": 129,
+	"./ar-dz.js": 129,
+	"./ar-kw": 130,
+	"./ar-kw.js": 130,
+	"./ar-ly": 131,
+	"./ar-ly.js": 131,
+	"./ar-ma": 132,
+	"./ar-ma.js": 132,
+	"./ar-sa": 133,
+	"./ar-sa.js": 133,
+	"./ar-tn": 134,
+	"./ar-tn.js": 134,
+	"./ar.js": 135,
+	"./az": 136,
+	"./az.js": 136,
+	"./be": 137,
+	"./be.js": 137,
+	"./bg": 138,
+	"./bg.js": 138,
+	"./bm": 139,
+	"./bm.js": 139,
+	"./bn": 140,
+	"./bn.js": 140,
+	"./bo": 141,
+	"./bo.js": 141,
+	"./br": 142,
+	"./br.js": 142,
+	"./bs": 143,
+	"./bs.js": 143,
+	"./ca": 144,
+	"./ca.js": 144,
+	"./cs": 145,
+	"./cs.js": 145,
+	"./cv": 146,
+	"./cv.js": 146,
+	"./cy": 147,
+	"./cy.js": 147,
+	"./da": 148,
+	"./da.js": 148,
+	"./de": 151,
+	"./de-at": 149,
+	"./de-at.js": 149,
+	"./de-ch": 150,
+	"./de-ch.js": 150,
+	"./de.js": 151,
+	"./dv": 152,
+	"./dv.js": 152,
+	"./el": 153,
+	"./el.js": 153,
+	"./en-au": 154,
+	"./en-au.js": 154,
+	"./en-ca": 155,
+	"./en-ca.js": 155,
+	"./en-gb": 156,
+	"./en-gb.js": 156,
+	"./en-ie": 157,
+	"./en-ie.js": 157,
+	"./en-nz": 158,
+	"./en-nz.js": 158,
+	"./eo": 159,
+	"./eo.js": 159,
+	"./es": 162,
+	"./es-do": 160,
+	"./es-do.js": 160,
+	"./es-us": 161,
+	"./es-us.js": 161,
+	"./es.js": 162,
+	"./et": 163,
+	"./et.js": 163,
+	"./eu": 164,
+	"./eu.js": 164,
+	"./fa": 165,
+	"./fa.js": 165,
+	"./fi": 166,
+	"./fi.js": 166,
+	"./fo": 167,
+	"./fo.js": 167,
+	"./fr": 170,
+	"./fr-ca": 168,
+	"./fr-ca.js": 168,
+	"./fr-ch": 169,
+	"./fr-ch.js": 169,
+	"./fr.js": 170,
+	"./fy": 171,
+	"./fy.js": 171,
+	"./gd": 172,
+	"./gd.js": 172,
+	"./gl": 173,
+	"./gl.js": 173,
+	"./gom-latn": 174,
+	"./gom-latn.js": 174,
+	"./gu": 175,
+	"./gu.js": 175,
+	"./he": 176,
+	"./he.js": 176,
+	"./hi": 177,
+	"./hi.js": 177,
+	"./hr": 178,
+	"./hr.js": 178,
+	"./hu": 179,
+	"./hu.js": 179,
+	"./hy-am": 180,
+	"./hy-am.js": 180,
+	"./id": 181,
+	"./id.js": 181,
+	"./is": 182,
+	"./is.js": 182,
+	"./it": 183,
+	"./it.js": 183,
+	"./ja": 184,
+	"./ja.js": 184,
+	"./jv": 185,
+	"./jv.js": 185,
+	"./ka": 186,
+	"./ka.js": 186,
+	"./kk": 187,
+	"./kk.js": 187,
+	"./km": 188,
+	"./km.js": 188,
+	"./kn": 189,
+	"./kn.js": 189,
+	"./ko": 190,
+	"./ko.js": 190,
+	"./ky": 191,
+	"./ky.js": 191,
+	"./lb": 192,
+	"./lb.js": 192,
+	"./lo": 193,
+	"./lo.js": 193,
+	"./lt": 194,
+	"./lt.js": 194,
+	"./lv": 195,
+	"./lv.js": 195,
+	"./me": 196,
+	"./me.js": 196,
+	"./mi": 197,
+	"./mi.js": 197,
+	"./mk": 198,
+	"./mk.js": 198,
+	"./ml": 199,
+	"./ml.js": 199,
+	"./mr": 200,
+	"./mr.js": 200,
+	"./ms": 202,
+	"./ms-my": 201,
+	"./ms-my.js": 201,
+	"./ms.js": 202,
+	"./mt": 203,
+	"./mt.js": 203,
+	"./my": 204,
+	"./my.js": 204,
+	"./nb": 205,
+	"./nb.js": 205,
+	"./ne": 206,
+	"./ne.js": 206,
+	"./nl": 208,
+	"./nl-be": 207,
+	"./nl-be.js": 207,
+	"./nl.js": 208,
+	"./nn": 209,
+	"./nn.js": 209,
+	"./pa-in": 210,
+	"./pa-in.js": 210,
+	"./pl": 211,
+	"./pl.js": 211,
+	"./pt": 213,
+	"./pt-br": 212,
+	"./pt-br.js": 212,
+	"./pt.js": 213,
+	"./ro": 214,
+	"./ro.js": 214,
+	"./ru": 215,
+	"./ru.js": 215,
+	"./sd": 216,
+	"./sd.js": 216,
+	"./se": 217,
+	"./se.js": 217,
+	"./si": 218,
+	"./si.js": 218,
+	"./sk": 219,
+	"./sk.js": 219,
+	"./sl": 220,
+	"./sl.js": 220,
+	"./sq": 221,
+	"./sq.js": 221,
+	"./sr": 223,
+	"./sr-cyrl": 222,
+	"./sr-cyrl.js": 222,
+	"./sr.js": 223,
+	"./ss": 224,
+	"./ss.js": 224,
+	"./sv": 225,
+	"./sv.js": 225,
+	"./sw": 226,
+	"./sw.js": 226,
+	"./ta": 227,
+	"./ta.js": 227,
+	"./te": 228,
+	"./te.js": 228,
+	"./tet": 229,
+	"./tet.js": 229,
+	"./th": 230,
+	"./th.js": 230,
+	"./tl-ph": 231,
+	"./tl-ph.js": 231,
+	"./tlh": 232,
+	"./tlh.js": 232,
+	"./tr": 233,
+	"./tr.js": 233,
+	"./tzl": 234,
+	"./tzl.js": 234,
+	"./tzm": 236,
+	"./tzm-latn": 235,
+	"./tzm-latn.js": 235,
+	"./tzm.js": 236,
+	"./uk": 237,
+	"./uk.js": 237,
+	"./ur": 238,
+	"./ur.js": 238,
+	"./uz": 240,
+	"./uz-latn": 239,
+	"./uz-latn.js": 239,
+	"./uz.js": 240,
+	"./vi": 241,
+	"./vi.js": 241,
+	"./x-pseudo": 242,
+	"./x-pseudo.js": 242,
+	"./yo": 243,
+	"./yo.js": 243,
+	"./zh-cn": 244,
+	"./zh-cn.js": 244,
+	"./zh-hk": 245,
+	"./zh-hk.js": 245,
+	"./zh-tw": 246,
+	"./zh-tw.js": 246
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -36731,10 +36942,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 381;
+webpackContext.id = 384;
 
 /***/ }),
-/* 382 */
+/* 385 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36825,7 +37036,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 383 */
+/* 386 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36917,18 +37128,18 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 384 */
+/* 387 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(382);
-exports.encode = exports.stringify = __webpack_require__(383);
+exports.decode = exports.parse = __webpack_require__(385);
+exports.encode = exports.stringify = __webpack_require__(386);
 
 
 /***/ }),
-/* 385 */
+/* 388 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -36953,7 +37164,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(386);
+module.exports = __webpack_require__(389);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -36969,7 +37180,7 @@ if (hadRuntime) {
 
 
 /***/ }),
-/* 386 */
+/* 389 */
 /***/ (function(module, exports) {
 
 /**
@@ -37702,12 +37913,12 @@ if (hadRuntime) {
 
 
 /***/ }),
-/* 387 */
+/* 390 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var ansiRegex = __webpack_require__(261)();
+var ansiRegex = __webpack_require__(266)();
 
 module.exports = function (str) {
 	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
@@ -37715,7 +37926,7 @@ module.exports = function (str) {
 
 
 /***/ }),
-/* 388 */
+/* 391 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -37724,7 +37935,7 @@ module.exports = function (str) {
 var content = __webpack_require__(67);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(249)(content, {});
+var update = __webpack_require__(247)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(true) {
@@ -37741,7 +37952,7 @@ if(true) {
 }
 
 /***/ }),
-/* 389 */
+/* 392 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -37750,7 +37961,7 @@ if(true) {
 var content = __webpack_require__(68);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(249)(content, {});
+var update = __webpack_require__(247)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(true) {
@@ -37767,1491 +37978,36 @@ if(true) {
 }
 
 /***/ }),
-/* 390 */
+/* 393 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/jpeg;base64,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"
 
 /***/ }),
-/* 391 */
+/* 394 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,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rOm9jo5eFouIiIhd77S372QsDcAZ8SxKKpxOFpqtDmaWlS5jFREREbFrboX/l4ylAVeuXLmOY2BZnDTzKiue5Uua+gYGLmP1PauIiIiIXUioE3rs65xy/1MsThqcBc6XMz28pv73LBYRERGnQo8uTfa2MZw+d+rcuaC5eySXwSEtrCIiIiJOzauqyGNcDThy6tTVWEe+Ti0tuOuPa9f+bcP2rQOojxS577V39C6sra4YU1DwaVaztKCmqpIvZWro3n6YxSIiIhIPI3jfevHSJYbWv3uwqrKQxcHq629eVFNVF/qEPRQyveX4S7/LFkHG5K769L6jR8LPPq8sX8EqIiIiEq8N27cNMLYG4MAUFv3D44/f0rxjxzFWiQpnxj/8fP1/s6VpYU11DauYjCf8awj0rCIiIiLxMgKtj/HVNMNX8iCLAxbX1qxhkS3IAne/zzeDzQNz5weOHQt7On+tqamVVURERGQ4sNr90IkTQceevd3WuoPFN2UXeUZHG2aPpHVnz0mjeWAr2uK6mnp+2XTy3NlrU71F30C5iIiIJIARcP+dcTYAaVjH5K76Ksr+tGH9Wn7ZsSmFhYvvfPbpz/QfD386X1JX8+vAi4uIiEhiIHsbVqwz1gYsqav9DcqauruDTmZzYlFN9fM4mpX/adrZ338xlYfBiIiI3DBCt5T1Hz9+dVpB3ldDz0534oMtW/Zj4Rv/MwDz6zN8pQ/zZUVERCTRQs8o/0trS/dBI7DzPx0LfeqHBdVVfr6ciIiIJEOWp+ju0CdqHNrC/ztsr21sauNLiYiISDJN9Xqm7Tty5DJj8PXQxDPxuGD0sbCmupovISIiIqmQXewd/WZLyzbMnx8+efLq6fPnHc+jI0c7htzfamv9OLvYM5tdi4iISKphy9lNy5fdMq8q/MjTaLBvfZrHMxFt2ZWIiIi4wZ9bNnUxXkd15vz56/OqK/LYTERERNwmx1/6Q+whZ+wO81FX54HssqIxrC4iIiJuhSNSZ1f4nnhx3dqP1m3beui9jvbdS+pqXpiUX7CAVURERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERE5Mbx2KOfGZe/OsvJP6PNJ9haRERE3GCKp3DJdYfuLci7i81FRETEDRTQRURERgAFdBERkRFAAT31ZpWX1Z44e/aak38TCwtmsnnC/WnD+nVWrxnt34TC/LFsbsu6bdsOWvUT6d++o0cus2lCHTx+/KrV60X691Zb68dsasu9+XlTrPoZzr8jp05d23vkyOXu/fvPt/f2nm7o7j7yxqZNXUvq656fVuxdNmZ17p18eRG5kSmgp97sCv//47fStklFhXPYPOFebWrcxJex7d781feyuS3NPTuOs6ktCGRsmlDnL17kK9jz/pbNfWxqi3Gjk82mKdXZ13fmoTV1/2nc+E3kpYjIjUYBPfUU0GNTQI/f2q1b+6eXltzHSxKRjPHYo6P4/+KigJ56CuixKaAPz5UrV66/2dKyNctb9Dlemoi4EQLqgppq/4ddnfsxp8Yvx0UBPfUU0GNTQE+Mjt27T08t9nyDlyci6TaxsOBTs8rLfvByY0Pj9v37zvNvNWDHgQMXWC0uCuipp4AemwJ64uw5fPjy+IL8O3iJIpJqEwryRxtP4WUfdHbuP3nu3DX+bYZRQM88CuixKaAn1kddXf28RBFJlbmV5U+GPoVHo4CeeRTQY1NAT7wHqysLeZkikgovrl//Ef/+bFFAzzwK6LEpoCde1549Z3mZIpIKCugjnwJ6bDdSQMfi1gW11cUzykoLB/8trK2ueHH9ug/fbGnZtm7btkNILMPqwzK+IG86L1VEkk0BfeRTQI/tRgroDz+/5vdsHtljj44yfm9+hDU12JIWr6Vr6n/LHkUk2RTQRz4F9NhupIA+t7L8v9jclgerK1dfuxZxnWxUb2xq7mQ3IpJsCugjnwJ6bAro0S2pr3uBzR1Zu3XrQXYhIsmmgD7yKaDHpoAew2OP3nL2wgX2YJ/xczjGHkQk2RTQRz4F9NgU0GNr3bnzJLuw7f0tW/ayuYgk20gI6EbwWYrFNzjiccP27QPb9u09197bewrDfX9pbelG2tqxebn3sHrKGR+6Ocb1/cfrzc2b8QGHYIO9/7hGHPP5dltbzytNjRsfqKpYcU/uyq+xWcIooMemgB4b/r7YhW3G73Uzm4tIomAbitU/fJDxb8+WS5cvX7fqZ+i/xo+7j/BlwyQqoN+96rnbESR3Huy3/Ym5de/ec3Mq/L9gF0mV4y97CFuADhw75miJ8NWrVwP7d4339j/feu7Z29jdsCigx6aAHptxs3yYXdg2u9z/OJuLSKLw7ysloj3FJyKgGx9IPz586uRVFjuGD/vsEu9odpdQ2SXFWdjqw5calqOnT1/jmdOfZ/dxUUCPTQE9toPHjzv6mzt25vS1O1c88xk2F5FE4d9YSiQroE8vLfnky40NDfFuoRkKB0hMLfZMClxUAuBAm1ebmlouD2PPbiR9AwOXjGudxpdyTAE9NgX06Iy/vSlsbtvS5+t/x+Yikkj8G0uJZAX0dzvad/FLCdFvPHFM9hTeHriwYUAfm3p6HAUQp46fOXMtx1/2Q76kIwrosSmgRzZmde6nt/TtPsPmtuw7euTyPbkrv8guRCSR+HeWEokO6Fneorvj3Qcby9ttbTt4aXG5r6R4et/hgYSkyYwF6xfmVJT/hC9tmwJ6bAroETz26Cini+HwezqjrHQxexCRROPfWkokOqAvqa8tHU76yVhmlZd9h5fnSHZJ8ZjhzOXH48ipU1enFnuirvoPFU9An15a8gCbJ5wCemSpCOi2Ur8ajL+L5V179pxjM1vwdzq/uqqAXYhIMvDvLSUSHdCTMS891HubO3bz8mzL8hZ9DqvR2UVKYXjfeHK6mZcSUzwBHSMXWK+QjH9Oh29BAd1aPAH9nfb2nVhYml3i/Zeh/4ybuGex/fPN1pbtHbt3n2Z12/BesfWSlyYiycK/uZRIdEBPtnMXLlx3ukUs3vl8rPxt6O4+gv252JPe099/MZ7RB5yOxUuJKZ6A7jYK6NbiCejJgNwPmH7iZYlIMvHvLiVSEdAHTp68isBofADu6d6///xwh+QfrK4s5CXGNK+q8lk2s+3kuXPX5lZWPI05SXZjmlhY8PX127YNsKotuw4evGT3KV0BPTYF9Pggz8Li+tpq7PLgJYlIsk0r9n439N+s8rIfYPiNf5u2YLsX2ln1N/hviqfoQb5smOEGdASyuZXlP0NuaXYZgL3aC2qqS5x+gA56vbm5g13FhAQ1bGYLbnCwP53NrRmBHslk2MQW4/vwS7aOSgE9NgV0+7DoDbkWFtXWrNI+cxEXyYTUr4OQgc74YP9ndmVppt+3EE/vbGJb265dp9hFVEZw/Cmb2HLKeDLHKn02j84I6hi6ZNOYNu742NbBFwrosSmg24fRMCyWw1w7pn7G5uV+g5cjIumUKQEdQ3tYiMZuolpcV1vDZrbhJCmr4fBQRuB3dEDForqaWja1xclw/sVLl67beUJSQI9NAT1+WLSKKSMstONliUg6ZEpAX1BTXcYuYsJTPD6g2dS2WAvjxuWvvptVbcFqbrvz3CbjpsLJVrgpnqJH2DIiBfTYFNATA4EdWeV4eSKSSpkQ0HEAixHogubMY8HJZmxuW6wT2RbWVntZ1ZbFdbW/YlNHNu+2v60L8+5sFpECemwK6ImDaSY9rYukQSYEdCQiYXPb4hl2H1+QF3XbjdMFhBMLC2ayqSMfdG7Zyy5i+qir6wCbRaSAHpsCemIFEszUVHl4mSKSCpkQ0J3suR40tdjzcza3bYqnKGq6yv7jx23vjTty6tQ1O3PyVpxkUmvdufMkm0WkgB6bAnriYY3HTL9vKS9VRJItEwK6nXniUFO8RfPY3LbJnsKH2DwMzl9nNVvwYWZ1VrydfziIhd3E1NPfH/PncYMG9GNsagvyBLBpQjkN6O9t7uhlU1viCeg4FTDL6xlntB0b+m98Qd44jFRNKipcuriutv6Dzs59F4zf5XjhyNWJhQVf4uWKSDJlQkAfszr322xum9MFbBAtoBv9ZbGaq2CLHi8xongC+h/Xr/vbgtrq4hllpYWJ/Ic+G7q7D/NlbHMa0Dds3+7oNbBSm00Tymna4rfb2nrY1BYjCDsO6HZzuQ8al7f6K69tbGq7ejW+Ywv+tGH9WnYlIsmUCQF98PhUJyYU5I9mc9uiBXSUsZqrIMkHLzGieAJ6ph/OgrUFbGpbopOkoD92bRv2drO5LfEE9LlxnIcORrsn8fvm1Onz568ZT/1fZjcikiwK6P8QLaBnlxT/gtVcBYuPeIkRxRPQM/341Hc72nvZ1LbxBfl3sHlCoD92bdsrTY0b2dyWVAZ0WFJf+3/ZjSMPVleuZhcikiwK6P8QLaDPKCstYTVXUUC3Fs9rGO95AZsnxOSiwvvZtW0495/NbUl1QEdehd5DhxxPquMGiz2ISLIooP9DtIB+v68kj9VcRQHdmvEk+Ws2tW1BTbWfzRMC54Kza9um+0pWsrktKQ/ohpcaNjSwK9u27993ns1FJFkU0P8hWkCfVux5nNVcRQHd2vTSkmfY1LY3NjV3snlCYPicXds2qahgLpvbko6AvrC2ppRd2XboxImYizdFZJgU0P8hWkDHcCyr2YLc8FjNnex/SLXJS4zoRgzo4wvy72NT2/qPH7/qNCNhNPhbYde2YBX5Hc/822fZ3JZ0BPT7SotXsCvbsH2PzUUkWRTQ/yFaQJ9YWDCR1WxB+ks2TbsbMaDjfO54VmTPqSj/F3YxLNglwC5t6+nvv8jmtqUjoC+pr3ueXdmGw5XYXESSxWlA33XwoOMPnaEyNaAbAeWfMbztRDzXnQw3YkCH9t7e02xuW+vOnSfYfFj+urmjj13a9samTV1sbls6Avq7He272JVtnXv6zrK5iCSL04COPaVsGpdMDejQ2ddn+9AUWFBTXcmmaXWjBvSXNmxYz+aO4BAedhGX2eX+uNZbzK2seJpd2JbqgG78/d7mJJPhoHXbth1iFyKSLC+uX/ch/+ZsG06SiEwO6K80NTazqi0du3efZtO0ulED+qzysu+wuSPnLlxADvJl7MaR6aUlOU6Ovx2ENRdjVud+gd3YluqA/trGpnZ24whWxrMLEUmWeLb3zKko/wmbO5bJAd14344PfJlXXZnH5mlzowZ0HI7Td3jA+US6AUE9sI3NwXn2xvf5iaOnTzt+eoX3NnfsZjeOpDKgx/NZMWhmmW8RuxGRZLnfV1rEvznbWnb2xD3PmMkBffTKFbeeOX+ete3B8GQi06jiSNYv/OJnUa8z1A0b0A0PP1//B3YRl649e84Zgb3MeHq+k10G+dZzz942r6pyZdPHHx9lk7jMKi/7Abt0JJ6A7jSX+9Riz13vb7F/pG8onFIY78mDIuJAPMeMwovr130Q6ekFW4b4f8NkckAHp8PugKe2+dVVuewiLsaN1xw8xV27du26EaB/xS/bciMH9HtyV37N6U2YFXzf9xw+fBnTKNgq2LZr10lkTHN6+IoVO0fgRhJPQMfaAkybWf3DqYLG/07GCYeL62p/tW7btoNOF4OGermxoZGXKyLJZHwgTOLfnWPtvb2ncLePmwLkasYJXd3791+ItrUt0wO6Eei+6fRIzEFGEDhlPO2V4KmO3UVkBLB/xhwwvqfYzsQuAhTQnYknwUsq5fh93+WlOhZPQE8lHJ9q/M3H/H0XkQSJd94vkpEc0OGNTc1b2CQueNrD093arVv732lv73m9uXnzmy0tW9/fsrkPx37ijPNoR1UqoDtj3HDeuv/o0eE/SifBW22t3bzMuLg9oBs3+oW8VBFJBQyr8e8vIUZ6QJ9YWPCleA6oSBQFdOewkBM3Um6ye2DgEoa5eYlxcXNAx7w7L1NEUmVuZfnP+DeYECM9oMP9vtIZiZibjYcCenyWPl//O3aXdsgkeF9J8XReWtzcGtA/6urqR7Y+XqaIpMxjj44KnacdjhshoANWN6fjqU8BPX6vNjW1sMu0OXbm9LUZZaWLeUnD4saAjqmkMatzP81LFJFUy/GXPTLc1ayDbpSADnMry3+Jpy12kRIK6MOzdE39bxP1u+7UroMHL033lczkpQybmwL6ibNnr2GLHy9NRNLp4efr/5t/m8NyIwV0yPJ6snceTNwIRywK6MM3s8z3vX1Hj6QsqmMk56221o/jyQYXjRsCOhZwYr48u8Q7mpclIm6wqLamLp5Tqoa60QI6GO/rNqTRxXAqu0s4PFV+0Nm5b1z+6iy+rC0K6NZwVCm2XZ5M8ghLc8+O4zn+sgV82YRKZ0DHCWr4nTd+9+/h5YiI2yBN43AyX2G/NbsKM1ID+iA8gSFFZiKf/nCDhOQcWV7POL6MIwro0d2Tu/KLi+pqarv27DnLlxu2I6dOXX2ztWX7dF/JXL5MUqQqoOMpHCct4qQ1HJ86qahg4U0JPDteRJLMCOzzjEDSgGMoo2XEunDpEs5yvoC91HMry5+cXlrySXYR5rYnfv7FacXe7zr5Z3xwOF9g89ijn7LqK9q/L/7iZ7eydULgSXpxfW31B51b9uJpJtbIB8qxHQ570bE3fWFtTWk8NzOhbn3i56Ot3m+0f1/+5RP/zOYJNy5v9Xir14z2z/h5/hObJ5XxM7sbOdzxu7ylb/cZIzDHfHpH3ncEO/ycMT+Pm1bjem3ngB+Wxx79rNX3a7j/jBu6pUbQnjE2L/cepDw2XkepW28IN930/wNRGIo+1DOVTQAAAABJRU5ErkJggg=="
 
 /***/ }),
-/* 392 */
+/* 395 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP4AAABzCAMAAACPZk9lAAAABGdBTUEAALGPC/xhBQAAAwBQTFRFAAAA3Roy3h423iI63iQ73ipA3ipB3yxC3y1D3zNI4DNJ4DVK4j5S40NX40RX40hc5Ete5E9g5E9i5FBj5FFk5FJk5VNl5VVn5Vpr5lts5lxt5l5v5mFx52Nz52Z26Gh46Wx76W596nWD6nmH6nqI63yJ636M63+N64KP7IOQ7YuX7ZGc7ZGd7pSf75mk8aOt8aWv8aix8auz8qu086u187O787S89LnA9LvC9LzD9L3E9cXL9sfM9sfN9sjO+dnd/v7+////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfzRYpwAAAQB0Uk5T////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AFP3ByUAAAAJcEhZcwAAFw4AABcOAfX8Te8AAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTZEaa/1AAAMi0lEQVR4Xu2bB3dkRxGFEZhkcs4GTDQmR5OM/P9/1FB161bq7pektVdr7XfOzqvcdd+80WjX8Inbs+a1/OfMa/nPmY+F/PsPBNrXeGXl3/sV2sG9x87zqsq//wBaUzu4rP8pyKeGK2+ettzXd55cfQBevvwi4fTuk+zkmv6XLr8pObn7jvqL+l+2/FEJw7vsqh9GSG39QMjHpX0+npj8M2/dqP5eoAnqDCY8pKVSTE94EfIf8IXj+N5xZXyHQb0d3oIoAxHm3PvbBxIr+h8pn/f9wfrRre1mnHn4u3zXRRfENhm1kFz0WYnfGR4jH48RyXnX4ABpT+sAqwsYbeEYMu4nytUuT+uD5Ffl4HjrJUWzz7PENlvnMgA8OqqXKn34BboPkD8qB8xdxSZhGVhVzwb9cAYFBgwLzer16VcF5ihX5C+VK4dLr+E0rGTm4aS2QC1myLDQaqYqqP5J+fGjecnR0hvYTDT7eMS3YRVpuhhTLB4ReBscy99XDlh5Ec7VZf2Io/vYVmnFjBk1sD9ykl/LTyhXjpbewIaj+aT8vk4tnu8LIwcTR/nSpR3649H6T3BwxAZ1PzOvPfvt1En+OfWTfOu6xmPko9eXPxjUNPZixgzJcPjhZoP8fsI5FmfIGFrblOY4FYktdtR3+eKj9lD8JB/tF5lOsT0PDi9FrutUh9OKGTMkc1b9IL+fcBL2BufUlJpzDWU3+bnUa9veklJ/fxpp8tuUs4zH5BAGllgVer0hB/Hnbp+MGiDx4VAmDE17LwYNxZXHydcvCPY6OWPnVC9DiXewnp5SJzAkzHOZMEp6mLygyWf1OWblCpOAoRVcrJjcsX/f5gkMAIaSdU9G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"
 
 /***/ }),
-/* 393 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/*!
- * vue-fullcalendar v1.0.9
- * (c) 2017 Sunny Wang <sunnywang0104@163.com> 
- * @license MIT
- */
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(true)
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["VueFullcalendar"] = factory();
-	else
-		root["VueFullcalendar"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
-
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
-
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-
-
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _fullCalendar = __webpack_require__(1);
-
-	var _fullCalendar2 = _interopRequireDefault(_fullCalendar);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var fc = _fullCalendar2.default;
-
-	module.exports = fc;
-
-/***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_exports__, __vue_options__
-	var __vue_styles__ = {}
-
-	/* styles */
-	__webpack_require__(2)
-
-	/* script */
-	__vue_exports__ = __webpack_require__(6)
-
-	/* template */
-	var __vue_template__ = __webpack_require__(19)
-	__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-	if (
-	  typeof __vue_exports__.default === "object" ||
-	  typeof __vue_exports__.default === "function"
-	) {
-	if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-	__vue_options__ = __vue_exports__ = __vue_exports__.default
-	}
-	if (typeof __vue_options__ === "function") {
-	  __vue_options__ = __vue_options__.options
-	}
-	__vue_options__.__file = "/Users/SunnyWang/code/vue-fullcalendar/src/fullCalendar.vue"
-	__vue_options__.render = __vue_template__.render
-	__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-	/* hot reload */
-	if (false) {(function () {
-	  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  module.hot.accept()
-	  if (!module.hot.data) {
-	    hotAPI.createRecord("data-v-3e333dbe", __vue_options__)
-	  } else {
-	    hotAPI.reload("data-v-3e333dbe", __vue_options__)
-	  }
-	})()}
-	if (__vue_options__.functional) {console.error("[vue-loader] fullCalendar.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-	module.exports = __vue_exports__
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(3);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/.npminstall/css-loader/0.23.1/css-loader/index.js!./../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/style-rewriter.js?id=data-v-3e333dbe!./../node_modules/.npminstall/sass-loader/3.2.3/sass-loader/index.js!./../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/selector.js?type=styles&index=0!./fullCalendar.vue", function() {
-				var newContent = require("!!./../node_modules/.npminstall/css-loader/0.23.1/css-loader/index.js!./../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/style-rewriter.js?id=data-v-3e333dbe!./../node_modules/.npminstall/sass-loader/3.2.3/sass-loader/index.js!./../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/selector.js?type=styles&index=0!./fullCalendar.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(4)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\n.comp-full-calendar {\n  padding: 20px;\n  background: #fff;\n  max-width: 960px;\n  margin: 0 auto;\n}\n.comp-full-calendar ul, .comp-full-calendar p {\n    margin: 0;\n    padding: 0;\n    font-size: 14px;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _langSets = __webpack_require__(7);
-
-	var _langSets2 = _interopRequireDefault(_langSets);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  props: {
-	    events: { // events will be displayed on calendar
-	      type: Array,
-	      default: []
-	    },
-	    lang: {
-	      type: String,
-	      default: 'en'
-	    },
-	    firstDay: {
-	      type: Number | String,
-	      validator: function validator(val) {
-	        var res = parseInt(val);
-	        return res >= 0 && res <= 6;
-	      },
-
-	      default: 0
-	    },
-	    titleFormat: {
-	      type: String,
-	      default: function _default() {
-	        return _langSets2.default[this.lang].titleFormat;
-	      }
-	    },
-	    monthNames: {
-	      type: Array,
-	      default: function _default() {
-	        return _langSets2.default[this.lang].monthNames;
-	      }
-	    },
-	    weekNames: {
-	      type: Array,
-	      default: function _default() {
-	        var arr = _langSets2.default[this.lang].weekNames;
-	        return arr.slice(this.firstDay).concat(arr.slice(0, this.firstDay));
-	      }
-	    }
-	  },
-	  data: function data() {
-	    return {
-	      currentDate: new Date()
-	    };
-	  },
-
-	  methods: {
-	    emitChangeMonth: function emitChangeMonth(start, end, currentStart, current) {
-	      console.log('currentDate 2', this.currentDate);
-	      this.currentDate = current;
-	      console.log('currentDate 3', this.currentDate);
-	      this.$emit('changeMonth', start, end, currentStart);
-	    },
-	    emitEventClick: function emitEventClick(event, jsEvent, pos) {
-	      this.$emit('eventClick', event, jsEvent, pos);
-	    },
-	    emitDayClick: function emitDayClick(day, jsEvent) {
-	      this.$emit('dayClick', day, jsEvent);
-	    },
-	    emitMoreClick: function emitMoreClick(day, events, jsEvent) {
-	      this.$emit('moreClick', day, event, jsEvent);
-	    }
-	  },
-	  components: {
-	    'fc-body': __webpack_require__(8),
-	    'fc-header': __webpack_require__(14)
-	  }
-	}; //
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  en: {
-	    weekNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-	    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-	    titleFormat: 'MMMM yyyy'
-	  },
-	  zh: {
-	    weekNames: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
-	    monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-	    titleFormat: 'yyyy年MM月'
-	  },
-	  fr: {
-	    weekNames: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
-	    monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-	    titleFormat: 'MMMM yyyy'
-	  }
-	};
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_exports__, __vue_options__
-	var __vue_styles__ = {}
-
-	/* styles */
-	__webpack_require__(9)
-
-	/* script */
-	__vue_exports__ = __webpack_require__(11)
-
-	/* template */
-	var __vue_template__ = __webpack_require__(13)
-	__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-	if (
-	  typeof __vue_exports__.default === "object" ||
-	  typeof __vue_exports__.default === "function"
-	) {
-	if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-	__vue_options__ = __vue_exports__ = __vue_exports__.default
-	}
-	if (typeof __vue_options__ === "function") {
-	  __vue_options__ = __vue_options__.options
-	}
-	__vue_options__.__file = "/Users/SunnyWang/code/vue-fullcalendar/src/components/body.vue"
-	__vue_options__.render = __vue_template__.render
-	__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-	/* hot reload */
-	if (false) {(function () {
-	  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  module.hot.accept()
-	  if (!module.hot.data) {
-	    hotAPI.createRecord("data-v-734054ba", __vue_options__)
-	  } else {
-	    hotAPI.reload("data-v-734054ba", __vue_options__)
-	  }
-	})()}
-	if (__vue_options__.functional) {console.error("[vue-loader] body.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-	module.exports = __vue_exports__
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(10);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/.npminstall/css-loader/0.23.1/css-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/style-rewriter.js?id=data-v-734054ba!./../../node_modules/.npminstall/sass-loader/3.2.3/sass-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/selector.js?type=styles&index=0!./body.vue", function() {
-				var newContent = require("!!./../../node_modules/.npminstall/css-loader/0.23.1/css-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/style-rewriter.js?id=data-v-734054ba!./../../node_modules/.npminstall/sass-loader/3.2.3/sass-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/selector.js?type=styles&index=0!./body.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(4)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\n.full-calendar-body {\n  margin-top: 20px;\n}\n.full-calendar-body .weeks {\n    display: flex;\n    border-top: 1px solid #e0e0e0;\n    border-bottom: 1px solid #e0e0e0;\n    border-left: 1px solid #e0e0e0;\n}\n.full-calendar-body .weeks .week {\n      flex: 1;\n      text-align: center;\n      border-right: 1px solid #e0e0e0;\n}\n.full-calendar-body .dates {\n    position: relative;\n}\n.full-calendar-body .dates .week-row {\n      border-left: 1px solid #e0e0e0;\n      display: flex;\n}\n.full-calendar-body .dates .week-row .day-cell {\n        flex: 1;\n        min-height: 100px;\n        padding: 4px;\n        border-right: 1px solid #e0e0e0;\n        border-bottom: 1px solid #e0e0e0;\n}\n.full-calendar-body .dates .week-row .day-cell .day-number {\n          text-align: right;\n}\n.full-calendar-body .dates .week-row .day-cell.today {\n          background-color: #fcf8e3;\n}\n.full-calendar-body .dates .week-row .day-cell.not-cur-month .day-number {\n          color: rgba(0, 0, 0, 0.24);\n}\n.full-calendar-body .dates .dates-events {\n      position: absolute;\n      top: 0;\n      left: 0;\n      z-index: 1;\n      width: 100%;\n}\n.full-calendar-body .dates .dates-events .events-week {\n        display: flex;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day {\n          cursor: pointer;\n          flex: 1;\n          min-height: 109px;\n          overflow: hidden;\n          text-overflow: ellipsis;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day .day-number {\n            text-align: right;\n            padding: 4px 5px 4px 4px;\n            opacity: 0;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day.not-cur-month .day-number {\n            color: rgba(0, 0, 0, 0.24);\n}\n.full-calendar-body .dates .dates-events .events-week .events-day .event-box .event-item {\n            cursor: pointer;\n            font-size: 12px;\n            background-color: #C7E6FD;\n            margin-bottom: 2px;\n            color: rgba(0, 0, 0, 0.87);\n            padding: 0 0 0 4px;\n            height: 18px;\n            line-height: 18px;\n            white-space: nowrap;\n            overflow: hidden;\n            text-overflow: ellipsis;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day .event-box .event-item.is-start {\n              margin-left: 4px;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day .event-box .event-item.is-end {\n              margin-right: 4px;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day .event-box .event-item.is-opacity {\n              opacity: 0;\n}\n.full-calendar-body .dates .dates-events .events-week .events-day .event-box .more-link {\n            cursor: pointer;\n            padding-left: 8px;\n            padding-right: 2px;\n            color: rgba(0, 0, 0, 0.38);\n            font-size: 14px;\n}\n.full-calendar-body .dates .more-events {\n      position: absolute;\n      width: 150px;\n      z-index: 2;\n      border: 1px solid #eee;\n      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);\n}\n.full-calendar-body .dates .more-events .more-header {\n        background-color: #eee;\n        padding: 5px;\n        display: flex;\n        align-items: center;\n        font-size: 14px;\n}\n.full-calendar-body .dates .more-events .more-header .title {\n          flex: 1;\n}\n.full-calendar-body .dates .more-events .more-header .close {\n          margin-right: 2px;\n          cursor: pointer;\n          font-size: 16px;\n}\n.full-calendar-body .dates .more-events .more-body {\n        height: 140px;\n        overflow: hidden;\n}\n.full-calendar-body .dates .more-events .more-body .body-list {\n          height: 120px;\n          padding: 5px;\n          overflow: auto;\n          background-color: #fff;\n}\n.full-calendar-body .dates .more-events .more-body .body-list .body-item {\n            cursor: pointer;\n            font-size: 12px;\n            background-color: #C7E6FD;\n            margin-bottom: 2px;\n            color: rgba(0, 0, 0, 0.87);\n            padding: 0 0 0 4px;\n            height: 18px;\n            line-height: 18px;\n            white-space: nowrap;\n            overflow: hidden;\n            text-overflow: ellipsis;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _dateFunc = __webpack_require__(12);
-
-	var _dateFunc2 = _interopRequireDefault(_dateFunc);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  props: {
-	    currentDate: {},
-	    events: {},
-	    weekNames: {
-	      type: Array,
-	      default: []
-	    },
-	    monthNames: {},
-	    firstDay: {}
-	  },
-	  created: function created() {
-	    this.events.forEach(function (item, index) {
-	      item._id = item.id || index;
-	      item.end = item.end || item.start;
-	    });
-	    // this.events = events
-	  },
-	  data: function data() {
-	    return {
-	      // weekNames : DAY_NAMES,
-	      weekMask: [1, 2, 3, 4, 5, 6, 7],
-	      // events : [],
-	      isLismit: true,
-	      eventLimit: 3,
-	      showMore: false,
-	      morePos: {
-	        top: 0,
-	        left: 0
-	      },
-	      selectDay: {}
-	    };
-	  },
-
-	  watch: {
-	    weekNames: function weekNames(val) {
-	      console.log('watch weekNames', val);
-	    }
-	  },
-	  computed: {
-	    currentDates: function currentDates() {
-	      return this.getCalendar();
-	    }
-	  },
-	  methods: {
-	    isBegin: function isBegin(event, date, index) {
-	      var st = new Date(event.start);
-
-	      if (index == 0 || st.toDateString() == date.toDateString()) {
-	        return event.title;
-	      }
-	      return '　';
-	    },
-	    moreTitle: function moreTitle(date) {
-	      var dt = new Date(date);
-	      return this.weekNames[dt.getDay()] + ', ' + this.monthNames[dt.getMonth()] + dt.getDate();
-	    },
-	    classNames: function classNames(cssClass) {
-	      if (!cssClass) return '';
-	      // string  
-	      if (typeof cssClass == 'string') return cssClass;
-
-	      // Array
-	      if (Array.isArray(cssClass)) return cssClass.join(' ');
-
-	      // else
-	      return '';
-	    },
-	    getCalendar: function getCalendar() {
-	      // calculate 2d-array of each month
-	      // first day of this month
-	      var now = new Date(); // today
-	      var current = new Date(this.currentDate);
-
-	      var startDate = _dateFunc2.default.getStartDate(current); // 1st day of this month
-
-	      var curWeekDay = startDate.getDay();
-
-	      // begin date of this table may be some day of last month
-	      var diff = parseInt(this.firstDay) - curWeekDay;
-	      diff = diff > 0 ? diff - 7 : diff;
-
-	      startDate.setDate(startDate.getDate() + diff);
-	      var calendar = [];
-
-	      for (var perWeek = 0; perWeek < 6; perWeek++) {
-
-	        var week = [];
-
-	        for (var perDay = 0; perDay < 7; perDay++) {
-	          week.push({
-	            monthDay: startDate.getDate(),
-	            isToday: now.toDateString() == startDate.toDateString(),
-	            isCurMonth: startDate.getMonth() == current.getMonth(),
-	            weekDay: perDay,
-	            date: new Date(startDate),
-	            events: this.slotEvents(startDate)
-	          });
-
-	          startDate.setDate(startDate.getDate() + 1);
-	          // if (startDate.toDateString() == endDate.toDateString()) {
-	          //   isFinal = true
-	          //   break
-	          // }
-	        }
-	        calendar.push(week);
-	        // if (isFinal) break
-	      }
-	      return calendar;
-	    },
-	    slotEvents: function slotEvents(date) {
-
-	      // find all events start from this date
-	      var cellIndexArr = [];
-	      var thisDayEvents = this.events.filter(function (day) {
-	        var dt = new Date(day.start);
-	        var st = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-	        var ed = day.end ? new Date(day.end) : st;
-	        // console.log('slotEvt', st, ed, date)
-	        return date >= st && date <= ed;
-	      });
-
-	      // sort by duration
-	      thisDayEvents.sort(function (a, b) {
-	        if (!a.cellIndex) return 1;
-	        if (!b.cellIndex) return -1;
-	        return a.cellIndex - b.cellIndex;
-	      });
-
-	      // mark cellIndex and place holder
-	      for (var i = 0; i < thisDayEvents.length; i++) {
-	        thisDayEvents[i].cellIndex = thisDayEvents[i].cellIndex || i + 1;
-	        thisDayEvents[i].isShow = true;
-	        if (thisDayEvents[i].cellIndex == i + 1 || i > 2) continue;
-	        thisDayEvents.splice(i, 0, {
-	          title: 'holder',
-	          cellIndex: i + 1,
-	          start: _dateFunc2.default.format(date, 'yyyy-MM-dd'),
-	          end: _dateFunc2.default.format(date, 'yyyy-MM-dd'),
-	          isShow: false
-	        });
-	      }
-
-	      return thisDayEvents;
-	    },
-	    isStart: function isStart(eventDate, date) {
-	      var st = new Date(eventDate);
-	      return st.toDateString() == date.toDateString();
-	    },
-	    isEnd: function isEnd(eventDate, date) {
-	      var ed = new Date(eventDate);
-	      return ed.toDateString() == date.toDateString();
-	    },
-	    selectThisDay: function selectThisDay(day, jsEvent) {
-	      this.selectDay = day;
-	      this.showMore = true;
-	      this.morePos = this.computePos(event.target);
-	      this.morePos.top -= 100;
-	      var events = day.events.filter(function (item) {
-	        return item.isShow == true;
-	      });
-	      this.$emit('moreclick', day.date, events, jsEvent);
-	    },
-	    computePos: function computePos(target) {
-	      var eventRect = target.getBoundingClientRect();
-	      var pageRect = this.$refs.dates.getBoundingClientRect();
-	      return {
-	        left: eventRect.left - pageRect.left,
-	        top: eventRect.top + eventRect.height - pageRect.top
-	      };
-	    },
-	    dayClick: function dayClick(day, jsEvent) {
-	      this.$emit('dayclick', day, jsEvent);
-	    },
-	    eventClick: function eventClick(event, jsEvent) {
-	      if (!event.isShow) {
-	        return;
-	      }
-	      jsEvent.stopPropagation();
-	      var pos = this.computePos(jsEvent.target);
-	      this.$emit('eventclick', event, jsEvent, pos);
-	    }
-	  }
-	}; //
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var shortMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	var defMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-	var dateFunc = {
-	    getDuration: function getDuration(date) {
-	        // how many days of this month
-	        var dt = new Date(date);
-	        var month = dt.getMonth();
-	        dt.setMonth(dt.getMonth() + 1);
-	        dt.setDate(0);
-	        return dt.getDate();
-	    },
-	    changeDay: function changeDay(date, num) {
-	        var dt = new Date(date);
-	        return new Date(dt.setDate(dt.getDate() + num));
-	    },
-	    getStartDate: function getStartDate(date) {
-	        // return first day of this month
-	        return new Date(date.getFullYear(), date.getMonth(), 1);
-	    },
-	    getEndDate: function getEndDate(date) {
-	        // get last day of this month
-	        var dt = new Date(date.getFullYear(), date.getMonth() + 1, 1); // 1st day of next month
-	        return new Date(dt.setDate(dt.getDate() - 1)); // last day of this month
-	    },
-	    format: function format(date, _format, monthNames) {
-	        monthNames = monthNames || defMonthNames;
-	        if (typeof date === 'string') {
-	            date = new Date(date.replace(/-/g, '/'));
-	        } else {
-	            date = new Date(date);
-	        }
-
-	        var map = {
-	            'M': date.getMonth() + 1,
-	            'd': date.getDate(),
-	            'h': date.getHours(),
-	            'm': date.getMinutes(),
-	            's': date.getSeconds(),
-	            'q': Math.floor((date.getMonth() + 3) / 3),
-	            'S': date.getMilliseconds()
-	        };
-
-	        _format = _format.replace(/([yMdhmsqS])+/g, function (all, t) {
-	            var v = map[t];
-	            if (v !== undefined) {
-	                if (all === 'MMMM') {
-	                    return monthNames[v - 1];
-	                }
-	                if (all === 'MMM') {
-	                    return shortMonth[v - 1];
-	                }
-	                if (all.length > 1) {
-	                    v = '0' + v;
-	                    v = v.substr(v.length - 2);
-	                }
-	                return v;
-	            } else if (t === 'y') {
-	                return String(date.getFullYear()).substr(4 - all.length);
-	            }
-	            return all;
-	        });
-	        return _format;
-	    }
-	};
-
-	module.exports = dateFunc;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._c;
-	  return _c('div', {
-	    staticClass: "full-calendar-body"
-	  }, [_c('div', {
-	    staticClass: "weeks"
-	  }, _vm._l((_vm.weekNames), function(week) {
-	    return _c('strong', {
-	      staticClass: "week"
-	    }, [_vm._v(_vm._s(week))])
-	  })), _vm._v(" "), _c('div', {
-	    ref: "dates",
-	    staticClass: "dates"
-	  }, [_c('div', {
-	    staticClass: "dates-bg"
-	  }, _vm._l((_vm.currentDates), function(week) {
-	    return _c('div', {
-	      staticClass: "week-row"
-	    }, _vm._l((week), function(day) {
-	      return _c('div', {
-	        staticClass: "day-cell",
-	        class: {
-	          'today': day.isToday,
-	            'not-cur-month': !day.isCurMonth
-	        }
-	      }, [_c('p', {
-	        staticClass: "day-number"
-	      }, [_vm._v(_vm._s(day.monthDay))])])
-	    }))
-	  })), _vm._v(" "), _c('div', {
-	    staticClass: "dates-events"
-	  }, _vm._l((_vm.currentDates), function(week) {
-	    return _c('div', {
-	      staticClass: "events-week"
-	    }, _vm._l((week), function(day) {
-	      return _c('div', {
-	        staticClass: "events-day",
-	        class: {
-	          'today': day.isToday,
-	            'not-cur-month': !day.isCurMonth
-	        },
-	        attrs: {
-	          "track-by": "$index"
-	        },
-	        on: {
-	          "click": function($event) {
-	            $event.stopPropagation();
-	            _vm.dayClick(day.date, $event)
-	          }
-	        }
-	      }, [_c('p', {
-	        staticClass: "day-number"
-	      }, [_vm._v(_vm._s(day.monthDay))]), _vm._v(" "), _c('div', {
-	        staticClass: "event-box"
-	      }, [_vm._l((day.events), function(event) {
-	        return _c('p', {
-	          directives: [{
-	            name: "show",
-	            rawName: "v-show",
-	            value: (event.cellIndex <= _vm.eventLimit),
-	            expression: "event.cellIndex <= eventLimit"
-	          }],
-	          staticClass: "event-item",
-	          class: [_vm.classNames(event.cssClass), {
-	            'is-start': _vm.isStart(event.start, day.date),
-	            'is-end': _vm.isEnd(event.end, day.date),
-	            'is-opacity': !event.isShow
-	          }],
-	          on: {
-	            "click": function($event) {
-	              _vm.eventClick(event, $event)
-	            }
-	          }
-	        }, [_vm._v("\n              " + _vm._s(_vm.isBegin(event, day.date, day.weekDay)) + "\n            ")])
-	      }), _vm._v(" "), (day.events.length > _vm.eventLimit) ? _c('p', {
-	        staticClass: "more-link",
-	        on: {
-	          "click": function($event) {
-	            $event.stopPropagation();
-	            _vm.selectThisDay(day, $event)
-	          }
-	        }
-	      }, [_vm._v("\n              + " + _vm._s(day.events[day.events.length - 1].cellIndex - _vm.eventLimit) + " more\n            ")]) : _vm._e()], 2)])
-	    }))
-	  })), _vm._v(" "), _c('div', {
-	    directives: [{
-	      name: "show",
-	      rawName: "v-show",
-	      value: (_vm.showMore),
-	      expression: "showMore"
-	    }],
-	    staticClass: "more-events",
-	    style: ({
-	      left: _vm.morePos.left + 'px',
-	      top: _vm.morePos.top + 'px'
-	    })
-	  }, [_c('div', {
-	    staticClass: "more-header"
-	  }, [_c('span', {
-	    staticClass: "title"
-	  }, [_vm._v(_vm._s(_vm.moreTitle(_vm.selectDay.date)))]), _vm._v(" "), _c('span', {
-	    staticClass: "close",
-	    on: {
-	      "click": function($event) {
-	        $event.stopPropagation();
-	        _vm.showMore = false
-	      }
-	    }
-	  }, [_vm._v("x")])]), _vm._v(" "), _c('div', {
-	    staticClass: "more-body"
-	  }, [_c('ul', {
-	    staticClass: "body-list"
-	  }, _vm._l((_vm.selectDay.events), function(event) {
-	    return _c('li', {
-	      directives: [{
-	        name: "show",
-	        rawName: "v-show",
-	        value: (event.isShow),
-	        expression: "event.isShow"
-	      }],
-	      staticClass: "body-item",
-	      on: {
-	        "click": function($event) {
-	          _vm.eventClick(event, $event)
-	        }
-	      }
-	    }, [_vm._v("\n            " + _vm._s(event.title) + "\n          ")])
-	  }))])]), _vm._v(" "), _vm._t("body-card")], 2)])
-	},staticRenderFns: []}
-	module.exports.render._withStripped = true
-	if (false) {
-	  module.hot.accept()
-	  if (module.hot.data) {
-	     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-734054ba", module.exports)
-	  }
-	}
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_exports__, __vue_options__
-	var __vue_styles__ = {}
-
-	/* styles */
-	__webpack_require__(15)
-
-	/* script */
-	__vue_exports__ = __webpack_require__(17)
-
-	/* template */
-	var __vue_template__ = __webpack_require__(18)
-	__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-	if (
-	  typeof __vue_exports__.default === "object" ||
-	  typeof __vue_exports__.default === "function"
-	) {
-	if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-	__vue_options__ = __vue_exports__ = __vue_exports__.default
-	}
-	if (typeof __vue_options__ === "function") {
-	  __vue_options__ = __vue_options__.options
-	}
-	__vue_options__.__file = "/Users/SunnyWang/code/vue-fullcalendar/src/components/header.vue"
-	__vue_options__.render = __vue_template__.render
-	__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-	/* hot reload */
-	if (false) {(function () {
-	  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  module.hot.accept()
-	  if (!module.hot.data) {
-	    hotAPI.createRecord("data-v-62863025", __vue_options__)
-	  } else {
-	    hotAPI.reload("data-v-62863025", __vue_options__)
-	  }
-	})()}
-	if (__vue_options__.functional) {console.error("[vue-loader] header.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-	module.exports = __vue_exports__
-
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(16);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/.npminstall/css-loader/0.23.1/css-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/style-rewriter.js?id=data-v-62863025!./../../node_modules/.npminstall/sass-loader/3.2.3/sass-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/selector.js?type=styles&index=0!./header.vue", function() {
-				var newContent = require("!!./../../node_modules/.npminstall/css-loader/0.23.1/css-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/style-rewriter.js?id=data-v-62863025!./../../node_modules/.npminstall/sass-loader/3.2.3/sass-loader/index.js!./../../node_modules/.npminstall/vue-loader/10.0.2/vue-loader/lib/selector.js?type=styles&index=0!./header.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(4)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\n.full-calendar-header {\n  display: flex;\n  align-items: center;\n}\n.full-calendar-header .header-left, .full-calendar-header .header-right {\n    flex: 1;\n}\n.full-calendar-header .header-center {\n    flex: 3;\n    text-align: center;\n}\n.full-calendar-header .header-center .title {\n      margin: 0 10px;\n}\n.full-calendar-header .header-center .prev-month, .full-calendar-header .header-center .next-month {\n      cursor: pointer;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _dateFunc = __webpack_require__(12);
-
-	var _dateFunc2 = _interopRequireDefault(_dateFunc);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  created: function created() {
-	    this.dispatchEvent();
-	  },
-
-	  props: {
-	    currentDate: {},
-	    titleFormat: {},
-	    firstDay: {},
-	    monthNames: {}
-	  },
-	  data: function data() {
-	    return {
-	      title: '',
-	      leftArrow: '<',
-	      rightArrow: '>',
-	      headDate: new Date()
-	    };
-	  },
-
-	  watch: {
-	    currentDate: function currentDate(val) {
-	      if (!val) return;
-	      this.headDate = val;
-	      console.log('currentDate', val);
-	      // this.headDate = JSON.parse(JSON.stringify(val))
-	    }
-	  },
-	  methods: {
-	    goPrev: function goPrev() {
-	      this.headDate = this.changeMonth(this.headDate, -1);
-	      this.dispatchEvent();
-	    },
-	    goNext: function goNext() {
-	      this.headDate = this.changeMonth(this.headDate, 1);
-	      this.dispatchEvent();
-	    },
-	    changeMonth: function changeMonth(date, num) {
-	      var dt = new Date(date);
-	      return new Date(dt.setMonth(dt.getMonth() + num));
-	    },
-	    dispatchEvent: function dispatchEvent() {
-	      this.title = _dateFunc2.default.format(this.headDate, this.titleFormat, this.monthNames);
-
-	      var startDate = _dateFunc2.default.getStartDate(this.headDate);
-	      var curWeekDay = startDate.getDay();
-
-	      // 1st day of this monthView
-	      var diff = parseInt(this.firstDay) - curWeekDay;
-	      if (diff) diff -= 7;
-	      startDate.setDate(startDate.getDate() + diff);
-
-	      // the month view is 6*7
-	      var endDate = _dateFunc2.default.changeDay(startDate, 41);
-
-	      // 1st day of current month
-	      var currentDate = _dateFunc2.default.getStartDate(this.headDate);
-
-	      this.$emit('change', _dateFunc2.default.format(startDate, 'yyyy-MM-dd'), _dateFunc2.default.format(endDate, 'yyyy-MM-dd'), _dateFunc2.default.format(currentDate, 'yyyy-MM-dd'), this.headDate);
-	    }
-	  }
-	}; //
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._c;
-	  return _c('div', {
-	    staticClass: "full-calendar-header"
-	  }, [_c('div', {
-	    staticClass: "header-left"
-	  }, [_vm._t("header-left")], 2), _vm._v(" "), _c('div', {
-	    staticClass: "header-center"
-	  }, [_c('span', {
-	    staticClass: "prev-month",
-	    on: {
-	      "click": function($event) {
-	        $event.stopPropagation();
-	        _vm.goPrev($event)
-	      }
-	    }
-	  }, [_vm._v(_vm._s(_vm.leftArrow))]), _vm._v(" "), _c('span', {
-	    staticClass: "title"
-	  }, [_vm._v(_vm._s(_vm.title))]), _vm._v(" "), _c('span', {
-	    staticClass: "next-month",
-	    on: {
-	      "click": function($event) {
-	        $event.stopPropagation();
-	        _vm.goNext($event)
-	      }
-	    }
-	  }, [_vm._v(_vm._s(_vm.rightArrow))])]), _vm._v(" "), _c('div', {
-	    staticClass: "header-right"
-	  }, [_vm._t("header-right")], 2)])
-	},staticRenderFns: []}
-	module.exports.render._withStripped = true
-	if (false) {
-	  module.hot.accept()
-	  if (module.hot.data) {
-	     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-62863025", module.exports)
-	  }
-	}
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._c;
-	  return _c('div', {
-	    staticClass: "comp-full-calendar"
-	  }, [_c('fc-header', {
-	    attrs: {
-	      "current-date": _vm.currentDate,
-	      "title-format": _vm.titleFormat,
-	      "first-day": _vm.firstDay,
-	      "month-names": _vm.monthNames
-	    },
-	    on: {
-	      "change": _vm.emitChangeMonth
-	    }
-	  }, [_c('div', {
-	    slot: "header-left"
-	  }, [_vm._t("fc-header-left")], 2), _vm._v(" "), _c('div', {
-	    slot: "header-right"
-	  }, [_vm._t("fc-header-right")], 2)]), _vm._v(" "), _c('fc-body', {
-	    attrs: {
-	      "current-date": _vm.currentDate,
-	      "events": _vm.events,
-	      "month-names": _vm.monthNames,
-	      "week-names": _vm.weekNames,
-	      "first-day": _vm.firstDay
-	    },
-	    on: {
-	      "eventclick": _vm.emitEventClick,
-	      "dayclick": _vm.emitDayClick,
-	      "moreclick": _vm.emitMoreClick
-	    }
-	  }, [_c('div', {
-	    slot: "body-card"
-	  }, [_vm._t("fc-body-card")], 2)])], 1)
-	},staticRenderFns: []}
-	module.exports.render._withStripped = true
-	if (false) {
-	  module.hot.accept()
-	  if (module.hot.data) {
-	     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-3e333dbe", module.exports)
-	  }
-	}
-
-/***/ }
-/******/ ])
-});
-;
-
-/***/ }),
-/* 394 */
+/* 396 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(458)
+__webpack_require__(448)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(264),
+  __webpack_require__(270),
   /* template */
-  __webpack_require__(434),
+  __webpack_require__(426),
   /* scopeId */
   "data-v-d5d0729c",
   /* cssModules */
@@ -39278,18 +38034,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 395 */
+/* 397 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(457)
+__webpack_require__(447)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(265),
+  __webpack_require__(271),
   /* template */
-  __webpack_require__(433),
+  __webpack_require__(425),
   /* scopeId */
   "data-v-cb1cdcba",
   /* cssModules */
@@ -39316,18 +38072,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 396 */
+/* 398 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(443)
+__webpack_require__(435)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(266),
+  __webpack_require__(272),
   /* template */
-  __webpack_require__(418),
+  __webpack_require__(412),
   /* scopeId */
   null,
   /* cssModules */
@@ -39354,167 +38110,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 397 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(270),
-  /* template */
-  __webpack_require__(428),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\GmPage.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] GmPage.vue: functional components are not supported with templates, they should use render functions.")}
-
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-73a05634", Component.options)
-  } else {
-    hotAPI.reload("data-v-73a05634", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 398 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(450)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(271),
-  /* template */
-  __webpack_require__(425),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\ShiftRequirementsModal.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] ShiftRequirementsModal.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6849a228", Component.options)
-  } else {
-    hotAPI.reload("data-v-6849a228", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
 /* 399 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(437)
+__webpack_require__(440)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(272),
+  __webpack_require__(280),
   /* template */
-  __webpack_require__(412),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\ShiftRequirementsWeek.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] ShiftRequirementsWeek.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-037510f6", Component.options)
-  } else {
-    hotAPI.reload("data-v-037510f6", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 400 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(441)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(273),
-  /* template */
-  __webpack_require__(416),
-  /* scopeId */
-  "data-v-18d24ffb",
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\ManagerComponents\\ShiftSelection.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] ShiftSelection.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-18d24ffb", Component.options)
-  } else {
-    hotAPI.reload("data-v-18d24ffb", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 401 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(448)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(274),
-  /* template */
-  __webpack_require__(423),
+  __webpack_require__(417),
   /* scopeId */
   "data-v-5400fe66",
   /* cssModules */
@@ -39541,18 +38148,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 402 */
+/* 400 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(455)
+__webpack_require__(445)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(275),
+  __webpack_require__(281),
   /* template */
-  __webpack_require__(431),
+  __webpack_require__(423),
   /* scopeId */
   "data-v-7dd64f58",
   /* cssModules */
@@ -39579,45 +38186,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 403 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(445)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(276),
-  /* template */
-  __webpack_require__(420),
-  /* scopeId */
-  "data-v-3aaf9f48",
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Scheduling\\GMApproveSchedule.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] GMApproveSchedule.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3aaf9f48", Component.options)
-  } else {
-    hotAPI.reload("data-v-3aaf9f48", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 404 */
+/* 401 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -39626,85 +38195,9 @@ __webpack_require__(444)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(277),
+  __webpack_require__(285),
   /* template */
-  __webpack_require__(419),
-  /* scopeId */
-  "data-v-297e35f2",
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Scheduling\\PayrollApproval.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] PayrollApproval.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-297e35f2", Component.options)
-  } else {
-    hotAPI.reload("data-v-297e35f2", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 405 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(452)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(278),
-  /* template */
-  __webpack_require__(427),
-  /* scopeId */
-  "data-v-70d7f825",
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\Scheduling\\ReviewScheduleChange.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] ReviewScheduleChange.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-70d7f825", Component.options)
-  } else {
-    hotAPI.reload("data-v-70d7f825", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 406 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(454)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(279),
-  /* template */
-  __webpack_require__(430),
+  __webpack_require__(422),
   /* scopeId */
   null,
   /* cssModules */
@@ -39731,18 +38224,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 407 */
+/* 402 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(438)
+__webpack_require__(430)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(280),
+  __webpack_require__(286),
   /* template */
-  __webpack_require__(413),
+  __webpack_require__(407),
   /* scopeId */
   null,
   /* cssModules */
@@ -39769,94 +38262,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 408 */
+/* 403 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(451)
+__webpack_require__(446)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(281),
+  __webpack_require__(289),
   /* template */
-  __webpack_require__(426),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\calendar\\ShiftModal.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] ShiftModal.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-69548e47", Component.options)
-  } else {
-    hotAPI.reload("data-v-69548e47", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 409 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(459)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(282),
-  /* template */
-  __webpack_require__(435),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "C:\\Working\\Ops\\ClientApp\\components\\calendar\\TheShift.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] TheShift.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (true) {(function () {
-  var hotAPI = __webpack_require__(1)
-  hotAPI.install(__webpack_require__(2), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-fad440e6", Component.options)
-  } else {
-    hotAPI.reload("data-v-fad440e6", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 410 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(456)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(286),
-  /* template */
-  __webpack_require__(432),
+  __webpack_require__(424),
   /* scopeId */
   null,
   /* cssModules */
@@ -39883,18 +38300,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 411 */
+/* 404 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(447)
+__webpack_require__(439)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(287),
+  __webpack_require__(290),
   /* template */
-  __webpack_require__(422),
+  __webpack_require__(416),
   /* scopeId */
   null,
   /* cssModules */
@@ -39921,902 +38338,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 412 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "week"
-  }, [(_vm.showModal) ? _c('ShiftRequirementsModal', {
-    on: {
-      "close": function($event) {
-        _vm.closeModal()
-      },
-      "submit": function($event) {
-        _vm.submit()
-      }
-    }
-  }) : _vm._e(), _vm._v(" "), _c('h2', {
-    staticClass: "header"
-  }, [_vm._v("Set Daily Shift Requirements")]), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Monday"
-    }
-  }), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Tuesday"
-    }
-  }), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Wednesday"
-    }
-  }), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Thursday"
-    }
-  }), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Friday"
-    }
-  }), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Saturday"
-    }
-  }), _vm._v(" "), _c('DailyShiftRequirements', {
-    staticClass: "day",
-    attrs: {
-      "day": "Sunday"
-    },
-    on: {
-      "AddShiftDayCode": function($event) {
-        _vm.addshiftDay($event)
-      }
-    }
-  }), _vm._v(" "), _c('button', {
-    staticClass: "btn btn-default",
-    staticStyle: {
-      "vertical-align": "central",
-      "background-color": "#015351",
-      "color": "white",
-      "margin-top": "10px",
-      "margin-left": "45%"
-    },
-    on: {
-      "click": _vm.submitShiftsRequirements
-    }
-  }, [_vm._v("\n    Submit")])], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-037510f6", module.exports)
-  }
-}
-
-/***/ }),
-/* 413 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticStyle: {
-      "width": "100%"
-    },
-    attrs: {
-      "id": "app"
-    }
-  }, [_c('div', {
-    staticStyle: {
-      "width": "100%"
-    }
-  }, [_c('nav', {
-    staticClass: "navbar",
-    staticStyle: {
-      "background-color": "#015351"
-    }
-  }, [_vm._m(0), _vm._v(" "), _c('div', {
-    staticClass: "navbar-menu"
-  }, [_c('div', {
-    staticClass: "navbar-start"
-  }, [_c('div', {
-    staticClass: "navbar-item has-dropdown is-hoverable"
-  }, [_c('a', {
-    staticClass: "navbar-link"
-  }, [_vm._v("\n                               Supply Hub\n                           ")]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown"
-  }, _vm._l((_vm.SupplyHub), function(link) {
-    return _c('a', {
-      staticClass: "navbar-item",
-      attrs: {
-        "href": link.link
-      }
-    }, [_vm._v("\n                                 " + _vm._s(link.title) + "\n                               ")])
-  }))]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-item has-dropdown is-hoverable"
-  }, [_c('a', {
-    staticClass: "navbar-link"
-  }, [_vm._v("\n                               Menu Hub\n                           ")]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown"
-  }, _vm._l((_vm.MenuHub), function(link) {
-    return _c('a', {
-      staticClass: "navbar-item",
-      attrs: {
-        "href": link.link
-      }
-    }, [_vm._v("\n                                  " + _vm._s(link.title) + "\n                               ")])
-  }))]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-item has-dropdown is-hoverable"
-  }, [_c('a', {
-    staticClass: "navbar-link"
-  }, [_vm._v("\n                               Ops Hub\n                           ")]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown"
-  }, _vm._l((_vm.OpsHub), function(link) {
-    return _c('a', {
-      staticClass: "navbar-item",
-      attrs: {
-        "href": link.link
-      }
-    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
-  }))]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-item has-dropdown is-hoverable"
-  }, [_c('a', {
-    staticClass: "navbar-link"
-  }, [_vm._v("\n                               Finance Hub\n                           ")]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown"
-  }, _vm._l((_vm.FinanceHub), function(link) {
-    return _c('a', {
-      staticClass: "navbar-item",
-      attrs: {
-        "href": link.link
-      }
-    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
-  }))]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-item has-dropdown is-hoverable"
-  }, [_c('a', {
-    staticClass: "navbar-link"
-  }, [_vm._v("\n                               Admin Hub\n                           ")]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown"
-  }, _vm._l((_vm.AdminHub), function(link) {
-    return _c('a', {
-      staticClass: "navbar-item",
-      attrs: {
-        "href": link.link
-      }
-    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
-  }))]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-item has-dropdown is-hoverable"
-  }, [_c('a', {
-    staticClass: "navbar-link"
-  }, [_vm._v("\n                               Inventory Hub\n                           ")]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown"
-  }, _vm._l((_vm.InventoryHub), function(link) {
-    return _c('a', {
-      staticClass: "navbar-item",
-      attrs: {
-        "href": link.link
-      }
-    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
-  }))]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-dropdown is-boxed"
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "navbar-end"
-  }, [_c('span', {
-    staticStyle: {
-      "color": "white",
-      "margin-top": "33%"
-    }
-  }, [_vm._v(" hello,  " + _vm._s(_vm.getUser.firstName) + " " + _vm._s(_vm.getUser.lastName) + " ")]), _vm._v(" "), _c('button', {
-    staticClass: "btn btn-default",
-    staticStyle: {
-      "color": "white",
-      "border-color": "#015351",
-      "background-color": "#015351",
-      "font-size": "xx-small"
-    },
-    on: {
-      "click": _vm.logout
-    }
-  }, [_vm._v(" Sign Out")]), _vm._v(" "), _c('img', {
-    staticStyle: {
-      "width": "100px",
-      "height": "60px",
-      "padding": ".6em 1em .6em 1em"
-    },
-    attrs: {
-      "src": __webpack_require__(391),
-      "alt": "hub_logo"
-    }
-  })])])]), _vm._v(" "), _c('div', {
-    staticClass: "main"
-  }, [_c('router-view')], 1)])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "navbar-brand"
-  }, [_c('a', {
-    staticClass: "navbar-item"
-  }, [_c('img', {
-    staticStyle: {
-      "width": "100px",
-      "height": "140px"
-    },
-    attrs: {
-      "src": __webpack_require__(390)
-    }
-  }), _vm._v(" "), _c('img', {
-    staticStyle: {
-      "width": "100px",
-      "height": "140px"
-    },
-    attrs: {
-      "src": __webpack_require__(392)
-    }
-  })])])
-}]}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-06b1abb3", module.exports)
-  }
-}
-
-/***/ }),
-/* 414 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "Daily"
-  }, [_c('span', {
-    staticClass: "header"
-  }, [_c('h4', [_vm._v(_vm._s(_vm.day))])]), _vm._v(" "), _c('hr'), _vm._v(" "), _c('ul', {
-    staticClass: "shiftList"
-  }, _vm._l((_vm.getShiftCodes), function(shiftCode) {
-    return _c('li', {
-      staticStyle: {
-        "text-align": "left"
-      }
-    }, [_c('label', [_c('shift', {
-      attrs: {
-        "ShiftCode": shiftCode.statusId,
-        "shiftDescription": shiftCode.description
-      },
-      on: {
-        "AddShiftCode": function($event) {
-          _vm.addShift($event)
-        },
-        "RemoveShiftCode": function($event) {
-          _vm.removeShift($event)
-        }
-      }
-    })], 1)])
-  }))])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-13975d2c", module.exports)
-  }
-}
-
-/***/ }),
-/* 415 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [(_vm.showDayClickedModal) ? _c('shift-modal', [_c('h3', {
-    staticClass: "modal-card-title",
-    attrs: {
-      "slot": "header"
-    },
-    slot: "header"
-  }, [_vm._v("Set The Shift")]), _vm._v(" "), _c('div', {
-    attrs: {
-      "slot": "body"
-    },
-    slot: "body"
-  }, [_c('div', [_vm._v("Shift Date " + _vm._s(this.workingDate))]), _vm._v(" "), _c('div', [_c('span', [_vm._v("Manager Name")]), _vm._v(" "), _c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.selectedManager),
-      expression: "selectedManager"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "id": "managerName"
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.selectedManager = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, _vm._l((_vm.getManagers), function(manager) {
-    return _c('option', [_vm._v(_vm._s(manager.Name))])
-  }))]), _vm._v(" "), _c('div', [_c('span', [_vm._v("Shift")]), _vm._v(" "), _c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newShiftCode),
-      expression: "newShiftCode"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "id": "ShiftCode"
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.newShiftCode = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, _vm._l((_vm.getShiftCodes), function(code) {
-    return _c('option', [_vm._v(" " + _vm._s(code.description) + " ")])
-  }))])]), _vm._v(" "), _c('div', {
-    attrs: {
-      "slot": "footer"
-    },
-    slot: "footer"
-  }, [_c('button', {
-    on: {
-      "click": function($event) {
-        _vm.submit()
-      }
-    }
-  }, [_vm._v(" Submit ")]), _vm._v(" "), _c('button', {
-    on: {
-      "click": function($event) {
-        _vm.closeModal()
-      }
-    }
-  }, [_vm._v("Close")])])]) : _vm._e(), _vm._v(" "), (_vm.showChangeModal) ? _c('shift-modal', [_c('h3', {
-    staticClass: "modal-card-title",
-    attrs: {
-      "slot": "header"
-    },
-    slot: "header"
-  }, [_vm._v("Change The Shift")]), _vm._v(" "), _c('div', {
-    attrs: {
-      "slot": "body"
-    },
-    slot: "body"
-  }, [_c('div', [_vm._v("Shift Date " + _vm._s(this.dayToChange) + "  Shift: " + _vm._s(this.shiftCode))]), _vm._v(" "), _c('div', [_c('span', [_vm._v("Manager Name")]), _vm._v(" "), _c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.selectedManager),
-      expression: "selectedManager"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "id": "managerName1"
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.selectedManager = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, _vm._l((_vm.getManagers), function(manager) {
-    return _c('option', [_vm._v(_vm._s(manager.Name))])
-  }))]), _vm._v(" "), _c('div', [_c('div', [_vm._v("\n                    Reason For Change\n                ")]), _vm._v(" "), _c('div', [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.reasonForChange),
-      expression: "reasonForChange"
-    }],
-    attrs: {
-      "type": "text"
-    },
-    domProps: {
-      "value": (_vm.reasonForChange)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.reasonForChange = $event.target.value
-      }
-    }
-  })])])]), _vm._v(" "), _c('div', {
-    attrs: {
-      "slot": "footer"
-    },
-    slot: "footer"
-  }, [_c('button', {
-    on: {
-      "click": function($event) {
-        _vm.submitChange()
-      }
-    }
-  }, [_vm._v(" Submit ")]), _vm._v(" "), _c('button', {
-    on: {
-      "click": function($event) {
-        _vm.closeModal()
-      }
-    }
-  }, [_vm._v("Close")])])]) : _vm._e(), _vm._v(" "), _c('div', {
-    staticStyle: {
-      "vertical-align": "middle",
-      "margin-bottom": "5px"
-    }
-  }, [_c('button', [_c('a', {
-    attrs: {
-      "href": this.lastWeekString
-    }
-  }, [_vm._v("<")])]), _vm._v(" "), _c('button', [_c('a', {
-    attrs: {
-      "href": this.nextweekString
-    }
-  }, [_vm._v(">")])])]), _vm._v(" "), _c('div', {
-    staticClass: "container-fluid weekly"
-  }, [_c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.monday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  }), _vm._v(" "), _c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.tuesday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  }), _vm._v(" "), _c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.wednesday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  }), _vm._v(" "), _c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.thursday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  }), _vm._v(" "), _c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.friday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  }), _vm._v(" "), _c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.saturday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  }), _vm._v(" "), _c('day', {
-    staticClass: "dayBox",
-    attrs: {
-      "Day": this.sunday
-    },
-    on: {
-      "dayClicked": function($event) {
-        _vm.dayClicked($event)
-      },
-      "eventClicked": function($event) {
-        _vm.eventClicked($event)
-      }
-    }
-  })], 1)], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-13e0a9bb", module.exports)
-  }
-}
-
-/***/ }),
-/* 416 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "type"
-  }, [_c('input', {
-    attrs: {
-      "type": "checkbox"
-    },
-    on: {
-      "click": function($event) {
-        _vm.clicked()
-      }
-    }
-  }), _vm._v(" " + _vm._s(this.shiftDescription) + "\n")])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-18d24ffb", module.exports)
-  }
-}
-
-/***/ }),
-/* 417 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (this.shiftType != 'Cancelled' && this.managerName != 'Cancel Shift') ? _c('div', {
-    staticClass: "card",
-    on: {
-      "click": function($event) {
-        _vm.eventClicked()
-      }
-    }
-  }, [_c('div', {
-    staticStyle: {
-      "padding": "2px 2px"
-    }
-  }, [_vm._v("Shift: " + _vm._s(_vm.shiftType))]), _vm._v(" "), _c('div', {
-    staticStyle: {
-      "padding": "2px 2px"
-    }
-  }, [_vm._v("Manager: " + _vm._s(_vm.managerName))])]) : _vm._e()
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-2111a126", module.exports)
-  }
-}
-
-/***/ }),
-/* 418 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('transition', {
-    attrs: {
-      "name": "modal"
-    }
-  }, [_c('div', {
-    staticClass: "modal-mask"
-  }, [_c('div', {
-    staticClass: "modal-wrapper"
-  }, [_c('div', {
-    staticClass: "modal-container"
-  }, [_c('div', {
-    staticClass: "modal-header"
-  }, [_vm._t("header", [_vm._v("\n            default header\n          ")])], 2), _vm._v(" "), _c('div', {
-    staticClass: "modal-body"
-  }, [_vm._t("body", [_vm._v("\n            default body\n          ")])], 2), _vm._v(" "), _c('div', {
-    staticClass: "modal-footer"
-  }, [_vm._t("footer", [_vm._v("\n            default footer\n            "), _c('button', {
-    staticClass: "modal-default-button",
-    on: {
-      "click": function($event) {
-        _vm.$emit('close')
-      }
-    }
-  }, [_vm._v("\n              OK\n            ")])])], 2)])])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-23216627", module.exports)
-  }
-}
-
-/***/ }),
-/* 419 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('nav-left', [_c('div', {
-    attrs: {
-      "slot": "body"
-    },
-    slot: "body"
-  }, [_c('div', {
-    staticStyle: {
-      "margin-top": "10%"
-    }
-  }, [_c('b-datepicker', {
-    attrs: {
-      "placeholder": "Click to select...",
-      "icon": "calendar-today"
-    }
-  })], 1)])]), _vm._v(" "), _c('div', {
-    staticClass: "container"
-  }, [_c('p', [_vm._v(" hello " + _vm._s(_vm.getUser.managerName))]), _vm._v(" "), _vm._l((_vm.getChangeRequest), function(request) {
-    return _c('div', {
-      attrs: {
-        "id": "request"
-      }
-    }, [_vm._v("\n            blargh\n          "), _c('section', {
-      staticClass: "hero is-light",
-      attrs: {
-        "id": "changeRequest"
-      }
-    }, [_c('div', {
-      staticClass: "hero-body"
-    }, [_c('h1', {
-      staticClass: "title"
-    }, [_vm._v(" " + _vm._s(request.fromName) + " would like to trade change their shift ")]), _vm._v(" "), _c('h2', {
-      staticClass: "subtitle"
-    }, [_vm._v(" Shift Date is " + _vm._s(request.shiftDate))]), _vm._v(" "), _c('p', [_vm._v(" This request would change the manager for that shift from  " + _vm._s(request.fromName) + " to " + _vm._s(request.toName))]), _vm._v(" "), _c('p', [_vm._v(" the shiftCode for this shift is: " + _vm._s(request.shiftCode))]), _vm._v(" "), _c('p', [_vm._v(" the reason for the request is: " + _vm._s(request.reason))]), _vm._v(" "), _c('div', {
-      staticStyle: {
-        "width": "50%",
-        "margin": "0 auto"
-      }
-    }, [_c('button', {
-      staticClass: "button is-info",
-      on: {
-        "click": function($event) {
-          _vm.approveChange(request)
-        }
-      }
-    }, [_vm._v("\n                  Approve\n                ")]), _vm._v(" "), _c('button', {
-      staticClass: "button is-warning",
-      staticStyle: {
-        "margin-left": "20px"
-      },
-      on: {
-        "click": function($event) {
-          _vm.rejectChange(request)
-        }
-      }
-    }, [_vm._v("\n                  Reject\n                ")])])])])])
-  })], 2)], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-297e35f2", module.exports)
-  }
-}
-
-/***/ }),
-/* 420 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticStyle: {
-      "width": "100%"
-    }
-  }, [_c('h1', {
-    staticClass: "title",
-    staticStyle: {
-      "margin": "0 auto",
-      "font-size": "x-large",
-      "text-align": "center"
-    }
-  }, [_vm._v("\n        Please confirm the week's schedule\n    ")]), _vm._v(" "), _c('hr'), _vm._v(" "), _c('weekly-calendar', {
-    attrs: {
-      "monday": this.monday,
-      "tuesday": this.tuesday,
-      "wednesday": this.wednesday,
-      "thursday": this.thursday,
-      "friday": this.friday,
-      "saturday": this.saturday,
-      "sunday": this.sunday
-    },
-    on: {
-      "shiftSubmitted": this.shiftSubmitted
-    }
-  }), _vm._v(" "), _c('hr'), _vm._v(" "), _c('div', [_c('ScheduleConsequences', {
-    staticClass: "container"
-  })], 1), _vm._v(" "), (_vm.disapproveModal) ? _c('DisapproveModal', {
-    on: {
-      "close": _vm.closeModal
-    }
-  }) : _vm._e(), _vm._v(" "), (_vm.approvalModal) ? _c('ApproveModal', {
-    on: {
-      "close": _vm.closeModal,
-      "accept": _vm.approveThisSchedule
-    }
-  }) : _vm._e(), _vm._v(" "), _c('div', {
-    staticStyle: {
-      "width": "50%",
-      "margin": "5px auto",
-      "vertical-align": "central"
-    }
-  }, [_c('button', {
-    staticClass: "button is-info",
-    on: {
-      "click": this.modalScheduleApproval
-    }
-  }, [_vm._v("Approve")]), _vm._v(" "), _c('button', {
-    staticClass: "button is-warning",
-    on: {
-      "click": this.rejectSchedule
-    }
-  }, [_vm._v("Reject")])])], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-3aaf9f48", module.exports)
-  }
-}
-
-/***/ }),
-/* 421 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "dropdown"
-  }, [_c('button', {
-    staticClass: "dropbtn"
-  }, [_vm._v(_vm._s(_vm.title))]), _vm._v(" "), _c('div', {
-    staticClass: "dropdown-content",
-    attrs: {
-      "id": "myDropdown"
-    }
-  }, [_c('ul', [_c('br'), _vm._v(" "), _vm._l((_vm.items), function(item) {
-    return _c('li', {
-      staticStyle: {
-        "list-style": "none",
-        "padding": "2px 0px",
-        "margin": "0"
-      }
-    }, [_c('a', {
-      attrs: {
-        "href": item.link
-      }
-    }, [_vm._v(_vm._s(item.title))])])
-  })], 2)])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-488ebd41", module.exports)
-  }
-}
-
-/***/ }),
-/* 422 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c("div")
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-50fe4cee", module.exports)
-  }
-}
-
-/***/ }),
-/* 423 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('transition', {
-    attrs: {
-      "name": "modal"
-    }
-  }, [_c('div', {
-    staticClass: "modal-mask"
-  }, [_c('div', {
-    staticClass: "modal-wrapper"
-  }, [_c('div', {
-    staticClass: "modal-container"
-  }, [_c('div', {
-    staticClass: "modal-header"
-  }, [_vm._v("A quick weekly review\n        ")]), _vm._v(" "), _c('div', {
-    staticClass: "modal-body"
-  }, [_vm._l((_vm.getManagerDays), function(manager) {
-    return _c('div', [(manager.shifts > 5 && manager.name != 'Cancel Shift') ? _c('p', [_vm._v(" " + _vm._s(manager.name) + " has more than 5 shifts and will be owed "), _c('strong', {
-      staticStyle: {
-        "color": "red"
-      }
-    }, [_vm._v(_vm._s((manager.shifts - 5)) + " ")]), _vm._v(" days")]) : _vm._e(), _vm._v(" "), (manager.shifts < 5 && manager.name != 'Cancel Shift') ? _c('p', [_vm._v(" " + _vm._s(manager.name) + " has less than 5 shifts and will need to use "), _c('strong', {
-      staticStyle: {
-        "color": "red"
-      }
-    }, [_vm._v(_vm._s(5 - manager.shifts))]), _vm._v("  days owed")]) : _vm._e()])
-  }), _vm._v(" "), _c('hr'), _vm._v(" "), _vm._l((_vm.getMissingShifts), function(value, key) {
-    return _c('div', [(value) ? _c('div', [_vm._v("\n                    " + _vm._s(key) + " "), _vm._l((value), function(code) {
-      return (code) ? _c('span', [_vm._v(" " + _vm._s(code) + ", ")]) : _vm._e()
-    })], 2) : _vm._e()])
-  })], 2), _vm._v(" "), _c('div', {
-    staticClass: "modal-footer"
-  }), _vm._v(" "), _c('button', {
-    staticClass: "modal-default-button",
-    on: {
-      "click": function($event) {
-        _vm.$emit('close', _vm.reason)
-      }
-    }
-  }, [_vm._v("close")]), _vm._v(" "), _c('button', {
-    staticClass: "modal-default-button",
-    on: {
-      "click": function($event) {
-        _vm.$emit('accept', _vm.reason)
-      }
-    }
-  }, [_vm._v("Submit")])])])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-5400fe66", module.exports)
-  }
-}
-
-/***/ }),
-/* 424 */
+/* 405 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41124,12 +38646,907 @@ module.exports.render._withStripped = true
 if (true) {
   module.hot.accept()
   if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-5f29db5a", module.exports)
+     __webpack_require__(1).rerender("data-v-005a603f", module.exports)
   }
 }
 
 /***/ }),
-/* 425 */
+/* 406 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "week"
+  }, [(_vm.showModal) ? _c('ShiftRequirementsModal', {
+    on: {
+      "close": function($event) {
+        _vm.closeModal()
+      },
+      "submit": function($event) {
+        _vm.submit()
+      }
+    }
+  }) : _vm._e(), _vm._v(" "), _c('h2', {
+    staticClass: "header"
+  }, [_vm._v("Set Daily Shift Requirements")]), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Monday"
+    }
+  }), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Tuesday"
+    }
+  }), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Wednesday"
+    }
+  }), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Thursday"
+    }
+  }), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Friday"
+    }
+  }), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Saturday"
+    }
+  }), _vm._v(" "), _c('DailyShiftRequirements', {
+    staticClass: "day",
+    attrs: {
+      "day": "Sunday"
+    },
+    on: {
+      "AddShiftDayCode": function($event) {
+        _vm.addshiftDay($event)
+      }
+    }
+  }), _vm._v(" "), _c('button', {
+    staticClass: "btn btn-default",
+    staticStyle: {
+      "vertical-align": "central",
+      "background-color": "#015351",
+      "color": "white",
+      "margin-top": "10px",
+      "margin-left": "45%"
+    },
+    on: {
+      "click": _vm.submitShiftsRequirements
+    }
+  }, [_vm._v("\n    Submit")])], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-037510f6", module.exports)
+  }
+}
+
+/***/ }),
+/* 407 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "id": "app"
+    }
+  }, [_c('div', {
+    staticStyle: {
+      "width": "100%"
+    }
+  }, [_c('nav', {
+    staticClass: "navbar",
+    staticStyle: {
+      "background-color": "#015351"
+    }
+  }, [_vm._m(0), _vm._v(" "), _c('div', {
+    staticClass: "navbar-menu"
+  }, [_c('div', {
+    staticClass: "navbar-start"
+  }, [_c('div', {
+    staticClass: "navbar-item has-dropdown is-hoverable"
+  }, [_c('a', {
+    staticClass: "navbar-link"
+  }, [_vm._v("\n                               Supply Hub\n                           ")]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown"
+  }, _vm._l((_vm.SupplyHub), function(link) {
+    return _c('a', {
+      staticClass: "navbar-item",
+      attrs: {
+        "href": link.link
+      }
+    }, [_vm._v("\n                                 " + _vm._s(link.title) + "\n                               ")])
+  }))]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-item has-dropdown is-hoverable"
+  }, [_c('a', {
+    staticClass: "navbar-link"
+  }, [_vm._v("\n                               Menu Hub\n                           ")]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown"
+  }, _vm._l((_vm.MenuHub), function(link) {
+    return _c('a', {
+      staticClass: "navbar-item",
+      attrs: {
+        "href": link.link
+      }
+    }, [_vm._v("\n                                  " + _vm._s(link.title) + "\n                               ")])
+  }))]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-item has-dropdown is-hoverable"
+  }, [_c('a', {
+    staticClass: "navbar-link"
+  }, [_vm._v("\n                               Ops Hub\n                           ")]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown"
+  }, _vm._l((_vm.OpsHub), function(link) {
+    return _c('a', {
+      staticClass: "navbar-item",
+      attrs: {
+        "href": link.link
+      }
+    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
+  }))]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-item has-dropdown is-hoverable"
+  }, [_c('a', {
+    staticClass: "navbar-link"
+  }, [_vm._v("\n                               Finance Hub\n                           ")]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown"
+  }, _vm._l((_vm.FinanceHub), function(link) {
+    return _c('a', {
+      staticClass: "navbar-item",
+      attrs: {
+        "href": link.link
+      }
+    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
+  }))]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-item has-dropdown is-hoverable"
+  }, [_c('a', {
+    staticClass: "navbar-link"
+  }, [_vm._v("\n                               Admin Hub\n                           ")]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown"
+  }, _vm._l((_vm.AdminHub), function(link) {
+    return _c('a', {
+      staticClass: "navbar-item",
+      attrs: {
+        "href": link.link
+      }
+    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
+  }))]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-item has-dropdown is-hoverable"
+  }, [_c('a', {
+    staticClass: "navbar-link"
+  }, [_vm._v("\n                               Inventory Hub\n                           ")]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown"
+  }, _vm._l((_vm.InventoryHub), function(link) {
+    return _c('a', {
+      staticClass: "navbar-item",
+      attrs: {
+        "href": link.link
+      }
+    }, [_vm._v("\n                                   " + _vm._s(link.title) + "\n                               ")])
+  }))]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-dropdown is-boxed"
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "navbar-end"
+  }, [_c('span', {
+    staticStyle: {
+      "color": "white",
+      "margin-top": "33%"
+    }
+  }, [_vm._v(" hello,  " + _vm._s(_vm.getUser.firstName) + " " + _vm._s(_vm.getUser.lastName) + " ")]), _vm._v(" "), _c('button', {
+    staticClass: "btn btn-default",
+    staticStyle: {
+      "color": "white",
+      "border-color": "#015351",
+      "background-color": "#015351",
+      "font-size": "xx-small"
+    },
+    on: {
+      "click": _vm.logout
+    }
+  }, [_vm._v(" Sign Out")]), _vm._v(" "), _c('img', {
+    staticStyle: {
+      "width": "100px",
+      "height": "60px",
+      "padding": ".6em 1em .6em 1em"
+    },
+    attrs: {
+      "src": __webpack_require__(394),
+      "alt": "hub_logo"
+    }
+  })])])]), _vm._v(" "), _c('div', {
+    staticClass: "main"
+  }, [_c('router-view')], 1)])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "navbar-brand"
+  }, [_c('a', {
+    staticClass: "navbar-item"
+  }, [_c('img', {
+    staticStyle: {
+      "width": "100px",
+      "height": "140px"
+    },
+    attrs: {
+      "src": __webpack_require__(393)
+    }
+  }), _vm._v(" "), _c('img', {
+    staticStyle: {
+      "width": "100px",
+      "height": "140px"
+    },
+    attrs: {
+      "src": __webpack_require__(395)
+    }
+  })])])
+}]}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-06b1abb3", module.exports)
+  }
+}
+
+/***/ }),
+/* 408 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "Daily"
+  }, [_c('span', {
+    staticClass: "header"
+  }, [_c('h4', [_vm._v(_vm._s(_vm.day))])]), _vm._v(" "), _c('hr'), _vm._v(" "), _c('ul', {
+    staticClass: "shiftList"
+  }, _vm._l((_vm.getShiftCodes), function(shiftCode) {
+    return _c('li', {
+      staticStyle: {
+        "text-align": "left"
+      }
+    }, [_c('label', [_c('shift', {
+      attrs: {
+        "ShiftCode": shiftCode.statusId,
+        "shiftDescription": shiftCode.description
+      },
+      on: {
+        "AddShiftCode": function($event) {
+          _vm.addShift($event)
+        },
+        "RemoveShiftCode": function($event) {
+          _vm.removeShift($event)
+        }
+      }
+    })], 1)])
+  }))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-13975d2c", module.exports)
+  }
+}
+
+/***/ }),
+/* 409 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [(_vm.showDayClickedModal) ? _c('shift-modal', [_c('h3', {
+    staticClass: "modal-card-title",
+    attrs: {
+      "slot": "header"
+    },
+    slot: "header"
+  }, [_vm._v("Set The Shift")]), _vm._v(" "), _c('div', {
+    attrs: {
+      "slot": "body"
+    },
+    slot: "body"
+  }, [_c('div', [_vm._v("Shift Date " + _vm._s(this.workingDate))]), _vm._v(" "), _c('div', [_c('span', [_vm._v("Manager Name")]), _vm._v(" "), _c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.selectedManager),
+      expression: "selectedManager"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "id": "managerName"
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.selectedManager = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, _vm._l((_vm.getManagers), function(manager) {
+    return _c('option', [_vm._v(_vm._s(manager.Name))])
+  }))]), _vm._v(" "), _c('div', [_c('span', [_vm._v("Shift")]), _vm._v(" "), _c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newShiftCode),
+      expression: "newShiftCode"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "id": "ShiftCode"
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.newShiftCode = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, _vm._l((_vm.getShiftCodes), function(code) {
+    return _c('option', [_vm._v(" " + _vm._s(code.description) + " ")])
+  }))])]), _vm._v(" "), _c('div', {
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('button', {
+    on: {
+      "click": function($event) {
+        _vm.submit()
+      }
+    }
+  }, [_vm._v(" Submit ")]), _vm._v(" "), _c('button', {
+    on: {
+      "click": function($event) {
+        _vm.closeModal()
+      }
+    }
+  }, [_vm._v("Close")])])]) : _vm._e(), _vm._v(" "), (_vm.showChangeModal) ? _c('shift-modal', [_c('h3', {
+    staticClass: "modal-card-title",
+    attrs: {
+      "slot": "header"
+    },
+    slot: "header"
+  }, [_vm._v("Change The Shift")]), _vm._v(" "), _c('div', {
+    attrs: {
+      "slot": "body"
+    },
+    slot: "body"
+  }, [_c('div', [_vm._v("Shift Date " + _vm._s(this.dayToChange) + "  Shift: " + _vm._s(this.shiftCode))]), _vm._v(" "), _c('div', [_c('span', [_vm._v("Manager Name")]), _vm._v(" "), _c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.selectedManager),
+      expression: "selectedManager"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "id": "managerName1"
+    },
+    on: {
+      "change": function($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        });
+        _vm.selectedManager = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+      }
+    }
+  }, _vm._l((_vm.getManagers), function(manager) {
+    return _c('option', [_vm._v(_vm._s(manager.Name))])
+  }))]), _vm._v(" "), _c('div', [_c('div', [_vm._v("\n                    Reason For Change\n                ")]), _vm._v(" "), _c('div', [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.reasonForChange),
+      expression: "reasonForChange"
+    }],
+    attrs: {
+      "type": "text"
+    },
+    domProps: {
+      "value": (_vm.reasonForChange)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.reasonForChange = $event.target.value
+      }
+    }
+  })])])]), _vm._v(" "), _c('div', {
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('button', {
+    on: {
+      "click": function($event) {
+        _vm.submitChange()
+      }
+    }
+  }, [_vm._v(" Submit ")]), _vm._v(" "), _c('button', {
+    on: {
+      "click": function($event) {
+        _vm.closeModal()
+      }
+    }
+  }, [_vm._v("Close")])])]) : _vm._e(), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "vertical-align": "middle",
+      "margin-bottom": "5px"
+    }
+  }, [_c('button', [_c('a', {
+    attrs: {
+      "href": this.lastWeekString
+    }
+  }, [_vm._v("<")])]), _vm._v(" "), _c('button', [_c('a', {
+    attrs: {
+      "href": this.nextweekString
+    }
+  }, [_vm._v(">")])])]), _vm._v(" "), _c('div', {
+    staticClass: "container-fluid weekly"
+  }, [_c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.monday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  }), _vm._v(" "), _c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.tuesday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  }), _vm._v(" "), _c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.wednesday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  }), _vm._v(" "), _c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.thursday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  }), _vm._v(" "), _c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.friday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  }), _vm._v(" "), _c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.saturday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  }), _vm._v(" "), _c('day', {
+    staticClass: "dayBox",
+    attrs: {
+      "Day": this.sunday
+    },
+    on: {
+      "dayClicked": function($event) {
+        _vm.dayClicked($event)
+      },
+      "eventClicked": function($event) {
+        _vm.eventClicked($event)
+      }
+    }
+  })], 1)], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-13e0a9bb", module.exports)
+  }
+}
+
+/***/ }),
+/* 410 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "type"
+  }, [_c('input', {
+    attrs: {
+      "type": "checkbox"
+    },
+    on: {
+      "click": function($event) {
+        _vm.clicked()
+      }
+    }
+  }), _vm._v(" " + _vm._s(this.shiftDescription) + "\n")])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-18d24ffb", module.exports)
+  }
+}
+
+/***/ }),
+/* 411 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return (this.shiftType != 'Cancelled' && this.managerName != 'Cancel Shift') ? _c('div', {
+    staticClass: "card",
+    on: {
+      "click": function($event) {
+        _vm.eventClicked()
+      }
+    }
+  }, [_c('div', {
+    staticStyle: {
+      "padding": "2px 2px"
+    }
+  }, [_vm._v("Shift: " + _vm._s(_vm.shiftType))]), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "padding": "2px 2px"
+    }
+  }, [_vm._v("Manager: " + _vm._s(_vm.managerName))])]) : _vm._e()
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-2111a126", module.exports)
+  }
+}
+
+/***/ }),
+/* 412 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('transition', {
+    attrs: {
+      "name": "modal"
+    }
+  }, [_c('div', {
+    staticClass: "modal-mask"
+  }, [_c('div', {
+    staticClass: "modal-wrapper"
+  }, [_c('div', {
+    staticClass: "modal-container"
+  }, [_c('div', {
+    staticClass: "modal-header"
+  }, [_vm._t("header", [_vm._v("\n            default header\n          ")])], 2), _vm._v(" "), _c('div', {
+    staticClass: "modal-body"
+  }, [_vm._t("body", [_vm._v("\n            default body\n          ")])], 2), _vm._v(" "), _c('div', {
+    staticClass: "modal-footer"
+  }, [_vm._t("footer", [_vm._v("\n            default footer\n            "), _c('button', {
+    staticClass: "modal-default-button",
+    on: {
+      "click": function($event) {
+        _vm.$emit('close')
+      }
+    }
+  }, [_vm._v("\n              OK\n            ")])])], 2)])])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-23216627", module.exports)
+  }
+}
+
+/***/ }),
+/* 413 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('nav-left', [_c('div', {
+    attrs: {
+      "slot": "body"
+    },
+    slot: "body"
+  }, [_c('div', {
+    staticStyle: {
+      "margin-top": "10%"
+    }
+  }, [_c('b-datepicker', {
+    attrs: {
+      "placeholder": "Click to select...",
+      "icon": "calendar-today"
+    }
+  })], 1)])]), _vm._v(" "), _c('div', {
+    staticClass: "container"
+  }, [_c('p', [_vm._v(" hello " + _vm._s(_vm.getUser.managerName))]), _vm._v(" "), _vm._l((_vm.getChangeRequest), function(request) {
+    return _c('div', {
+      attrs: {
+        "id": "request"
+      }
+    }, [_vm._v("\n            blargh\n          "), _c('section', {
+      staticClass: "hero is-light",
+      attrs: {
+        "id": "changeRequest"
+      }
+    }, [_c('div', {
+      staticClass: "hero-body"
+    }, [_c('h1', {
+      staticClass: "title"
+    }, [_vm._v(" " + _vm._s(request.fromName) + " would like to trade change their shift ")]), _vm._v(" "), _c('h2', {
+      staticClass: "subtitle"
+    }, [_vm._v(" Shift Date is " + _vm._s(request.shiftDate))]), _vm._v(" "), _c('p', [_vm._v(" This request would change the manager for that shift from  " + _vm._s(request.fromName) + " to " + _vm._s(request.toName))]), _vm._v(" "), _c('p', [_vm._v(" the shiftCode for this shift is: " + _vm._s(request.shiftCode))]), _vm._v(" "), _c('p', [_vm._v(" the reason for the request is: " + _vm._s(request.reason))]), _vm._v(" "), _c('div', {
+      staticStyle: {
+        "width": "50%",
+        "margin": "0 auto"
+      }
+    }, [_c('button', {
+      staticClass: "button is-info",
+      on: {
+        "click": function($event) {
+          _vm.approveChange(request)
+        }
+      }
+    }, [_vm._v("\n                  Approve\n                ")]), _vm._v(" "), _c('button', {
+      staticClass: "button is-warning",
+      staticStyle: {
+        "margin-left": "20px"
+      },
+      on: {
+        "click": function($event) {
+          _vm.rejectChange(request)
+        }
+      }
+    }, [_vm._v("\n                  Reject\n                ")])])])])])
+  })], 2)], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-297e35f2", module.exports)
+  }
+}
+
+/***/ }),
+/* 414 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticStyle: {
+      "width": "100%"
+    }
+  }, [_c('h1', {
+    staticClass: "title",
+    staticStyle: {
+      "margin": "0 auto",
+      "font-size": "x-large",
+      "text-align": "center"
+    }
+  }, [_vm._v("\n        Please confirm the week's schedule\n    ")]), _vm._v(" "), _c('hr'), _vm._v(" "), _c('weekly-calendar', {
+    attrs: {
+      "monday": this.monday,
+      "tuesday": this.tuesday,
+      "wednesday": this.wednesday,
+      "thursday": this.thursday,
+      "friday": this.friday,
+      "saturday": this.saturday,
+      "sunday": this.sunday
+    },
+    on: {
+      "shiftSubmitted": this.shiftSubmitted
+    }
+  }), _vm._v(" "), _c('hr'), _vm._v(" "), _c('div', [_c('ScheduleConsequences', {
+    staticClass: "container"
+  })], 1), _vm._v(" "), (_vm.disapproveModal) ? _c('DisapproveModal', {
+    on: {
+      "close": _vm.closeModal
+    }
+  }) : _vm._e(), _vm._v(" "), (_vm.approvalModal) ? _c('ApproveModal', {
+    on: {
+      "close": _vm.closeModal,
+      "accept": _vm.approveThisSchedule
+    }
+  }) : _vm._e(), _vm._v(" "), _c('div', {
+    staticStyle: {
+      "width": "50%",
+      "margin": "5px auto",
+      "vertical-align": "central"
+    }
+  }, [_c('button', {
+    staticClass: "button is-info",
+    on: {
+      "click": this.modalScheduleApproval
+    }
+  }, [_vm._v("Approve")]), _vm._v(" "), _c('button', {
+    staticClass: "button is-warning",
+    on: {
+      "click": this.rejectSchedule
+    }
+  }, [_vm._v("Reject")])])], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-3aaf9f48", module.exports)
+  }
+}
+
+/***/ }),
+/* 415 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "dropdown"
+  }, [_c('button', {
+    staticClass: "dropbtn"
+  }, [_vm._v(_vm._s(_vm.title))]), _vm._v(" "), _c('div', {
+    staticClass: "dropdown-content",
+    attrs: {
+      "id": "myDropdown"
+    }
+  }, [_c('ul', [_c('br'), _vm._v(" "), _vm._l((_vm.items), function(item) {
+    return _c('li', {
+      staticStyle: {
+        "list-style": "none",
+        "padding": "2px 0px",
+        "margin": "0"
+      }
+    }, [_c('a', {
+      attrs: {
+        "href": item.link
+      }
+    }, [_vm._v(_vm._s(item.title))])])
+  })], 2)])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-488ebd41", module.exports)
+  }
+}
+
+/***/ }),
+/* 416 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c("div")
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-50fe4cee", module.exports)
+  }
+}
+
+/***/ }),
+/* 417 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('transition', {
+    attrs: {
+      "name": "modal"
+    }
+  }, [_c('div', {
+    staticClass: "modal-mask"
+  }, [_c('div', {
+    staticClass: "modal-wrapper"
+  }, [_c('div', {
+    staticClass: "modal-container"
+  }, [_c('div', {
+    staticClass: "modal-header"
+  }, [_vm._v("A quick weekly review\n        ")]), _vm._v(" "), _c('div', {
+    staticClass: "modal-body"
+  }, [_vm._l((_vm.getManagerDays), function(manager) {
+    return _c('div', [(manager.shifts > 5 && manager.name != 'Cancel Shift') ? _c('p', [_vm._v(" " + _vm._s(manager.name) + " has more than 5 shifts and will be owed "), _c('strong', {
+      staticStyle: {
+        "color": "red"
+      }
+    }, [_vm._v(_vm._s((manager.shifts - 5)) + " ")]), _vm._v(" days")]) : _vm._e(), _vm._v(" "), (manager.shifts < 5 && manager.name != 'Cancel Shift') ? _c('p', [_vm._v(" " + _vm._s(manager.name) + " has less than 5 shifts and will need to use "), _c('strong', {
+      staticStyle: {
+        "color": "red"
+      }
+    }, [_vm._v(_vm._s(5 - manager.shifts))]), _vm._v("  days owed")]) : _vm._e()])
+  }), _vm._v(" "), _c('hr'), _vm._v(" "), _vm._l((_vm.getMissingShifts), function(value, key) {
+    return _c('div', [(value) ? _c('div', [_vm._v("\n                    " + _vm._s(key) + " "), _vm._l((value), function(code) {
+      return (code) ? _c('span', [_vm._v(" " + _vm._s(code) + ", ")]) : _vm._e()
+    })], 2) : _vm._e()])
+  })], 2), _vm._v(" "), _c('div', {
+    staticClass: "modal-footer"
+  }), _vm._v(" "), _c('button', {
+    staticClass: "modal-default-button",
+    on: {
+      "click": function($event) {
+        _vm.$emit('close', _vm.reason)
+      }
+    }
+  }, [_vm._v("close")]), _vm._v(" "), _c('button', {
+    staticClass: "modal-default-button",
+    on: {
+      "click": function($event) {
+        _vm.$emit('accept', _vm.reason)
+      }
+    }
+  }, [_vm._v("Submit")])])])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (true) {
+  module.hot.accept()
+  if (module.hot.data) {
+     __webpack_require__(1).rerender("data-v-5400fe66", module.exports)
+  }
+}
+
+/***/ }),
+/* 418 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41187,45 +39604,7 @@ if (true) {
 }
 
 /***/ }),
-/* 426 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('transition', {
-    attrs: {
-      "name": "modal"
-    }
-  }, [_c('div', {
-    staticClass: "modal-mask"
-  }, [_c('div', {
-    staticClass: "modal-wrapper"
-  }, [_c('div', {
-    staticClass: "modal-container"
-  }, [_c('div', {
-    staticClass: "modal-header"
-  }, [_vm._t("header", [_vm._v("\n            default header\n          ")])], 2), _vm._v(" "), _c('div', {
-    staticClass: "modal-body"
-  }, [_vm._t("body", [_vm._v("\n            default body\n          ")])], 2), _vm._v(" "), _c('div', {
-    staticClass: "modal-footer"
-  }, [_vm._t("footer", [_vm._v("\n            default footer\n            "), _c('button', {
-    staticClass: "modal-default-button",
-    on: {
-      "click": function($event) {
-        _vm.$emit('close')
-      }
-    }
-  }, [_vm._v("\n              OK\n            ")])])], 2)])])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-69548e47", module.exports)
-  }
-}
-
-/***/ }),
-/* 427 */
+/* 419 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41318,7 +39697,7 @@ if (true) {
 }
 
 /***/ }),
-/* 428 */
+/* 420 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41350,7 +39729,7 @@ if (true) {
 }
 
 /***/ }),
-/* 429 */
+/* 421 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41365,7 +39744,7 @@ if (true) {
 }
 
 /***/ }),
-/* 430 */
+/* 422 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41427,7 +39806,7 @@ if (true) {
 }
 
 /***/ }),
-/* 431 */
+/* 423 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41492,7 +39871,7 @@ if (true) {
 }
 
 /***/ }),
-/* 432 */
+/* 424 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41509,7 +39888,7 @@ if (true) {
 }
 
 /***/ }),
-/* 433 */
+/* 425 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41584,7 +39963,7 @@ if (true) {
 }
 
 /***/ }),
-/* 434 */
+/* 426 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -41621,37 +40000,7 @@ if (true) {
 }
 
 /***/ }),
-/* 435 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (this.shiftType != 'Cancelled' && this.managerName != 'Cancel Shift') ? _c('div', {
-    staticClass: "card",
-    on: {
-      "click": function($event) {
-        _vm.eventClicked()
-      }
-    }
-  }, [_c('div', {
-    staticStyle: {
-      "padding": "2px 2px"
-    }
-  }, [_vm._v("Shift: " + _vm._s(_vm.shiftType))]), _vm._v(" "), _c('div', {
-    staticStyle: {
-      "padding": "2px 2px"
-    }
-  }, [_vm._v("Manager: " + _vm._s(_vm.managerName))])]) : _vm._e()
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (true) {
-  module.hot.accept()
-  if (module.hot.data) {
-     __webpack_require__(1).rerender("data-v-fad440e6", module.exports)
-  }
-}
-
-/***/ }),
-/* 436 */
+/* 427 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42754,7 +41103,7 @@ function xhrClient (request) {
 
 function nodeClient (request) {
 
-    var client = __webpack_require__(467);
+    var client = __webpack_require__(456);
 
     return new PromiseObj(function (resolve) {
 
@@ -43230,7 +41579,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 
 /***/ }),
-/* 437 */
+/* 428 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43240,7 +41589,7 @@ var content = __webpack_require__(69);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("cd8d74bc", content, false);
+var update = __webpack_require__(6)("01e5fda6", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43256,7 +41605,7 @@ if(true) {
 }
 
 /***/ }),
-/* 438 */
+/* 429 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43266,7 +41615,7 @@ var content = __webpack_require__(70);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("03c83e00", content, false);
+var update = __webpack_require__(6)("cd8d74bc", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43282,7 +41631,7 @@ if(true) {
 }
 
 /***/ }),
-/* 439 */
+/* 430 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43292,7 +41641,7 @@ var content = __webpack_require__(71);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("23fab9e4", content, false);
+var update = __webpack_require__(6)("03c83e00", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43308,7 +41657,7 @@ if(true) {
 }
 
 /***/ }),
-/* 440 */
+/* 431 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43318,7 +41667,7 @@ var content = __webpack_require__(72);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("8a27a23a", content, false);
+var update = __webpack_require__(6)("23fab9e4", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43334,7 +41683,7 @@ if(true) {
 }
 
 /***/ }),
-/* 441 */
+/* 432 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43344,7 +41693,7 @@ var content = __webpack_require__(73);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("491fac5a", content, false);
+var update = __webpack_require__(6)("8a27a23a", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43360,7 +41709,7 @@ if(true) {
 }
 
 /***/ }),
-/* 442 */
+/* 433 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43370,7 +41719,7 @@ var content = __webpack_require__(74);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("c5e4bf50", content, false);
+var update = __webpack_require__(6)("491fac5a", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43386,7 +41735,7 @@ if(true) {
 }
 
 /***/ }),
-/* 443 */
+/* 434 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43396,7 +41745,7 @@ var content = __webpack_require__(75);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("aee01428", content, false);
+var update = __webpack_require__(6)("c5e4bf50", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43412,7 +41761,7 @@ if(true) {
 }
 
 /***/ }),
-/* 444 */
+/* 435 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43422,7 +41771,7 @@ var content = __webpack_require__(76);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("8d055030", content, false);
+var update = __webpack_require__(6)("aee01428", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43438,7 +41787,7 @@ if(true) {
 }
 
 /***/ }),
-/* 445 */
+/* 436 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43448,7 +41797,7 @@ var content = __webpack_require__(77);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("4b778ed3", content, false);
+var update = __webpack_require__(6)("8d055030", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43464,7 +41813,7 @@ if(true) {
 }
 
 /***/ }),
-/* 446 */
+/* 437 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43474,7 +41823,7 @@ var content = __webpack_require__(78);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("764183fb", content, false);
+var update = __webpack_require__(6)("4b778ed3", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43490,7 +41839,7 @@ if(true) {
 }
 
 /***/ }),
-/* 447 */
+/* 438 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43500,7 +41849,7 @@ var content = __webpack_require__(79);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("b6f17072", content, false);
+var update = __webpack_require__(6)("764183fb", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43516,7 +41865,7 @@ if(true) {
 }
 
 /***/ }),
-/* 448 */
+/* 439 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43526,7 +41875,7 @@ var content = __webpack_require__(80);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("69fc4d49", content, false);
+var update = __webpack_require__(6)("b6f17072", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43542,7 +41891,7 @@ if(true) {
 }
 
 /***/ }),
-/* 449 */
+/* 440 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43552,7 +41901,7 @@ var content = __webpack_require__(81);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("3578e43c", content, false);
+var update = __webpack_require__(6)("69fc4d49", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43568,7 +41917,7 @@ if(true) {
 }
 
 /***/ }),
-/* 450 */
+/* 441 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43578,7 +41927,7 @@ var content = __webpack_require__(82);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("eec858fa", content, false);
+var update = __webpack_require__(6)("eec858fa", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43594,7 +41943,7 @@ if(true) {
 }
 
 /***/ }),
-/* 451 */
+/* 442 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43604,7 +41953,7 @@ var content = __webpack_require__(83);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("7a3cc67f", content, false);
+var update = __webpack_require__(6)("7fae09b2", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43620,7 +41969,7 @@ if(true) {
 }
 
 /***/ }),
-/* 452 */
+/* 443 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43630,7 +41979,7 @@ var content = __webpack_require__(84);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("7fae09b2", content, false);
+var update = __webpack_require__(6)("84e62cee", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43646,7 +41995,7 @@ if(true) {
 }
 
 /***/ }),
-/* 453 */
+/* 444 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43656,7 +42005,7 @@ var content = __webpack_require__(85);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("84e62cee", content, false);
+var update = __webpack_require__(6)("40ced48c", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43672,7 +42021,7 @@ if(true) {
 }
 
 /***/ }),
-/* 454 */
+/* 445 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43682,7 +42031,7 @@ var content = __webpack_require__(86);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("40ced48c", content, false);
+var update = __webpack_require__(6)("2c769c33", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43698,7 +42047,7 @@ if(true) {
 }
 
 /***/ }),
-/* 455 */
+/* 446 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43708,7 +42057,7 @@ var content = __webpack_require__(87);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("2c769c33", content, false);
+var update = __webpack_require__(6)("3afad4c8", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43724,7 +42073,7 @@ if(true) {
 }
 
 /***/ }),
-/* 456 */
+/* 447 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43734,7 +42083,7 @@ var content = __webpack_require__(88);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("3afad4c8", content, false);
+var update = __webpack_require__(6)("09d9a4de", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43750,7 +42099,7 @@ if(true) {
 }
 
 /***/ }),
-/* 457 */
+/* 448 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -43760,7 +42109,7 @@ var content = __webpack_require__(89);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("09d9a4de", content, false);
+var update = __webpack_require__(6)("a95624a2", content, false);
 // Hot Module Replacement
 if(true) {
  // When the styles change, update the <style> tags
@@ -43776,59 +42125,7 @@ if(true) {
 }
 
 /***/ }),
-/* 458 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(90);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("a95624a2", content, false);
-// Hot Module Replacement
-if(true) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept(90, function() {
-     var newContent = __webpack_require__(90);
-     if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 459 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(91);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("2cda57da", content, false);
-// Hot Module Replacement
-if(true) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept(91, function() {
-     var newContent = __webpack_require__(91);
-     if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 460 */
+/* 449 */
 /***/ (function(module, exports) {
 
 /**
@@ -43861,13 +42158,13 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 461 */
+/* 450 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function(t,e){ true?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports.vueCalendar=e():t.vueCalendar=e()}("undefined"!=typeof self?self:this,function(){return function(t){function e(a){if(n[a])return n[a].exports;var r=n[a]={i:a,l:!1,exports:{}};return t[a].call(r.exports,r,r.exports,e),r.l=!0,r.exports}var n={};return e.m=t,e.c=n,e.d=function(t,n,a){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:a})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="/",e(e.s=3)}([function(t,e){t.exports=function(t,e,n,a,r){var i,s=t=t||{},o=typeof t.default;"object"!==o&&"function"!==o||(i=t,s=t.default);var u="function"==typeof s?s.options:s;e&&(u.render=e.render,u.staticRenderFns=e.staticRenderFns),a&&(u._scopeId=a);var l;if(r?(l=function(t){t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext,t||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),n&&n.call(this,t),t&&t._registeredComponents&&t._registeredComponents.add(r)},u._ssrRegister=l):n&&(l=n),l){var c=u.functional,d=c?u.render:u.beforeCreate;c?u.render=function(t,e){return l.call(e),d(t,e)}:u.beforeCreate=d?[].concat(d,l):[l]}return{esModule:i,exports:s,options:u}}},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default={data:function(){return{translations:this.$calendar.translations}},computed:{locale:function(){return this.$calendar.locale},dayOffset:function(){return this.$calendar.firstDay},showMoreLabel:function(){return this.translations.showMore}},methods:{printDay:function(t){var e=this.$calendar.fullDayNames?"dayNameLong":"dayNameShort",n=parseInt(t+this.dayOffset)%7;return this.translations[e][n]},printMonth:function(t){var e=this.$calendar.fullMonthNames?"monthNameLong":"monthNameShort";return this.translations[e][t]}}}},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var a=function(t,e){for(var n=t.length,a=0;a<n;a++)e(t[a],a)},r=function(t){return t||(t=new Date),new Date(t.getFullYear(),t.getMonth(),1)},i=function(t){return t||(t=new Date),new Date(t.getFullYear(),t.getMonth()+1,0)},s=function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:0;e=e<0||e>6?0:e;var n=t.getDay(),a=new Date(t),r=a.getDate()-n+((0===n?-7:0)+e);return a.setDate(r),a>t?a.setDate(a.getDate()-7):a},o=function(t,e){return new Date(t.setMonth(t.getMonth()-e))},u=function(t){for(var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:1,n=[],a=(new Date).setHours(0,0,0,0),r=s(t,e),i=0;i<6;i++){for(var o=[],u=0;u<7;u++){o.push({weekDay:u,date:r,isSunday:0===u,isSaturday:6===u,isWeekend:0===u||6===u,monthDay:r.getDate(),isToday:r.getTime()===a,isCurrentMonth:r.getMonth()===t.getMonth()});var l=r.getDate()+1;r=new Date(r.getFullYear(),r.getMonth(),l,0,0,0)}n.push(o)}return n},l=function(t,e,n){var r=[];return a(e,function(e,n){var a=new Date(e.start),i=e.end?new Date(e.end):a;t.getTime()<=i.getTime()&&t.getTime()>=a.getTime()&&r.push(e)}),!!r.length&&r},c=function(t,e){return e.dates?e.dates.some(function(e){return t.toDateString()===e.toDateString()}):!!(e.to&&t<e.to)||(!!(e.from&&t>e.from)||(!(!e.days||-1===e.days.indexOf(t.getDay))||void 0))};e.default={shiftMonth:o,startOfWeek:s,dateOccursIn:c,buildCalendar:u,lastDateOfMonth:i,firstDateOfMonth:r,filterEventsForDate:l}},function(t,e,n){"use strict";(function(t){function a(t){return t&&t.__esModule?t:{default:t}}function r(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=Object.assign(o.default,e);e.languages&&l.default.addLanguage(e.languages);var a={eventBus:new t,translations:l.default.getTranslation(n.locale)};t.prototype.$calendar=Object.assign(a,n),t.component(n.componentName,d.default)}Object.defineProperty(e,"__esModule",{value:!0});var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},s=n(5),o=a(s),u=n(6),l=a(u),c=n(8),d=a(c);e.default=r,"object"===i(t)&&t.exports&&(t.exports.install=r)}).call(e,n(4)(t))},function(t,e){t.exports=function(t){return t.webpackPolyfill||(t.deprecate=function(){},t.paths=[],t.children||(t.children=[]),Object.defineProperty(t,"loaded",{enumerable:!0,get:function(){return t.l}}),Object.defineProperty(t,"id",{enumerable:!0,get:function(){return t.i}}),t.webpackPolyfill=1),t}},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default={firstDay:0,showLimit:3,locale:"en",fullDayNames:!1,fullMonthNames:!1,class:"vue-calendar",componentName:"vue-calendar"}},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var a=n(7),r=function(t){return t&&t.__esModule?t:{default:t}}(a);e.default={getTranslation:function(t){return this.languages.hasOwnProperty(t)?this.languages[t]:this.languages.en},addLanguage:function(t){var e=(0,r.default)(t);this.languages=Object.assign(this.languages,Object.keys(t).filter(function(t){return-1!==e.indexOf(t)}).reduce(function(e,n){return e[n]=t[n],e},{}))},languages:{en:{showMore:"Show more",dayNameShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],dayNameLong:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],monthNameShort:["Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sept.","Oct.","Nov.","Dec."],monthNameLong:["January","February","March","April","May","June","July","August","September","October","November","December"]},ru:{showMore:"Показать больше",dayNameShort:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],dayNameLong:["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],monthNameShort:["Янв.","Фев.","Март.","Апр.","Май","Июнь","Июль","Авг.","Сент.","Окт.","Ноя.","Дек."],monthNameLong:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]},zh:{showMore:"展示更多",dayNameShort:["日","一","二","三","四","五","六"],dayNameLong:["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],monthNameShort:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],monthNameLong:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"]}}}},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var a=function(t){return"[object Array]"===Object.prototype.toString.call(t)},r=function(t){return"[object Object]"===Object.prototype.toString.call(t)},i=function(t,e){return Object.keys(e).map(function(n){return[n,e[n](t[n])]}).reduce(function(t,e){return!e[1]&&t.push(e[0]+" is invalid"),t},[])},s={showMore:function(t){return"string"==typeof t},dayNameLong:function(t){return a(t)&&t.length>6},dayNameShort:function(t){return a(t)&&t.length>6},monthNameLong:function(t){return a(t)&&t.length>11},monthNameShort:function(t){return a(t)&&t.length>11}};e.default=function(t){return r(t)&&Object.keys(t).length?Object.keys(t).map(function(e){return[e,i(t[e],s)]}).reduce(function(t,e){return 0===e[1].length&&t.push(e[0]),t},[]):[]}},function(t,e,n){"use strict";function a(t){n(9)}Object.defineProperty(e,"__esModule",{value:!0});var r=n(10),i=n.n(r),s=n(23),o=n(0),u=a,l=o(i.a,s.a,u,null,null);e.default=l.exports},function(t,e){},function(t,e,n){"use strict";function a(t){return t&&t.__esModule?t:{default:t}}Object.defineProperty(e,"__esModule",{value:!0});var r=function(){function t(t,e){var n=[],a=!0,r=!1,i=void 0;try{for(var s,o=t[Symbol.iterator]();!(a=(s=o.next()).done)&&(n.push(s.value),!e||n.length!==e);a=!0);}catch(t){r=!0,i=t}finally{try{!a&&o.return&&o.return()}finally{if(r)throw i}}return n}return function(e,n){if(Array.isArray(e))return e;if(Symbol.iterator in Object(e))return t(e,n);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),i=n(11),s=a(i),o=n(15),u=a(o);e.default={name:"vue-calendar",props:{events:{type:Array,default:function(){return[]}},disable:{type:Object,default:function(){return{}}},highlight:{type:Object,default:function(){return{}}},height:{type:String,default:"500px"}},data:function(){return{calendarEvents:this.events,disabledDays:this.disable,highlightedDays:this.highlight,wrapperClass:this.$calendar.class}},watch:{events:function(t){this.calendarEvents=t},disable:function(t){this.disabledDays=t},highlight:function(t){this.highlightedDays=t},height:function(t){this.height=t,this.updateHeight()}},methods:{updateHeight:function(){var t=document.getElementsByClassName(this.wrapperClass),e=r(t,1),n=e[0];n&&(n.style.height=this.height)}},components:{"calendar-body":u.default,"calendar-header":s.default},mounted:function(){var t=this;this.updateHeight(),this.$calendar.eventBus.$on("show-all",function(e){return t.$emit("show-all",e)}),this.$calendar.eventBus.$on("day-clicked",function(e){return t.$emit("day-clicked",e)}),this.$calendar.eventBus.$on("event-clicked",function(e){return t.$emit("event-clicked",e)}),this.$calendar.eventBus.$on("month-changed",function(e,n){return t.$emit("month-changed",e,n)})}}},function(t,e,n){"use strict";function a(t){n(12)}Object.defineProperty(e,"__esModule",{value:!0});var r=n(13),i=n.n(r),s=n(14),o=n(0),u=a,l=o(i.a,s.a,u,null,null);e.default=l.exports},function(t,e){},function(t,e,n){"use strict";function a(t){return t&&t.__esModule?t:{default:t}}Object.defineProperty(e,"__esModule",{value:!0});var r=n(1),i=a(r),s=n(2),o=a(s);e.default={name:"calendar-header",mixins:[i.default],props:{disable:{type:Object,required:!0}},data:function(){return{monthStart:null}},computed:{year:function(){return this.monthStart.getFullYear()},month:function(){return this.printMonth(this.monthStart.getMonth())},hasDisabledPeriod:function(){return!Object.keys(this.disable).length},isPrevMonthDisabled:function(){return!(this.hasDisabledPeriod||!this.disable.hasOwnProperty("to"))&&(this.disable.to.getMonth()>=this.monthStart.getMonth()&&this.disable.to.getFullYear()>=this.monthStart.getFullYear())},isNextMonthDisabled:function(){return!(this.hasDisabledPeriod||!this.disable.hasOwnProperty("from"))&&(this.disable.from.getMonth()<=this.monthStart.getMonth()&&this.disable.from.getFullYear()<=this.monthStart.getFullYear())}},methods:{goPrev:function(){this.previousMonthDisabled||(this.monthStart=o.default.shiftMonth(this.monthStart,1))},goNext:function(){this.nextMonthDisabled||(this.monthStart=o.default.shiftMonth(this.monthStart,-1))}},watch:{monthStart:function(t){var e=o.default.lastDateOfMonth(t);this.$calendar.eventBus.$emit("month-changed",t,e)}},created:function(){this.monthStart=o.default.firstDateOfMonth()}}},function(t,e,n){"use strict";var a=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"calendar-header"},[n("div",{staticClass:"header-left"},[t._t("header-left")],2),t._v(" "),n("div",{staticClass:"header-center"},[t.isPrevMonthDisabled?t._e():n("span",{staticClass:"prev-month",on:{click:function(e){e.stopPropagation(),t.goPrev(e)}}},[t._v(" < ")]),t._v(" "),n("span",{staticClass:"title"},[t._v(" "+t._s(t.month)+" "+t._s(t.year)+" ")]),t._v(" "),t.isNextMonthDisabled?t._e():n("span",{staticClass:"next-month",on:{click:function(e){e.stopPropagation(),t.goNext(e)}}},[t._v(" > ")])]),t._v(" "),n("div",{staticClass:"header-right"},[t._t("header-right")],2)])},r=[],i={render:a,staticRenderFns:r};e.a=i},function(t,e,n){"use strict";function a(t){n(16)}Object.defineProperty(e,"__esModule",{value:!0});var r=n(17),i=n.n(r),s=n(22),o=n(0),u=a,l=o(i.a,s.a,u,null,null);e.default=l.exports},function(t,e){},function(t,e,n){"use strict";function a(t){return t&&t.__esModule?t:{default:t}}Object.defineProperty(e,"__esModule",{value:!0});var r=n(18),i=a(r),s=n(1),o=a(s),u=n(2),l=a(u);e.default={name:"calendar-body",mixins:[o.default],props:{events:{type:Array,required:!0},disable:{type:Object,required:!0},highlight:{type:Object,required:!0}},data:function(){return{monthStart:null,disabledDays:this.disable,highlightedDays:this.highlight}},computed:{firstDay:function(){return this.$calendar.firstDay},showLimit:function(){return this.$calendar.showLimit},calendar:function(){if(this.monthStart)return l.default.buildCalendar(this.monthStart,this.firstDay)}},methods:{dayClasses:function(t){var e={today:t.isToday,sunday:t.isSunday,weekend:t.isWeekend,saturday:t.isSaturday,"not-current":!t.isCurrentMonth,disabled:this.isDayDisabled(t),highlighted:this.isDayHighlighted(t)};return Object.keys(e).filter(function(t){return!0===e[t]})},dayClicked:function(t){this.$calendar.eventBus.$emit("day-clicked",t)},getEventsForDay:function(t){return l.default.filterEventsForDate(t,this.events)},isDayDisabled:function(t){return l.default.dateOccursIn(t.date,this.disabledDays)},isDayHighlighted:function(t){return l.default.dateOccursIn(t.date,this.highlightedDays)}},watch:{disable:function(t){this.disabledDays=t},highlight:function(t){this.highlightedDays=t}},components:{"events-box":i.default},mounted:function(){var t=this;this.$calendar.eventBus.$on("month-changed",function(e){return t.monthStart=e})}}},function(t,e,n){"use strict";function a(t){n(19)}Object.defineProperty(e,"__esModule",{value:!0});var r=n(20),i=n.n(r),s=n(21),o=n(0),u=a,l=o(i.a,s.a,u,null,null);e.default=l.exports},function(t,e){},function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var a=n(1),r=function(t){return t&&t.__esModule?t:{default:t}}(a);e.default={name:"events-box",mixins:[r.default],props:{events:{type:Array,required:!0}},computed:{showLimit:function(){return this.$calendar.showLimit},eventList:function(){return this.events.slice(0,this.showLimit)},more:function(){return this.events.length>this.showLimit}},methods:{eventClicked:function(t){this.$calendar.eventBus.$emit("event-clicked",t)},showAll:function(){this.$calendar.eventBus.$emit("show-all",this.events)}}}},function(t,e,n){"use strict";var a=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"events"},[t._l(t.eventList,function(e,a){return n("div",{key:a,staticClass:"event",class:e.classes,on:{click:function(n){n.stopPropagation(),t.eventClicked(e)}}},[n("div",{staticClass:"event-title"},[t._v("\n      "+t._s(e.title)+"\n    ")])])}),t._v(" "),t.more?n("span",{staticClass:"more-link",on:{click:function(e){e.stopPropagation(),t.showAll()}}},[t._v("\n    "+t._s(t.showMoreLabel)+"\n  ")]):t._e()],2)},r=[],i={render:a,staticRenderFns:r};e.a=i},function(t,e,n){"use strict";var a=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"calendar-body"},[n("div",{staticClass:"days-header"},t._l(7,function(e){return n("div",{key:e,staticClass:"day-label"},[t._v("\n      "+t._s(t.printDay(e-1))+"\n    ")])})),t._v(" "),n("div",{staticClass:"days-body"},t._l(t.calendar,function(e,a){return n("div",{key:a,staticClass:"week-row"},t._l(e,function(e,a){return n("div",{key:a,staticClass:"week-day",class:t.dayClasses(e),on:{click:function(n){n.stopPropagation(),t.dayClicked(e)}}},[n("div",{staticClass:"day-number"},[t._v("\n          "+t._s(e.monthDay)+"\n        ")]),t._v(" "),(t.dayEvents=t.getEventsForDay(e.date))?n("events-box",{attrs:{events:t.dayEvents}}):t._e()],1)}))}))])},r=[],i={render:a,staticRenderFns:r};e.a=i},function(t,e,n){"use strict";var a=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{class:t.wrapperClass},[n("calendar-header",{attrs:{disable:t.disabledDays}}),t._v(" "),n("calendar-body",{attrs:{events:t.calendarEvents,disable:t.disabledDays,highlight:t.highlightedDays}})],1)},r=[],i={render:a,staticRenderFns:r};e.a=i}])});
 
 /***/ }),
-/* 462 */
+/* 451 */
 /***/ (function(module, exports) {
 
 exports.sync = function (store, router, options) {
@@ -43948,7 +42245,7 @@ function cloneRoute (to, from) {
 
 
 /***/ }),
-/* 463 */
+/* 452 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*eslint-env browser*/
@@ -43974,7 +42271,7 @@ var styles = {
   textAlign: 'left'
 };
 
-var ansiHTML = __webpack_require__(260);
+var ansiHTML = __webpack_require__(265);
 var colors = {
   reset: ['transparent', 'transparent'],
   black: '181818',
@@ -43988,7 +42285,7 @@ var colors = {
   darkgrey: '6D7891'
 };
 
-var Entities = __webpack_require__(378).AllHtmlEntities;
+var Entities = __webpack_require__(381).AllHtmlEntities;
 var entities = new Entities();
 
 function showProblems(type, lines) {
@@ -44051,7 +42348,7 @@ module.exports.showProblems = showProblems;
 
 
 /***/ }),
-/* 464 */
+/* 453 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -44203,30 +42500,30 @@ module.exports = function(hash, moduleMap, options) {
 
 
 /***/ }),
-/* 465 */
+/* 454 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (__webpack_require__(29))(14);
 
 /***/ }),
-/* 466 */
+/* 455 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (__webpack_require__(29))(3);
 
 /***/ }),
-/* 467 */
+/* 456 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 468 */
+/* 457 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(259);
-__webpack_require__(258);
-module.exports = __webpack_require__(257);
+__webpack_require__(264);
+__webpack_require__(263);
+module.exports = __webpack_require__(262);
 
 
 /***/ })
