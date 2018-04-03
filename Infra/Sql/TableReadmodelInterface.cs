@@ -11,7 +11,7 @@ namespace Ops.Infra.Sql
     public class TableReadmodelInterface
     {
         static SqlConnection myConnection =
-            new SqlConnection("Data Source=(localdb)\\ProjectsV13;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            new SqlConnection("Data Source=esx-db;Initial Catalog=Ops;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
         static string nspace = "Ops.ReadModels";
         public static void CheckForTables()
         {
@@ -35,6 +35,7 @@ namespace Ops.Infra.Sql
                         string fullClassName = nameSpace + "." + methodName;
                         object classToInvoke = Activator.CreateInstance(Type.GetType(fullClassName));
                         string dboParams = "";
+                        string tableName = key[0].Split("Table")[0];
                         foreach (PropertyInfo propertyInfo in classToInvoke.GetType().GetProperties())
                         {
                             if (propertyInfo.Name.ToString() != "Id")
@@ -42,21 +43,23 @@ namespace Ops.Infra.Sql
                                 dboParams = dboParams + propertyInfo.Name.ToString() + " varchar(50), ";
                             }
                         }
-                        string dropCommandText = "IF EXISTS(SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[" + key[0] + "]'))"
-                           + Environment.NewLine +
-                           " Drop TABLE " + key[0];
+                        string dropCommandText = "IF EXISTS(SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[" + tableName + "]'))" +" Drop TABLE " + tableName;
                         command.CommandText = dropCommandText;
                         command.ExecuteReader();
                         myConnection.Close();
                         myConnection.Open();
-                        string commandtext = "IF NOT EXISTS(SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[" + key[0] + "]'))"
-                            + Environment.NewLine +
-                            " CREATE TABLE " + key[0] + "(" +
-                            " Id varchar(50) PRIMARY KEY, " +
-                            dboParams +
-                            ");";
+                        string commandtext = "IF NOT EXISTS(SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[" + tableName + "]'))" + " CREATE TABLE " + tableName + "(" +" Id varchar(50) PRIMARY KEY, " + dboParams + ");";
+
+                        string atest = commandtext;
+
                         command.CommandText = commandtext;
-                        var test = command.ExecuteReader();
+                        try
+                        {
+                            var test = command.ExecuteReader();
+                        } catch (Exception e)
+                        {
+
+                        }
                         myConnection.Close();
                     }
                     catch (Exception e)
@@ -69,19 +72,27 @@ namespace Ops.Infra.Sql
 
         public static void UpdateTable(ReadModelData readModelData, string table)
         {
+            table = table.Split("Table")[0];
             var l = readModelData.GetType().ToString();
             if (l.Split("Table").Length > 1 || 1 != 0)
             {
-                string commandText = "INSERT INTO " + "dbo." + table.ToLower() + "Data" + Environment.NewLine + "Values(";
+                string commandText = "INSERT INTO " + "dbo." + table.ToLower() +  Environment.NewLine + "Values(";
                 string dboParams = "'" + readModelData.Id + "', ";
                 string clearRow = "";
-                clearRow = "DELETE FROM " + table.ToLower() + "Data" + Environment.NewLine + "WHERE Id='" + readModelData.Id + "'";
+                clearRow = "DELETE FROM " + table.ToLower() + Environment.NewLine + "WHERE Id='" + readModelData.Id + "'";
                 Type typedReadmodel = readModelData.GetType();
                 foreach (PropertyInfo propertyInfo in typedReadmodel.GetProperties())
                 {
                     if (propertyInfo.Name != "Id")
                     {
                         var value = GetValues(readModelData, propertyInfo.Name);
+                        if(value != null)
+                        {
+                            if(value.ToString().Split("'").Length > 1)
+                            {
+                                value = value.ToString().Split("'")[0] + "''" + value.ToString().Split("'")[1];
+                            }
+                        }
                         dboParams = dboParams + "'" + value + "', ";
                     }
                 }
@@ -112,9 +123,10 @@ namespace Ops.Infra.Sql
         }
         private static object GetValues(ReadModelData readModelData, string name)
         {
-            return readModelData.GetType().GetProperties()
+            var returnable = readModelData.GetType().GetProperties()
                 .Single(pi => pi.Name == name)
                 .GetValue(readModelData, null);
+            return returnable;
         }
     }
 }
