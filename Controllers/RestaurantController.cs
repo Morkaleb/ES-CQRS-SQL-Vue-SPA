@@ -3,7 +3,6 @@ using System;
 using Ops.Domain;
 using Ops.Infra.CommandToPublishEvent;
 using Ops.Models.commands;
-using Ops.Models.events;
 
 namespace Ops.Controllers
 {
@@ -43,4 +42,5 @@ namespace Ops.Controllers
             }
         }
     }
+   
 }

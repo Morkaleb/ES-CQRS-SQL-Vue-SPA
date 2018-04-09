@@ -6,10 +6,10 @@
               <strong style="margin-left:18%; margin-bottom:5px;">Shift break down for the week</strong>
               <div v-for="manager in getManagerDays" v-if="manager.name != 'Cancel Shift'" >
                   <p style="margin:1% 10%">
-                      - {{manager.name}}
+                       {{manager.name}}
                       <span v-if="manager.shifts !== 5" style="color:red">has {{manager.shifts}} shifts</span>
                       <span v-if="manager.shifts === 5">has 5 shifts</span>
-                      <!--<span v-if="manager.daysToOwe !== 0"> Will be owed {{manager.daysToOwe}} shift</span>-->
+                      <span v-if="manager.daysToOwe !== 0"> Will be owed {{manager.daysToOwe}} shift</span>
                   </p>
                   <hr style="margin:1px;" />
               </div>
@@ -44,14 +44,16 @@
     import moment from 'moment'
 
     export default {
-        name: 'schedule-consequences',
+        name: 'scheduleConsequences',
         data() {
             return {
-                managerDays: [],
                 schedule: [],
-                consequences: []
+                consequences: [],
+                managerDays:[]
             }
         },
+        props: [
+        ],
         methods: {
             ...mapActions([
                 'fetchVacationHistory',
@@ -72,20 +74,28 @@
                 'getUser',
                 'getVacationHistory',
                 'getWeeklyRequirements'
-            ])
+            ]),
+            gettheManagerDays() {
+                this.$set(this.getManagerDays, 'managerDays', this.managerDays)
+            }
         },
         created() {
             var param = {
                 eow: this.eow,
-                locationId: this.$store.state.loggedInUser.locationId
+                locationId: this.$store.state.loggedInUser.locationId                
             }
-            this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
+            this.fetchWeek(param)
                 .then(() => {
-                    this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)
-                    this.fetchManagers(this.$store.state.loggedInUser.locationId)
-                        .then(() => { this.fetchWeek(param) })
-                }) 
-        }
+                    this.fetchVacationHistory(this.$store.state.loggedInUser.locationId)
+                        .then(() => {
+                            this.fetchRequiredShifts(this.$store.state.loggedInUser.locationId)
+                            this.fetchManagers(this.$store.state.loggedInUser.locationId)
+                                .then(() => {
+                                })
+                        })
+                })
+        }           
+        
      }
 </script>
 

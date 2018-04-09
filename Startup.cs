@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Ops.DBContext;
 using Ops.Infra;
 
 namespace Ops
@@ -39,10 +41,11 @@ namespace Ops
                 .AllowAnyOrigin();
             }));
 
-            //services.AddDbContext<ManagerContext>(options =>
-            //{
-
-            //});
+            services.AddDbContext<HubContext>(options =>
+            {
+                var connectionString = Configuration.GetConnectionString("HubContext");
+                options.UseSqlServer(connectionString);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

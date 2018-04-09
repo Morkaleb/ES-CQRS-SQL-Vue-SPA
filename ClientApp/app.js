@@ -8,6 +8,7 @@ import Buefy from 'buefy'
 import 'buefy/lib/buefy.css'
 
 
+
 Vue.prototype.$http = axios;
 Vue.use(Buefy)
 sync(store, router)

@@ -7,8 +7,8 @@ import moment from 'moment'
 Vue.use(Vuex)
 
 var instance = axios.create({
-    baseURL: 'http://192.168.0.37:8000/api/',
-    headers: { 'Access-Control-Allow-Origin': 'http://192.168.0.37:8001' }
+    baseURL: 'wsbis.whitespotonline.com:4443/ops/api/',
+    headers: { 'Access-Control-Allow-Origin': 'https://wsbis.whitespotonline.com:4443' }
 })
 
 let preMutatedShiftsReq = {
@@ -137,17 +137,11 @@ const mutations = {
 
 // ACTIONS
 const actions = ({
-    checkAuth: () => {
-        let token = window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1]
-        instance.get('http://192.168.0.37:8001/api/Auth/checkToken/?token=' + token)
-            .then((res) =>{
-            })
-    },
     fetchSchedule: ({ commit }, payload) => {
         let managerSchedule = []
         let theManagerDays = []
         let storeNumber = payload
-        instance.get('http://192.168.0.37:8000/api/r/CalendarPage/?LocationId=' + storeNumber)
+        instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/CalendarPage/?LocationId=' + storeNumber)
             .then((response) => {
                 let data = response.data
                 for (var day in data) {
@@ -172,7 +166,7 @@ const actions = ({
     },
     fetchShiftCodes: ({ commit }) => {
         let shiftCodes = []
-       instance.get('http://192.168.0.37:8000/api/r/ShiftStatusTable')
+       instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/ShiftStatusTable')
             .then((response) => {
                 let data = response.data
                 for (var shift in data) {
@@ -192,7 +186,7 @@ const actions = ({
     fetchChangeRequest: ({ commit }, payload) => {
         let changeRequest = {}
         let requestString = stringifyRequest(payload)
-        return instance.get('http://192.168.0.37:8000/api/r/ChangeRequestsTable' + requestString)
+        return instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/ChangeRequestsTable' + requestString)
             .then((response) => {
                 changeRequest = response.data
                 commit('setChangeRequest', changeRequest)
@@ -201,7 +195,7 @@ const actions = ({
     fetchManagers: ({ commit }, payload) => {
         var managerList = []
         let storeNumber = payload
-        instance.get('http://192.168.0.37:8000/api/r/ManagerTable/?locationId='+ storeNumber)
+        instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/ManagerTable/?locationId='+ storeNumber)
             .then((response) => {
                 let data = response.data
                 for (let person in data) {
@@ -232,23 +226,25 @@ const actions = ({
             var user = {}
             let retrievedToken = document.cookie
             var token = retrievedToken.split('=')[1]
-            return instance.get('http://192.168.0.37:8001/api/auth/checkToken/?token=' + token)
+            return instance.get('https://wsbis.whitespotonline.com:4443/signIn/api/auth/checkToken/?token=' + token)
                 .then((index) => {
                     if (index.data != -1) {
-                        return instance.get('http://192.168.0.37:8000/api/r/ManagerTable/?Id=' + index.data)
+                        return instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/ManagerTable/?Id=' + index.data)
                             .then((user) => {
                                 commit('setLoggedInUser', user.data[0])
                             })
                     }
-                    if(index.data == -1) window.location.href = 'http://192.168.0.37:8001'
+                    if (index.data == -1) window.location.href = 'https://wsbis.whitespotonline.com:4443/signIn'
                 })
         } catch (e) {
             console.log(e)
         }
     },
     fetchDailyShiftRequirements: ({ commit }, payload) => {
-        instance.get('http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?Id=' + payload)
+        instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/LocationDailyShiftRequirements/?Id=' + payload)
             .then((res) => {
+                console.log('HIT')
+                console.log(res)
                 if (res.data[0].monday) {
                     commit('setShiftRequirements', res.data[0])
                 }
@@ -256,9 +252,10 @@ const actions = ({
     },
     fetchWeek: ({ commit }, payload) => {
         let requestString = stringifyRequest(payload)
-        return instance.get('http://192.168.0.37:8000/api/r/WeeklyCalendarPage' + requestString)
+        return instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/WeeklyCalendarPage' + requestString)
             .then((response) => {
                 let data = response.data[0]
+                console.log(data)
                 let weeklist = []
                 let theseManagerDays = []
                 for (var manager in store.state.managers) {
@@ -298,6 +295,7 @@ const actions = ({
                             }
                         }
                     }
+                    console.log(theseManagerDays)
                 }
                 commit('setWeek', weeklist)
                 commit('setManagerDays', theseManagerDays)
@@ -305,45 +303,45 @@ const actions = ({
             })
     },
     fetchVacationHistory: ({ commit }, payload) => {
-        instance.get('http://192.168.0.37:8000/api/r/HistoricalVacationTable/?locationId=' + payload)
+        instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/HistoricalVacationTable/?locationId=' + payload)
             .then((res) => {
                 commit('setVacationHistory', res.data)
             })
     },
     fetchRequiredShifts: ({ commit }, payload) => {
-        instance.get("http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?id=" + payload)
+        instance.get("https://wsbis.whitespotonline.com:4443/ops/api/r/LocationDailyShiftRequirements/?id=" + payload)
             .then((res) => {
                 commit('setRequiredShifts', res.data[0])
             })
     },
     submitNewShift: ({ commit }, payload) => {
-        instance.post('http://192.168.0.37:8000/api/Schedule/set',  payload)
+        instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Schedule/set',  payload)
            .then((res) => {
             })
     },
     submitShiftChange: ({ commit }, newshift) => {
         console.log(newshift)
-       instance.post('http://192.168.0.37:8000/api/Schedule/changeDay', newshift)
+       instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Schedule/changeDay', newshift)
             .then((res) => {
             })
     },
     gmAcceptShiftChange: ({ commit }, payload) => {
-        instance.post('http://192.168.0.37:8000/api/Schedule/GMApproveChange', payload)
+        instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Schedule/GMApproveChange', payload)
             .then((res) => {
             })
     },
     payrollAcceptShiftChange: ({ commit }, payload) => {
-        instance.post('http://192.168.0.37:8000/api/Schedule/PayrollApproveChange', payload)
+        instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Schedule/PayrollApproveChange', payload)
             .then((res) => {
             })
     },
     gmRejectShiftChange: ({ commit }, payload) => {
-        instance.post('http://192.168.0.37:8000/api/Schedule/GMRejectChange', payload)
+        instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Schedule/GMRejectChange', payload)
             .then((res) => {
             })
     },
     approveSchedule: ({ commit }, payload) => {
-        instance.post('http://192.168.0.37:8000/api/Schedule/approveSchedule', payload)
+        instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Schedule/approveSchedule', payload)
             .then((res) => {
             })
     },
@@ -381,10 +379,12 @@ const actions = ({
         state.preSubmittedShiftsReq.Sunday.forEach((shift) => {
             submittal.Sunday.push(shift.shiftCode)
         })
-        instance.post('http://192.168.0.37:8000/api/Restaurant/shiftrequirements', submittal)
-                .then((res) => {
+        console.log(submittal)
+        instance.post('https://wsbis.whitespotonline.com:4443/ops/api/Restaurant/shiftrequirements', submittal)
+            .then((res) => {
+                    console.log(res)
                     setTimeout(() => {
-                        instance.get('http://192.168.0.37:8000/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId)
+                        instance.get('https://wsbis.whitespotonline.com:4443/ops/api/r/LocationDailyShiftRequirements/?locationId=' + state.loggedInUser.locationId)
                         .then((response) => {
                         })
                     }, 300)
@@ -513,7 +513,7 @@ const actions = ({
         startstring = moment(startstring, "MMM-DD-YYYY").format("MM-DD-YYYY")
         endstring = moment(endstring, "MMM-DD-YYYY").format("MM-DD-YYYY")
         let quesryString = "?LocationId=" + payload.locationId + "&StartDate=" + startstring + "&EndDate=" + endstring;
-        window.location.href ='http://192.168.0.37:8000/api/Schedule/download' + quesryString
+        window.location.href ='https://wsbis.whitespotonline.com:4443/ops/api/Schedule/download' + quesryString
     }
 })
 

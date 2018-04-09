@@ -1,7 +1,7 @@
 <template>
     <div class="container" style="margin-top: 30%">
         Please select the Management page that you require
-        <button class="btn-default"><router-link to="/dailyShiftRequirements">Daily shift requirements</router-link></button>
+        <button class="btn-default"><router-link to="/ops/dailyShiftRequirements">Daily shift requirements</router-link></button>
         <button class="btn-default"><router-link :to=this.week>check/approve next week schedule</router-link></button>
     </div>
 </template>
@@ -32,7 +32,7 @@
         },
         created() {
             this.loggedInUser = this.$store.state.loggedInUser
-            this.week = "/approveSchedule/?eow=" + this.getEow();
+            this.week = "/ops/approveSchedule/?eow=" + this.getEow();
         }
     }
 </script>

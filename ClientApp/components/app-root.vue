@@ -5,7 +5,12 @@
                 <div class="navbar-brand">
                     <a class="navbar-item">
                         <img src="../Assets/Logo_Green_lq.jpg" style="width:100px; height:140px;">
-                        <img src="../Assets/logo2_lq.png" style="width:100px; height:140px;"/>
+                        <img src="../Assets/logo2_lq.png" style="width:100px; height:140px;" />
+                        <div class="navbar-burger" @click="makeBurger" style="color:white;" data-target="navMenu"  v-bind:class="{ 'is-active': activator }">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
                     </a>
                 </div>
                 <div class="navbar-menu">
@@ -16,7 +21,7 @@
                             </a>
                             <div class="navbar-dropdown">
                                 <a class="navbar-item" v-for="link in SupplyHub" :href=link.link>
-                                  {{link.title}}
+                                    {{link.title}}
                                 </a>
                             </div>
                         </div>
@@ -25,8 +30,8 @@
                                 Menu Hub
                             </a>
                             <div class="navbar-dropdown">
-                                <a class="navbar-item" v-for="link in MenuHub":href=link.link>
-                                   {{link.title}}
+                                <a class="navbar-item" v-for="link in MenuHub" :href=link.link>
+                                    {{link.title}}
                                 </a>
                             </div>
                         </div>
@@ -35,13 +40,13 @@
                                 Ops Hub
                             </a>
                             <div class="navbar-dropdown">
-                                <a class="navbar-item" v-for="link in OpsHub" :href=link.link>
-                                    {{link.title}}
+                                <a class="navbar-item" v-for="link in OpsHub">
+                                    <router-link :to="{ path: link.link}">{{link.title}}</router-link>
                                 </a>
                             </div>
                         </div>
                         <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link" >
+                            <a class="navbar-link">
                                 Finance Hub
                             </a>
                             <div class="navbar-dropdown">
@@ -61,7 +66,7 @@
                             </div>
                         </div>
                         <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link" >
+                            <a class="navbar-link">
                                 Inventory Hub
                             </a>
                             <div class="navbar-dropdown">
@@ -73,10 +78,9 @@
                         <div class="navbar-dropdown is-boxed">
                         </div>
                     </div>
-
+                    
                     <div class="navbar-end">
-                        <span style="color:white; margin-top:33%;"> hello,  {{ getUser.firstName }} {{getUser.lastName}} </span>
-                        <button class="btn btn-default" style="color:white; border-color:#015351; background-color: #015351; font-size:xx-small;" v-on:click="logout"> Sign Out</button>
+                        <button class="btn btn-default" style="color:white; border-color:#015351; background-color: #015351; font-size:xx-small;" v-on:click="logout"> Sign Out {{ getUser.firstName }} {{getUser.lastName}} </button>
                         <img src="../Assets/SmallLogo.png" style="width: 100px; height: 60px; padding: .6em 1em .6em 1em" alt="hub_logo" />
                     </div>
                 </div>
@@ -96,10 +100,10 @@
     import HomePage from './home-page'
     import NavMenu from './nav-menu'
     import MonthlyCalendar from './Calendar/MonthlyCalendar'
-    import calendar from 'vue2-simple-calendar'
+    import calendar from 'vue-fullcalendar'
     import dropdown from './layout/dropdown'
     import shift from './Calendar/TheShift'
-    import oneday from './Calendar/OneDay'
+    import day from './Calendar/OneDay'
     import scheduleConsequences from './Calendar/ScheduleConsequences'
     import shiftModal from './Calendar/ShiftModal'
     import weeklyCalendar from './Calendar/WeeklyCalendar'
@@ -122,7 +126,7 @@
     Vue.component('monthly-calendar', MonthlyCalendar);
     Vue.component('dropdown', dropdown);
     Vue.component('shift', shift);
-    Vue.component('oneday', oneday);
+    Vue.component('day', day);
     Vue.component('scheduleConsequences', scheduleConsequences);
     Vue.component('shiftModal', shiftModal);
     Vue.component('dailyShiftRequirements', dailyShiftRequirements);
@@ -135,6 +139,7 @@
     Vue.component('gMApproveSchedule', gMApproveSchedule);
     Vue.component('PayRollApproval', PayRollApproval);
     Vue.component('ReviewScheduleChange', ReviewScheduleChange);
+    Vue.component('weeklyCalendar', weeklyCalendar);
     Vue.component('calendar', calendar);
     
     Vue.use(Vuex)
@@ -143,7 +148,8 @@
         data() {
             return {
                 routes,
-                collapsed: true,
+                collapsed: true, msg: '',
+                activator: false,
                 SupplyHub: [
                     { title: 'Home (NEW)', link: "" },
                     { title: 'Products', link: "" },
@@ -164,8 +170,8 @@
                     { title: 'OOO Grid', link: "" },
                     { title: 'OOO Pivot Data', link: "" },
                     { title: 'Mgmt Change', link: "" },
-                    { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/" },
-                    { title: "Gm Page", link: "http://192.168.0.37:8000/GmPage" }
+                    { title: 'Mgmt Scheduling', link: "/ops/schedule" },
+                    { title: "Gm Page", link: "/ops/GmPage" }
 
                 ],
                 FinanceHub: [
@@ -190,9 +196,13 @@
             ...mapActions([
                 'fetchLoggedInUser'
             ]),
+            makeBurger() {
+                this.activator = !this.activator
+                return this.activator
+            },
             logout() {
                 document.cookie = ""
-                window.location.href = 'http://192.168.0.37:8001'
+                window.location.href = 'https://wsbis.whitespotonline.com:4443/signIn'
             }
         },
         created() {

@@ -19,8 +19,7 @@ namespace Ops.Domain
 
         private Events[] _SetDailyShiftRequirements(SetDailyShiftTypeRequirements cmd)
         {
-            if (string.IsNullOrEmpty(_Id)) throw new Exception("Restaurant not found");
-            if (string.IsNullOrEmpty(cmd.Id)) throw new Exception("Restaurant Location required");
+            if (string.IsNullOrEmpty(cmd.Id)) throw new Exception("Restaurant not Found");
             DailyShiftTypeRequirementsSet shiftRequirements = new DailyShiftTypeRequirementsSet
             {
                 Id = cmd.Id,

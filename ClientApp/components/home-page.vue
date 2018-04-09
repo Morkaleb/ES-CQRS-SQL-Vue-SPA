@@ -1,6 +1,6 @@
 <template>
     <div>
-        Welcome {{getUser.managerName}}
+        Welcome {{getUser.firstName}} {{getUser.LastName}}
     </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
             ])
         },
         created() {
-           // this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
+            this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
         }    
 }
 </script>

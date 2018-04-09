@@ -12,6 +12,8 @@
                         <option v-for="manager in getManagers">{{ manager.Name }}</option>
                     </select>
                 </div>
+                <span v-if="selectedManager =='Manager In Charge'">If Manager in Charge</span>
+                <input v-if="selectedManager =='Manager In Charge'" v-model="managerInCharge" placeholder="Manager in Charge name" />
                 <div>
                     <span>Shift</span>
                     <select id='ShiftCode'
@@ -52,9 +54,9 @@
                 <button @click="closeModal()">Close</button>
             </div>
         </shift-modal>
-        <div style="vertical-align:middle; margin-bottom:5px;">
-            <button><a :href=this.lastWeekString><</a></button>
-            <button><a :href=this.nextweekString>></a></button>
+        <div style="vertical-align:middle; margin-bottom:5px; margin-right:45%">
+            <button><a :href=this.lastWeekString>last week</a></button>
+            <button><a :href=this.nextweekString>next week</a></button>
         </div>
         <div class="container-fluid weekly">
             <day class="dayBox" :Day="this.monday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
@@ -74,7 +76,7 @@
   import Toasted from 'vue-toasted';
 
   export default {
-        name: 'weekly-calendar',
+        name: 'weeklyCalendar',
         props: [
             'monday',
             'tuesday',
@@ -94,7 +96,7 @@
         ]),
         nextWeek() {
             let eowString = moment(this.eow, "MM-DD-YYYY").add(7, 'day').format('MM-DD-YYYY')
-           return eowString
+            return eowString
         },
         lastWeek() {
             let eowString = moment(this.eow, "MM-DD-YYYY").subtract(7, 'day').format('MM-DD-YYYY')
@@ -190,7 +192,8 @@
             dayToChange: "",
             shiftCode: "",
             reasonForChange: "",
-            managerFromId:""
+            managerFromId: "",
+            managerInCharge:""
         }
     },
     computed: {
@@ -202,15 +205,15 @@
       ])
     },
     created() {
-        this.nextweekString = "/approveSchedule/?eow=" + this.nextWeek()
-        this.lastWeekString = "/approveSchedule/?eow=" + this.lastWeek()
+        this.nextweekString = "/ops/approveSchedule/?eow=" + this.nextWeek()
+        this.lastWeekString = "/ops/approveSchedule/?eow=" + this.lastWeek()
     }
   }
 </script>
 
 <style scoped>
     @media(min-width:1400px) {
-        .dayBox {
+        .day {
             width: 13%;
             background: white;
             float: left;
@@ -235,17 +238,18 @@
             width: 80%;
         }
     }
-    @media(m-width:801px) {
-        .dayBox {
-            width: 40%;
-            background: white;
-            float: left;
-            margin: 0px 8px 8px;
-            box-shadow: 10px 10px 5px #999999;
-            border: 1px solid black;
-            border-radius: 5px;
-            overflow: auto;
+    @media only screen and (max-width: 1399px) and (min-width: 801px) {
+        .day {
+            width: 40% !important;
+            background: white !important;
+            float: left !important;
+            margin: 0px 8px 8px !important;
+            height: 55vh !important;
+            box-shadow: 10px 10px 5px #999999 !important;
+            border: 1px solid black !important;
+            border-radius: 5px !important;
         }
+
         .consequences {
             background: white;
             vertical-align: central;
@@ -262,15 +266,15 @@
         }
     }
     @media(max-width:800px) {
-        .dayBox {
+        .day {
             width: 80%;
             background: white;
             float: left;
-            margin: 0px 8px 8px;            
-            box-shadow: 10px 10px 5px #999999;
-            border: 1px solid black;
-            border-radius: 5px;
-            overflow:auto;
+            margin: 0px 8px 8px !important;
+            box-shadow: 10px 10px 5px #999999 !important;
+            border: 1px solid black !important;
+            border-radius: 5px !important;
+            overflow: auto !important;
         }
         .consequences {
             background: white;

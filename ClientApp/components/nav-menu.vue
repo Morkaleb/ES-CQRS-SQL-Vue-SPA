@@ -64,8 +64,8 @@
                     { title: 'OOO Grid', link: "" },
                     { title: 'OOO Pivot Data', link: "" },
                     { title: 'Mgmt Change', link: "" },
-                    { title: 'Mgmt Scheduling', link: "http://192.168.0.37:8000/schedule/"},
-                    {title: "Gm Page", link: "http://192.168.0.37:8000/GmPage"}
+                    { title: 'Mgmt Scheduling', link: "https://wsbis.whitespotonline.com:4443/ops/schedule/"},
+                    {title: "Gm Page", link: "https://wsbis.whitespotonline.com:4443/ops/GmPage"}
 
                 ],
                 FinanceHub: [
