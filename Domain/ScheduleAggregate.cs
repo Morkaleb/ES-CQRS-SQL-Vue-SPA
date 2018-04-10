@@ -433,7 +433,7 @@ namespace Ops.Domain
             string body = managerToName + " from location " +
                 locationId + " has requested that their shift on " + date + "  "
                 + "Be changed with " + managerFromName + "<br/> The reason that they gave was: '" +
-                reason + ".'<br/> " + "Please click  <a href='http://192.168.0.37:8080/" + page + "/?Id=" + requestId + "'>here</a> to check.";
+                reason + ".'<br/> " + "Please click  <a href='https://wsbis.whitespotonline.com:4443/ops" + page + "/?Id=" + requestId + "'>here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
 
@@ -451,7 +451,7 @@ namespace Ops.Domain
             string receiver = theReceiver;
             string subject = "Schedule for the week ending on " + eow;
             string body = "The weekly schedule ending on " + eow + " at restaurant " +
-                locationId + " has been set.</br>" + "Please click  <a href=http://192.168.0.37:8080/#/schedule >here</a> to check.";
+                locationId + " has been set.</br>" + "Please click  <a href=https://wsbis.whitespotonline.com:4443/ops/schedule >here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
     }

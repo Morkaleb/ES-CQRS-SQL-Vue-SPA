@@ -205,8 +205,8 @@
       ])
     },
     created() {
-        this.nextweekString = "/ops/approveSchedule/?eow=" + this.nextWeek()
-        this.lastWeekString = "/ops/approveSchedule/?eow=" + this.lastWeek()
+        this.nextweekString = "/ops/weeklySchedule/?eow=" + this.nextWeek()
+        this.lastWeekString = "/ops/weeklySchedule/?eow=" + this.lastWeek()
     }
   }
 </script>

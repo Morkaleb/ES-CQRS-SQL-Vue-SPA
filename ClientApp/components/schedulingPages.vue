@@ -1,6 +1,6 @@
 <template>
     <div class="cellholder container">
-        <div class="pageChoice" @click="$router.push('weeklySchedule')">
+        <div class="pageChoice" @click="$router.push('weeklySchedule/?eow=' + getEow())">
             <strong>Weekly Schedule</strong>
             <hr />
             <p v-if="getUser.role == 3">View or approved this week's schedule</p>
@@ -36,13 +36,19 @@
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
+    import moment from 'moment'
 
     export default {
         name: "schedulingPages",
         methods: {
             ...mapActions([
                 'fetchLoggedInUser'
-            ])
+            ]),
+            getEow() {
+                let daysuntileow = 7 - moment().format('d');
+                let eowstring = moment().add(daysuntileow, 'day').format('MM-DD-YYYY')
+                return eowstring
+            },
         },
         computed: {
             ...mapGetters([

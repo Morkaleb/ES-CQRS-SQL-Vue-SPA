@@ -21,7 +21,8 @@ namespace Ops
            WebHost.CreateDefaultBuilder(args)
                .UseStartup<Startup>()
                .UseKestrel()
-               .UseUrls("http://*:8000", "http://192.168.0.37:8000")
+               .UseIISIntegration()
+               .UseUrls("http://*:8000", "")
                .Build();
     }
 }

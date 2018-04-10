@@ -6,7 +6,7 @@
                     <a class="navbar-item">
                         <img src="../Assets/Logo_Green_lq.jpg" style="width:100px; height:140px;">
                         <img src="../Assets/logo2_lq.png" style="width:100px; height:140px;" />
-                        <div class="navbar-burger" @click="makeBurger" style="color:white;" data-target="navMenu"  v-bind:class="{ 'is-active': activator }">
+                        <div class="navbar-burger" @click="showNav = !showNav" style="color:white;" data-target="navMenu"  v-bind:class="{ 'is-active': activator }">
                             <span></span>
                             <span></span>
                             <span></span>
@@ -203,7 +203,7 @@
             },
             logout() {
                 document.cookie = ""
-                window.location.href = 'http://192.168.0.37:8001'
+                window.location.href = 'https://wsbis.whitespotonline.com:4443/signIn'
             }
         },
         created() {

@@ -41,11 +41,11 @@ namespace Ops
                 .AllowAnyOrigin();
             }));
 
-            services.AddDbContext<HubContext>(options =>
-            {
-                var connectionString = Configuration.GetConnectionString("HubContext");
-                options.UseSqlServer(connectionString);
-            });
+            //services.AddDbContext<HubContext>(options =>
+            //{
+            //    var connectionString = Configuration.GetConnectionString("HubContext");
+            //    options.UseSqlServer(connectionString);
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
