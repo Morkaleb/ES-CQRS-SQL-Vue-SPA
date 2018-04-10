@@ -98,7 +98,7 @@
     import Vuex from 'vuex'
 
     import HomePage from './home-page'
-    import NavMenu from './nav-menu'
+    //import NavMenu from './nav-menu'
     import MonthlyCalendar from './Calendar/MonthlyCalendar'
     import calendar from 'vue-fullcalendar'
     import dropdown from './layout/dropdown'
@@ -117,12 +117,13 @@
     import gMApproveSchedule from './Scheduling/GMApproveSchedule'
     import PayRollApproval from './Scheduling/PayrollApproval'
     import ReviewScheduleChange from './Scheduling/ReviewScheduleChange'
+    import schedulingPages from './schedulingPages'
 
     import { mapGetters, mapActions } from 'vuex'
     
 
     Vue.component('home-page', HomePage);
-    Vue.component('nav-menu', NavMenu);
+   // Vue.component('nav-menu', NavMenu);
     Vue.component('monthly-calendar', MonthlyCalendar);
     Vue.component('dropdown', dropdown);
     Vue.component('shift', shift);
@@ -141,6 +142,7 @@
     Vue.component('ReviewScheduleChange', ReviewScheduleChange);
     Vue.component('weeklyCalendar', weeklyCalendar);
     Vue.component('calendar', calendar);
+    Vue.component('schedulingPages', schedulingPages);
     
     Vue.use(Vuex)
 
@@ -170,8 +172,7 @@
                     { title: 'OOO Grid', link: "" },
                     { title: 'OOO Pivot Data', link: "" },
                     { title: 'Mgmt Change', link: "" },
-                    { title: 'Mgmt Scheduling', link: "/ops/schedule" },
-                    { title: "Gm Page", link: "/ops/GmPage" }
+                    { title: 'Mgmt Scheduling', link: "/ops/schedule" }
 
                 ],
                 FinanceHub: [
@@ -202,7 +203,7 @@
             },
             logout() {
                 document.cookie = ""
-                window.location.href = 'https://wsbis.whitespotonline.com:4443/signIn'
+                window.location.href = 'http://192.168.0.37:8001'
             }
         },
         created() {
@@ -212,6 +213,9 @@
 </script>
 
 <style>
+    body {
+        background-color: #e9eaed !important;
+    }
     .main {
         margin: 0 0 0 0;
         padding:0;

@@ -21,7 +21,7 @@ namespace Ops
            WebHost.CreateDefaultBuilder(args)
                .UseStartup<Startup>()
                .UseKestrel()
-               .UseUrls("http://*:8000", "https://wsbis.whitespotonline.com:4443/ops")
+               .UseUrls("http://*:8000", "http://192.168.0.37:8000")
                .Build();
     }
 }

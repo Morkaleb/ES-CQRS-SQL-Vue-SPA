@@ -9,8 +9,7 @@
 export default {
         data() {
             return {
-                user: {},
-                chui:""
+                user: {}
             }
         },
         methods: {
@@ -24,7 +23,7 @@ export default {
             ])
         },
         created() {
-            this.fetchLoggedInUser(window.localStorage.getItem("Auth-Token").split(':')[1].split('"')[1])
+            this.fetchLoggedInUser()
         }    
 }
 </script>
