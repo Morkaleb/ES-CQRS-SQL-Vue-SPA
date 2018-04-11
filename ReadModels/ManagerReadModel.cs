@@ -43,6 +43,16 @@ namespace Ops.ReadModels
                     }
                     break;
 
+                case "ManagerRoleChanged":
+                    index = GetIndex(readmodelCollection["ManagerTable"], (string)anEvent.Data["ManagerId"]);
+                    if(index != -1)
+                    {
+                        ManagerTableData manager = (ManagerTableData)readmodelCollection["ManagerTable"][index];
+                        manager.Role = 3;
+                        return manager;
+                    }
+                    break;
+
                 case "ManagerWorkedAHoliday":
                     index = GetIndex(readmodelCollection["ManagerTable"], anEvent.Data["ManagerId"]);
                     if (index != -1)

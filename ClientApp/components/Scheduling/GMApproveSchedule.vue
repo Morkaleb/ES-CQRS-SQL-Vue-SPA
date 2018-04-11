@@ -127,7 +127,7 @@
             sunday: {},
         }
     },
-    async created () {
+    async created() {
          this.fetchLoggedInUser()
             .then(() => {
                 var param = {

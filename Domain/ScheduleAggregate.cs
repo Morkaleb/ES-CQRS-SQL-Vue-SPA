@@ -7,6 +7,7 @@ using Ops.Infra.CommandToPublishEvent;
 using Ops.Infra.EventStore;
 using Ops.Models.commands;
 using Ops.Models.events;
+using Ops.Models.Events;
 using Ops.ReadModels;
 
 namespace Ops.Domain
@@ -112,10 +113,38 @@ namespace Ops.Domain
 
         private Events[] _RequestChangeManagerSchedule(RequestChangeManagerSchedule cmd)
         {
+            if (string.IsNullOrEmpty(_Id)) { throw new Exception("Location and End of week error"); }
+            if (string.IsNullOrEmpty(cmd.Reason)) { throw new Exception("Reason is a required field"); }
+            if (string.IsNullOrEmpty(cmd.EOW)) { throw new Exception("End Of Week date is a required field"); }
+            if (string.IsNullOrEmpty(cmd.ShiftDate)) { throw new Exception("Shift Date is a required field"); }
+            if (string.IsNullOrEmpty(cmd.ShiftCode)) { throw new Exception("Shift Code is a required field"); }
+            if (string.IsNullOrEmpty(cmd.RequestId)) { throw new Exception("Request Id is a required field"); }
+            if (string.IsNullOrEmpty(cmd.LocationId)) { throw new Exception("Location Id is a required field"); }
+            if (string.IsNullOrEmpty(cmd.ManagerToName)) { throw new Exception("Manager To is a required field"); }
+            if (string.IsNullOrEmpty(cmd.ManagerFromName)) { throw new Exception("Managerfrom is a required field"); }
+
             var managerToIndex = _managerDays.FindIndex(m => m.ManagerId == cmd.ManagerId);
+            var managerFromIndex = _managerDays.FindIndex(m => m.ManagerId == cmd.ManagerFromId);
+            var managerfromShiftIndex = _managerDays[managerFromIndex].HydratedShifts.FindIndex(hs => hs.ShiftId.Split("(O").Length > 1);
+            string shiftDate = "";
+            string shiftcode = "";
+            if(managerfromShiftIndex != -1)
+            {
+                shiftDate = _managerDays[managerFromIndex].HydratedShifts[managerfromShiftIndex].ShiftDate;
+                shiftcode = _managerDays[managerFromIndex].HydratedShifts[managerfromShiftIndex].ShiftId;
+            };
+            ShiftOwedStatusChanged statusChanged = new ShiftOwedStatusChanged {
+                StreamId = "ScheduleAggregate." + cmd.LocationId + "." + cmd.EOW,
+                EOW = cmd.EOW,
+                LocationId = cmd.LocationId,
+                ManagerId = cmd.ManagerFromId,
+                ShiftDate = shiftDate,
+                ShiftCode = shiftcode
+            };
+           
             if(managerToIndex != -1 && cmd.ManagerId != "Cancel Shift")
             {
-                if(_managerDays[managerToIndex].Shifts < 5)
+                if(_managerDays[managerToIndex].ShiftsCodes < 5)
                 {
                     var code = cmd.ShiftCode.Split('(');
                     string shiftCode = code[0].Trim();
@@ -130,7 +159,7 @@ namespace Ops.Domain
                 _managerDays.Add(new ManagerDays
                 {
                     ManagerId = cmd.ManagerId,
-                    Shifts = 1
+                    ShiftsCodes = 1
                 });
             }
             if(cmd.RequestingManagerRole == "3")
@@ -148,7 +177,14 @@ namespace Ops.Domain
                     ManagerToName = cmd.ManagerToName,
                     ManagerFromId = cmd.ManagerFromId
                 };
-                return new Events[] { change };
+                if (_managerDays[managerFromIndex].ShiftsCodes > 5)
+                {
+                    return new Events[] { statusChanged, change };
+                }
+                else
+                {
+                    return new Events[] { change };
+                }
             }
             if (cmd.Id == "Cancel Shift")
             {
@@ -169,17 +205,16 @@ namespace Ops.Domain
                         cmd.ShiftDate, cmd.ManagerEmailAddress, cmd.GMEmailAddress, cmd.Reason, cmd.RequestId, "approveChange");
                 }
                 else cancelled.Pending = false;
-                return new Events[] { cancelled };
+                if (_managerDays[managerFromIndex].ShiftsCodes > 5)
+                {
+                    return new Events[] { statusChanged, cancelled };
+                }
+                else
+                {
+                    return new Events[] { cancelled };
+                }
             }
-            if (string.IsNullOrEmpty(_Id)) { throw new Exception("Location and End of week error"); }
-            if (string.IsNullOrEmpty(cmd.Reason)) { throw new Exception("Reason is a required field"); }
-            if (string.IsNullOrEmpty(cmd.EOW)) { throw new Exception("End Of Week date is a required field"); }
-            if (string.IsNullOrEmpty(cmd.ShiftDate)) { throw new Exception("Shift Date is a required field"); }
-            if (string.IsNullOrEmpty(cmd.ShiftCode)) { throw new Exception("Shift Code is a required field"); }
-            if (string.IsNullOrEmpty(cmd.RequestId)) { throw new Exception("Request Id is a required field"); }
-            if (string.IsNullOrEmpty(cmd.LocationId)) { throw new Exception("Location Id is a required field"); }
-            if (string.IsNullOrEmpty(cmd.ManagerToName)) { throw new Exception("Manager To is a required field"); }
-            if (string.IsNullOrEmpty(cmd.ManagerFromName)) { throw new Exception("Managerfrom is a required field"); }
+           
             if (_approved == true)
             {
                 ManagerDayScheduleChangeRequested request = new ManagerDayScheduleChangeRequested
@@ -202,7 +237,14 @@ namespace Ops.Domain
                 SendSchedulingEmail.EmailBuilder(cmd.ManagerToName, cmd.ManagerFromName, cmd.LocationId,
                     cmd.ShiftDate, cmd.ManagerEmailAddress, cmd.GMEmailAddress, cmd.Reason, cmd.RequestId, "approveChange");
                 request.Pending = true;
-                return new Events[] { request };
+                if (_managerDays[managerFromIndex].ShiftsCodes > 5)
+                {
+                    return new Events[] { statusChanged, request };
+                }
+                else
+                {
+                    return new Events[] { request };
+                }
             }
             else
             {
@@ -219,7 +261,14 @@ namespace Ops.Domain
                     ManagerToName = cmd.ManagerToName,
                     ManagerFromId = cmd.ManagerFromId
                 };
-                return new Events[] { change };
+                if (_managerDays[managerFromIndex].ShiftsCodes > 5)
+                {
+                    return new Events[] { statusChanged, change };
+                }
+                else
+                {
+                    return new Events[] { change };
+                }
             }
         }
 
@@ -233,7 +282,7 @@ namespace Ops.Domain
             var index = _managerDays.FindIndex(m => m.ManagerId == cmd.ManagerId);
             if(index != -1)
             {
-                if(_managerDays[index].Shifts > 4)
+                if(_managerDays[index].ShiftsCodes > 4)
                 {
                     shiftCode = shiftCode + " (Owed)";
                     shiftStatus = "3";
@@ -282,9 +331,9 @@ namespace Ops.Domain
             };
             foreach (ManagerDays manager in _managerDays)
             {
-                if(manager.Shifts < 5)
+                if(manager.ShiftsCodes < 5)
                 {
-                    for(int i = manager.Shifts; i <= 5; i++)
+                    for(int i = manager.ShiftsCodes; i <= 5; i++)
                     {
                         ManagerDayScheduleSet scheduleSet = new ManagerDayScheduleSet
                         {
@@ -295,12 +344,12 @@ namespace Ops.Domain
                             Day = DateGetter(cmd.EOW, manager.ShiftDates),
                             ShiftStatus = "2"
                         };
-                        manager.Shifts++;
+                        manager.ShiftsCodes++;
                         manager.ShiftDates.Add(scheduleSet.Day);
                         events.Add(scheduleSet);
                     }
                 }
-                if(manager.Shifts == 5)
+                if(manager.ShiftsCodes == 5)
                 {
                     ManagerDayScheduleSet scheduleSet1 = new ManagerDayScheduleSet
                     {
@@ -321,10 +370,10 @@ namespace Ops.Domain
                         Day = DateGetter(cmd.EOW, manager.ShiftDates),
                         ShiftStatus = "2"
                     };
-                    manager.Shifts++;
+                    manager.ShiftsCodes++;
                     manager.ShiftDates.Add(scheduleSet1.Day);
 
-                    manager.Shifts++;
+                    manager.ShiftsCodes++;
                     manager.ShiftDates.Add(scheduleSet2.Day);
                     events.Add(scheduleSet2);
                 }
@@ -368,19 +417,33 @@ namespace Ops.Domain
             var fromId = evt.Data["ManagerFromId"].ToString();
             var toId = evt.Data["ManagerId"].ToString();
             var managerfrom = _managerDays.Find(m => m.ManagerId == fromId);
-            managerfrom.Shifts--;
+            managerfrom.ShiftsCodes--;
             int managerToIndex = _managerDays.FindIndex(m => m.ManagerId == toId);
             if(managerToIndex == -1)
             {
-                _managerDays.Add(new ManagerDays
+                ManagerDays managerDay = new ManagerDays
                 {
                     ManagerId = evt.Data["ManagerId"],
-                    Shifts = 1
+                    ShiftsCodes = 1,
+                    HydratedShifts = new List<DailyShift>(),
+                };
+                managerDay.HydratedShifts.Add(new DailyShift
+                {
+                    ShiftId = evt.Data["ShiftCode"],
+                    ShiftDate = evt.Data["ShiftDate"],
+                    EndOfWeek = evt.Data["EOW"]
                 });
+                _managerDays.Add(managerDay);
             }
             else
             {
-                _managerDays[managerToIndex].Shifts++;
+                _managerDays[managerToIndex].ShiftsCodes++;
+                _managerDays[managerToIndex].HydratedShifts.Add(new DailyShift
+                {
+                    ShiftId = evt.Data["ShiftCode"],
+                    ShiftDate = evt.Data["ShiftDate"],
+                    EndOfWeek = evt.Data["EOW"]
+                });
             }
         }
 
@@ -401,20 +464,37 @@ namespace Ops.Domain
                 var index = _managerDays.FindIndex(m => m.ManagerId == managerId);
                 if (index != -1)
                 {
-                    _managerDays[index].Shifts++;
+                    _managerDays[index].ShiftsCodes++;
                     _managerDays[index].ShiftDates.Add(shiftDate);
+                    DailyShift dailyShift = new DailyShift {
+                        ShiftId = evt.Data["ShiftCode"],
+                    };
+                    dailyShift.ShiftId = evt.Data["ShiftCode"];
+                    _managerDays[index].HydratedShifts.Add(new DailyShift
+                    {
+                        ShiftId = evt.Data["ShiftCode"],
+                        ShiftDate = evt.Data["Day"],
+                        EndOfWeek = evt.Data["EOW"]
+                    });
                 }
                 else
                 {
                     _managerDays.Add(new ManagerDays
                     {
                         ManagerId = evt.Data["ManagerId"],
-                        Shifts = 1,
+                        ShiftsCodes = 1,
                         ShiftDates = new List<string>(),
+                        HydratedShifts = new List<DailyShift>(),                    
                         LocationId = evt.Data["LocationId"]
                     });
                     index = _managerDays.FindIndex(m => m.ManagerId == managerId);
                     _managerDays[index].ShiftDates.Add(shiftDate);
+                    _managerDays[index].HydratedShifts.Add(new DailyShift
+                    {
+                        ShiftId = evt.Data["ShiftCode"],
+                        ShiftDate = evt.Data["ShiftDate"],
+                        EndOfWeek = evt.Data["EOW"]
+                    });
                 }
             }
 
@@ -433,7 +513,7 @@ namespace Ops.Domain
             string body = managerToName + " from location " +
                 locationId + " has requested that their shift on " + date + "  "
                 + "Be changed with " + managerFromName + "<br/> The reason that they gave was: '" +
-                reason + ".'<br/> " + "Please click  <a href='https://wsbis.whitespotonline.com:4443/ops" + page + "/?Id=" + requestId + "'>here</a> to check.";
+                reason + ".'<br/> " + "Please click  <a href='192.167.0.37:8000" + page + "/?Id=" + requestId + "'>here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
 
@@ -451,23 +531,24 @@ namespace Ops.Domain
             string receiver = theReceiver;
             string subject = "Schedule for the week ending on " + eow;
             string body = "The weekly schedule ending on " + eow + " at restaurant " +
-                locationId + " has been set.</br>" + "Please click  <a href=https://wsbis.whitespotonline.com:4443/ops/schedule >here</a> to check.";
+                locationId + " has been set.</br>" + "Please click  <a href=192.167.0.37:8000/schedule >here</a> to check.";
             Emailer.Email(sender, receiver, subject, body);
         }
     }
 
-    class DailyShift
+    public class DailyShift
     {
-        string ShiftId { get; set; }
-        string ShiftDate { get; set; }
-        string EndOfWeek { get; set; }
+        public string ShiftId { get; set; }
+        public string ShiftDate { get; set; }
+        public string EndOfWeek { get; set; }
     }
 
     class ManagerDays
     {
         public string ManagerId { get; set; }
-        public int Shifts { get; set; }
+        public int ShiftsCodes { get; set; }
         public List<string> ShiftDates { get; set; }
+        public List<DailyShift> HydratedShifts { get; set; }
         public string LocationId { get; set; }
     }
 }

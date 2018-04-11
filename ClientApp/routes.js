@@ -21,12 +21,12 @@ export const routes = [
     { path: '/ops/payrollApproval', component: PayrollApproval, display: 'Payroll Approval', beforeEnter: checkAuth },
     { path: '/ops/reviewScheduleChange', component: ReviewScheduleChange, display: 'Review Schedule Change Requeast', beforeEnter: checkAuth },
     { path: '/ops/dailyShiftRequirements', component: ShiftRequirementsWeek, display: 'Set restaurant requirements', beforeEnter: checkAuth },
-    { path: '/ops/GmPage', component: GmPage, display: 'Restaurant Management', beforeEnter: checkAuth },
+    { path: '/ops/schedulingPages', component: schedulingPages, display: 'Restaurant Management', beforeEnter: checkAuth },
     { path: '/ops/scheduleChangeRequests', component: ChangeRequests, display:'Schedule Change Requests', beforeEnter:checkAuth}
 ]
 
 var instance = axios.create({
-    baseURL: 'https://wsbis.whitespotonline.com:4443/ops/api/',
+    baseURL: 'https://wsbis.whitespotonline.com:4443/ops/ops/api/',
     headers: { 'Access-Control-Allow-Origin': 'https://wsbis.whitespotonline.com:4443' }
 })
 

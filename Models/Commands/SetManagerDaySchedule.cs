@@ -3,7 +3,7 @@ using Ops.ReadModels;
 
 namespace Ops.Models.commands
 {
-    public class SetManagerDaySchedule : Commands
+    public class SetManagerDaySchedule : Ops.Infra.Commands
     {
         public string ManagerId { get; set; }
         public string LocationId { get; set; }

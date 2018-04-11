@@ -222,7 +222,6 @@ const actions = ({
             })
     },
     fetchLoggedInUser: ({ commit }, payload) => {
-        console.log(payload)
         try {
             var user = {}
             let retrievedToken = document.cookie

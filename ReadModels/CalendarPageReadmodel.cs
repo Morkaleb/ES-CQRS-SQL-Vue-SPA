@@ -173,6 +173,22 @@ namespace Ops.ReadModels
                     aDay.Schedule[ashiftIndex].ManagerName = thisRequest.ToName;
                     return readModelCollection;
 
+                case "ShiftOwedStatusChanged":
+                    id = data["LocationId"];
+                    eow = data["EOW"];
+                    managerId = data["ManagerId"];
+                    var pages = scheduleReturn(Book.book["CalendarPage"], id, eow);
+                    foreach (var daily in pages)
+                    {
+                        var managersShift = daily.Schedule.Find(shift => shift.ManagerId == managerId && shift.ShiftCode.IndexOf("(Owed)") != -1);
+                        if(managersShift != null)
+                        {
+                            string newCode = managersShift.ShiftCode.Split(" ")[0];
+                            managersShift.ShiftCode = newCode;
+                            return readModelCollection;
+                        }
+                    }
+                    break;
             }
             return null;
         }

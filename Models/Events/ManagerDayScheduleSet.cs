@@ -2,7 +2,7 @@ using Ops.Infra.EventStore;
 
 namespace Ops.Models.events
 {
-    public class ManagerDayScheduleSet : Events
+    public class ManagerDayScheduleSet : Ops.Infra.EventStore.Events
     {
         public string LocationId { get; set; }
         public string ShiftCode { get; set; }

@@ -2,7 +2,7 @@ using Ops.Infra;
 
 namespace Ops.Models.commands
 {
-    public class CreateManager : Commands
+    public class CreateManager : Ops.Infra.Commands
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

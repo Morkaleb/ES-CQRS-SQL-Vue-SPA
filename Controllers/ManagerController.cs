@@ -3,6 +3,7 @@ using System;
 using Ops.Domain;
 using Ops.Infra.CommandToPublishEvent;
 using Ops.Models.commands;
+using Ops.Models.Commands;
 
 namespace Ops.Controllers
 {
@@ -17,6 +18,22 @@ namespace Ops.Controllers
                 Aggregate managerAggreate = new ManagerAggregate();
                 CommandHandler.ActivateCommand(createManager, managerAggreate);
                 return Ok(createManager.Id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("api/[controller]/setRole")]
+        public ActionResult ChangeManagerRole([FromBody]ChangeManagerRole changeManagerRole)
+        {
+            try
+            {
+                Aggregate managerAggreate = new ManagerAggregate();
+                CommandHandler.ActivateCommand(changeManagerRole, managerAggreate);
+                return Ok(changeManagerRole.Id);
             }
             catch (Exception e)
             {

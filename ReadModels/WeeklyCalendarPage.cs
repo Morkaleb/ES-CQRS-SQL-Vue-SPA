@@ -202,6 +202,23 @@ namespace Ops.ReadModels
                     WeeklyCalendarData thisWeek = (WeeklyCalendarData)readModelCollection["WeeklyCalendarPage"][locationWeekIndex];
                     thisWeek.Approved = true;
                     return readModelCollection;
+
+                case "ShiftOwedStatusChanged":
+                    EOW = data["EOW"];
+                    alocationId = data["LocationId"];
+                    string shiftDate = data["ShiftDate"];
+                    string shiftCode = data["ShiftCode"];
+                    locationId = Convert.ToInt16(alocationId);
+                    locationWeekIndex = findWeekByLocation(readModelCollection["WeeklyCalendarPage"], EOW, locationId);
+                    thisWeek = (WeeklyCalendarData)readModelCollection["WeeklyCalendarPage"][locationWeekIndex];
+                    int adayIndex = thisWeek.Days.FindIndex(d => d.Date == shiftDate);
+                    if(adayIndex != -1)
+                    {
+                        int shiftIndex = thisWeek.Days[adayIndex].Shifts.FindIndex(s => s.ShiftCode == shiftCode);
+                        thisWeek.Days[adayIndex].Shifts[shiftIndex].ShiftCode = shiftCode.Split(" ")[0];
+                        thisWeek.Days[adayIndex].Shifts[shiftIndex].ShiftType = thisWeek.Days[adayIndex].Shifts[shiftIndex].ShiftType.Split(",")[0];
+                    }
+                    return readModelCollection;
             }
             return null;
         }

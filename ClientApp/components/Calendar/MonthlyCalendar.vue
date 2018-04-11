@@ -61,20 +61,20 @@
                 <p>Select a start and end date</p>
                 <div style="width:15%; float:left;" >
                     <b-field label="">
-                        <b-datepicker placeholder="Type or select a date..."
+                        <datePicker placeholder="Type or select a date..."
                                       icon="calendar-today"
                                       :readonly="false"
                                       v-model="PrintStartDate"
                                       :first-day-of-week=1>
-                        </b-datepicker>
+                        </datePicker>
                     </b-field>
                     <b-field label="">
-                        <b-datepicker placeholder="Type or select a date..."
+                        <datePicker placeholder="Type or select a date..."
                                       icon="calendar-today"
                                       :readonly="false"
                                       v-model="PrintEndDate"
                                       :first-day-of-week=1>
-                        </b-datepicker>
+                        </datePicker>
                     </b-field>
                 </div>
             </div>
@@ -210,7 +210,6 @@
           this.closeModal();
       },
       submit() {
-            console.log(this.selectedManager)
             let shiftDay = moment(this.shiftDate, 'MMM-DD-YYYY').format('MM-DD-YYYY')
             let managerIndex = this.getManagers.findIndex(x => x.Name === this.selectedManager)
             let shiftCodeIndex = this.getShiftCodes.findIndex(x => x.description === this.newShiftCode)
@@ -270,7 +269,7 @@
       }      
     },    
     created() {
-    this.weeklyUrl = "/ops/approveSchedule/?eow=" + this.getEow();
+    this.weeklyUrl = "/ops/weeklyschedule/?eow=" + this.getEow();
     this.checkWindowSize()
     this.fetchLoggedInUser()
         .then(() => {

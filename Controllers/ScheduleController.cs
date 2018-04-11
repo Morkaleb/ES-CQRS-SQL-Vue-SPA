@@ -181,7 +181,7 @@ namespace Ops.Controllers
                 var shiftDate = Convert.ToDateTime(week.EOW);
                 int datecompare = DateTime.Compare(shiftDate, startTime);
                 int dateCompare2 = DateTime.Compare(endtime, shiftDate);
-                if (DateTime.Compare(shiftDate, startTime) >= 0 && DateTime.Compare(endtime, shiftDate) >= 0)
+                if (DateTime.Compare(shiftDate, startTime) >= 0 && DateTime.Compare(endtime, shiftDate) >= 0 && week.LocationId == Int32.Parse(locationId))
                 {
                     filtered.Add(week);
                 }

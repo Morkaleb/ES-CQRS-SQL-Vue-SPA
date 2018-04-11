@@ -4,7 +4,7 @@ using Ops.ReadModels;
 
 namespace Ops.Models.commands
 {
-    public class GMApproveSchedule : Commands
+    public class GMApproveSchedule : Ops.Infra.Commands
     {
         public string RestaurantId { get; set; }
         public string GMId { get; set; }

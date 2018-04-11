@@ -2,7 +2,7 @@ using Ops.Infra.EventStore;
 
 namespace Ops.Models.events
 {
-    public class ManagerDayScheduleChangeRequested : Events
+    public class ManagerDayScheduleChangeRequested : Ops.Infra.EventStore.Events
     {
         public string RequestId { get; set; }
         public string EOW { get; set; }

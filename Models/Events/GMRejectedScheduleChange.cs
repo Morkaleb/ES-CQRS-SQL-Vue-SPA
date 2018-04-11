@@ -2,7 +2,7 @@ using Ops.Infra.EventStore;
 
 namespace Ops.Models.events
 {
-    public class GMRejectedScheduleChange : Events
+    public class GMRejectedScheduleChange : Ops.Infra.EventStore.Events
     {
         public string GMId { get; set; }
         public string RequestId { get; set; }

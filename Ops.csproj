@@ -25,8 +25,6 @@
     <Content Remove="ClientApp\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Commands\" />
-    <Folder Include="Models\Events\" />
     <Folder Include="ReadModels\" />
     <Folder Include="Views\Shared\Dropdowns\" />
   </ItemGroup>

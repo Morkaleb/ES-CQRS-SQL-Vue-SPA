@@ -2,7 +2,7 @@ using Ops.Infra.EventStore;
 
 namespace Ops.Models.events
 {
-    public class ManagerCreated : Events
+    public class ManagerCreated : Ops.Infra.EventStore.Events
     {
         public string ManagerId { get; set;}
         public string FirstName { get; set; }

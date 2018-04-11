@@ -2,7 +2,7 @@ using Ops.Infra.EventStore;
 
 namespace Ops.Models.events
 {
-    public class RestarauntCreated : Events
+    public class RestarauntCreated : Ops.Infra.EventStore.Events
     {
         public string Id { get; set; }
         public string StoreId { get; set; }

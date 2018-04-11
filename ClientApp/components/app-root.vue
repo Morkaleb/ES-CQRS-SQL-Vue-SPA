@@ -6,14 +6,14 @@
                     <a class="navbar-item">
                         <img src="../Assets/Logo_Green_lq.jpg" style="width:100px; height:140px;">
                         <img src="../Assets/logo2_lq.png" style="width:100px; height:140px;" />
-                        <div class="navbar-burger" @click="showNav = !showNav" style="color:white;" data-target="navMenu"  v-bind:class="{ 'is-active': activator }">
+                        <div class="navbar-burger" @click="makeBurger" style="color:white;" data-target="navMenu"  v-bind:class="{ 'is-active': activator }">
                             <span></span>
                             <span></span>
                             <span></span>
                         </div>
                     </a>
                 </div>
-                <div class="navbar-menu">
+                <div class="navbar-menu" id="navMenu" v-bind:class="{ 'is-active': activator }">
                     <div class="navbar-start">
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
@@ -98,7 +98,6 @@
     import Vuex from 'vuex'
 
     import HomePage from './home-page'
-    //import NavMenu from './nav-menu'
     import MonthlyCalendar from './Calendar/MonthlyCalendar'
     import calendar from 'vue-fullcalendar'
     import dropdown from './layout/dropdown'
@@ -118,6 +117,7 @@
     import PayRollApproval from './Scheduling/PayrollApproval'
     import ReviewScheduleChange from './Scheduling/ReviewScheduleChange'
     import schedulingPages from './schedulingPages'
+    import datePicker from 'vuejs-datepicker'
 
     import { mapGetters, mapActions } from 'vuex'
     
@@ -143,6 +143,7 @@
     Vue.component('weeklyCalendar', weeklyCalendar);
     Vue.component('calendar', calendar);
     Vue.component('schedulingPages', schedulingPages);
+    Vue.component('datePicker', datePicker);
     
     Vue.use(Vuex)
 
@@ -152,6 +153,7 @@
                 routes,
                 collapsed: true, msg: '',
                 activator: false,
+                showNav:false,
                 SupplyHub: [
                     { title: 'Home (NEW)', link: "" },
                     { title: 'Products', link: "" },

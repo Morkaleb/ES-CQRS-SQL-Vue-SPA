@@ -3,7 +3,7 @@ using Ops.ReadModels;
 
 namespace Ops.Models.commands
 {
-    public class GMApproveScheduleChange : Commands
+    public class GMApproveScheduleChange : Ops.Infra.Commands
     {
         public string LocationId { get; set; }
         public string ManagerId { get; set; }

@@ -3,7 +3,7 @@ using Ops.Infra;
 
 namespace Ops.Models.commands
 {
-    public class SetDailyShiftTypeRequirements : Commands
+    public class SetDailyShiftTypeRequirements : Ops.Infra.Commands
     {
         public string GmId { get; set; }
         public List<string> Monday { get; set; }

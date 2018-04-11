@@ -3,7 +3,7 @@ using Ops.Infra.EventStore;
 
 namespace Ops.Models.events
 {
-    public class DailyShiftTypeRequirementsSet : Events
+    public class DailyShiftTypeRequirementsSet : Ops.Infra.EventStore.Events
     {
         public string Id { get; set; }
         public string GmId { get; set; }

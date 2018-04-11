@@ -2,7 +2,7 @@ using Ops.Infra;
 
 namespace Ops.Models.commands
 {  
-    public class CreateShiftCode : Commands
+    public class CreateShiftCode : Ops.Infra.Commands
     {
         public int ShiftStatus { get; set; }
        

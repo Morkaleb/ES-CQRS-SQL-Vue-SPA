@@ -5,6 +5,8 @@ using Ops.Infra.CommandToPublishEvent;
 using Ops.Infra.EventStore;
 using Ops.Models.commands;
 using Ops.Models.events;
+using Ops.Models.Commands;
+using Ops.Models.Events;
 
 namespace Ops.Domain
 {
@@ -17,8 +19,20 @@ namespace Ops.Domain
         {
             if (cmd is CreateManager) { return _CreateManager((CreateManager)cmd); }
             if (cmd is ChangeManagerEmail) { return _ChangeManagerEmail((ChangeManagerEmail)cmd); }
-
+            if (cmd is ChangeManagerRole) { return _ChangeManagerRole((ChangeManagerRole)cmd); }
             return null;
+        }
+
+        private Events[] _ChangeManagerRole(ChangeManagerRole cmd)
+        {
+            if (string.IsNullOrEmpty(cmd.Id)) { throw new Exception("Id is a required Field"); }
+            if (string.IsNullOrEmpty(_Id)) { throw new Exception("Manager not found"); }
+            ManagerRoleChanged managerRoleChanged = new ManagerRoleChanged
+            {
+                ManagerId = cmd.Id,
+                Role = cmd.Role
+            };
+            return new Events[] { managerRoleChanged };
         }
 
         private Events[] _ChangeManagerEmail(ChangeManagerEmail cmd)

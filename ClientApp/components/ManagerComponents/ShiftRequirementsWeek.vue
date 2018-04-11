@@ -58,7 +58,7 @@
             submit() {
                 this.submitDailyShiftRequirements();
                 this.showModal = false
-                window.location.href='https://wsbis.whitespotonline.com:4443/ops/GmPage'
+                window.location.href ='https://wsbis.whitespotonline.com:4443/ops/ops/schedule'
             }
         }
     }

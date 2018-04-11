@@ -3,8 +3,8 @@
         <div class="pageChoice" @click="$router.push('weeklySchedule/?eow=' + getEow())">
             <strong>Weekly Schedule</strong>
             <hr />
-            <p v-if="getUser.role == 3">View or approved this week's schedule</p>
-            <p v-if="getUser.role !== 3">View this week's schedule</p>
+            <p v-if="getUser.role == 3 || getUser.role == 0">View or approved this week's schedule</p>
+            <p v-if="getUser.role !== 3 || getUser.role !== 0">View this week's schedule</p>
         </div>
         <div class="pageChoice" @click="$router.push('MonthlySchedule')">
             <strong>Monthly Schedule</strong>
@@ -16,16 +16,16 @@
             <hr />
             <p>PayRoll's schedule page</p>
         </div>
-        <div class="pageChoice" v-if="getUser.role == 3" @click="$router.push('dailyShiftRequirements')">
+        <div class="pageChoice" v-if="getUser.role == 3 || getUser.role == 0 " @click="$router.push('dailyShiftRequirements')">
             <strong>Shift requirements</strong>
             <hr />
             <p>Set the daily shift requirements for the restaurant</p>
         </div>
-        <div class="pageChoice" v-if="getUser.role == 3">
+        <!--<div class="pageChoice" v-if="getUser.role == 3 || getUser.role == 0">
             <strong>Shift requirements</strong>
             <hr />
             <p>Set the daily shift requirements for the restaurant</p>
-        </div>
+        </div>-->
         <!--<div class="pageChoice" v-if="getUser.role == 3">
             <strong>Shift Change Requests</strong>
             <hr />

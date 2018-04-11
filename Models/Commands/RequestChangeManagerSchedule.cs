@@ -2,7 +2,7 @@ using Ops.Infra;
 
 namespace Ops.Models.commands
 {
-    public class RequestChangeManagerSchedule : Commands
+    public class RequestChangeManagerSchedule : Ops.Infra.Commands
     {
         public string RequestId { get; set; }
         public string ManagerId { get; set; }

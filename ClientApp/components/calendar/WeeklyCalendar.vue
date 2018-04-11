@@ -54,9 +54,9 @@
                 <button @click="closeModal()">Close</button>
             </div>
         </shift-modal>
-        <div style="vertical-align:middle; margin-bottom:5px; margin-right:45%">
-            <button><a :href=this.lastWeekString>last week</a></button>
-            <button><a :href=this.nextweekString>next week</a></button>
+        <div style="vertical-align:middle; margin-bottom:5px; margin-left:45%">
+            <button style="border-bottom-left-radius:15px; border-top-left-radius:15px; background-color:black; color:white";><a :href=this.lastWeekString>last week</a></button>
+            <button style="border-bottom-right-radius:15px; border-top-right-radius:15px; background-color:black; color:white";><a :href=this.nextweekString>next week</a></button>
         </div>
         <div class="container-fluid weekly">
             <day class="dayBox" :Day="this.monday" v-on:dayClicked="dayClicked($event)" v-on:eventClicked="eventClicked($event)"></day>
