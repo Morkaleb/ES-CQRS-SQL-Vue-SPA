@@ -13,9 +13,9 @@ namespace Ops.Infra
         public static void Start()
         {
             ReadModelRegistration.Register();
-            TableReadmodelInterface.CheckForTables();
-            EventStoreInterface.StartConnection();
-            EventStoreInterface.ReadSavedEvents();
+            TableReadmodelConnection.CheckForTables();
+            EventStoreConnection.StartConnection();
+            EventStoreConnection.ReadSavedEvents();
         }
     }
 }

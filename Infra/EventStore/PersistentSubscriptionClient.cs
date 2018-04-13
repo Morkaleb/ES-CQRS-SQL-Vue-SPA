@@ -23,7 +23,7 @@ namespace Ops.Infra.EventStore
             var settings = ConnectionSettings.Create(); //.EnableVerboseLogging().UseConsoleLogger();
             settings.SetHeartbeatTimeout(new TimeSpan(0, 0, 1));
 
-            _conn = EventStoreConnection.Create(settings, new IPEndPoint(IPAddress.Loopback, DEFAULTPORT));
+            _conn = global::EventStore.ClientAPI.EventStoreConnection.Create(settings, new IPEndPoint(IPAddress.Loopback, DEFAULTPORT));
             CreateSubscription();
             _conn.ConnectAsync().Wait();
             ConnectToSubscription();
@@ -55,7 +55,7 @@ namespace Ops.Infra.EventStore
             var data = Encoding.ASCII.GetString(resolvedEvent.Event.Data);
             if (resolvedEvent.Event.EventType[0] != '$')
             {
-                return EventStoreInterface.publishToReadModel(resolvedEvent);
+                return EventStoreConnection.publishToReadModel(resolvedEvent);
             }
             else return Task.FromResult(0);
 

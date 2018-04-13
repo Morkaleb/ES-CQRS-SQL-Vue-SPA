@@ -15,7 +15,7 @@ namespace Ops.Infra.CommandToPublishEvent
             List<EventFromES> eventStream = new List<EventFromES>();
             try
             {
-                eventStream = EventStoreInterface.HydrateFromES(aggregateId);
+                eventStream = EventStoreConnection.HydrateFromES(aggregateId);
             }
             catch (Exception e) { Console.Write(e); }
             if (eventStream.Count > 0)
@@ -38,7 +38,7 @@ namespace Ops.Infra.CommandToPublishEvent
             {
                 evt.StreamId = aggregateId;
                 evt.TimeStamp = DateTime.Now;
-                EventStoreInterface.PublishToEventStore(evt);
+                EventStoreConnection.PublishToEventStore(evt);
 
             }
         }

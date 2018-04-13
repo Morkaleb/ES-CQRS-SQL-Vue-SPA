@@ -44,7 +44,7 @@ namespace Ops.Infra.EventStore
                         }
                         if (key.Split("Table").Length > 1 && readmodelData != null)
                         {
-                            TableReadmodelInterface.UpdateTable(readmodelData, key);
+                            TableReadmodelConnection.UpdateTable(readmodelData, key);
                         }
                     }
                     catch (Exception e)

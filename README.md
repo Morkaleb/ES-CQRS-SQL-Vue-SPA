@@ -21,6 +21,8 @@ _Looking for aspnetcore & Angular 2.x+ Universal starter? [click here](https://g
 
 # Features
 
+  **GetEventStore Client**
+  **CQRS Data pattern**
 - **ASP.NET Core 2.0**
   - Web API
 - **VueJS 2**
@@ -31,6 +33,7 @@ _Looking for aspnetcore & Angular 2.x+ Universal starter? [click here](https://g
 - ...more details to come...
 
 # Prerequisites:
+ *GetEventStore
  * nodejs > 6
  * VS2017
  * dotnet core 2.0

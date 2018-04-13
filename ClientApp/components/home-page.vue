@@ -1,6 +1,6 @@
 <template>
     <div>
-        Welcome {{getUser.firstName}} {{getUser.LastName}}
+        Welcome people
     </div>
 </template>
 
@@ -14,16 +14,13 @@ export default {
         },
         methods: {
             ...mapActions([
-                'fetchLoggedInUser'
             ])
         },
         computed: {
             ...mapGetters([
-                'getUser'
             ])
         },
         created() {
-            this.fetchLoggedInUser()
         }    
 }
 </script>
